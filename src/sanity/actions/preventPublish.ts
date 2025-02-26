@@ -6,7 +6,7 @@ import type {
   } from 'sanity'
 
   export function preventPublish (prev: DocumentActionComponent[], context: DocumentActionsContext) {
-    const blockedTypes = ['metaData']
+    const blockedTypes: string[] = ['metaData', 'pages'];
     if (!context.schemaType || !blockedTypes.includes(context.schemaType)) {
       return prev
     }
@@ -18,7 +18,7 @@ import type {
           return {
             ...description,
             disabled: true,
-            title: `You cannot publish because there should only be one type of ${context.schemaType}.`,
+            title: `You cannot publish because there should only be one version of this information.`,
           }
         }
         return description

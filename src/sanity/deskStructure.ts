@@ -5,13 +5,41 @@ export const myStructure: StructureResolver = (S) =>
       .title('Base')
       .items([
         S.listItem()
-            .title('Metadata')
+        .title('Projects')
+        .child(
+            S.list()
+                .title('Projects')
+
+        ),
+        S.listItem()
+            .title('Company Settings')
             .child(
-                S.document()
-                    .schemaType('metaData')
-                    .documentId('metaData')),
-                    ...S.documentTypeListItems().filter(listItem => {
-                        const id = listItem.getId();
-                        return id !== undefined && !['metaData'].includes(id);
-                    })
-                ])
+                S.list()
+                    .title('Company Settings')
+
+            ),
+        S.listItem()
+            .title('Site Settings')
+            .child(
+                S.list()
+                    .title('Available Settings')
+                    .items([
+                        S.listItem()
+                            .title('Site details for search engines')
+                            .child(S.document().schemaType('metaData').documentId('metaData')),
+
+                        S.listItem()
+                            .title('Website page name settings')
+                            .child(S.document().schemaType('pages').documentId('pages'))
+                    ])
+                ),
+        
+        
+        
+        
+        ...S.documentTypeListItems().filter(
+            (listItem) => !['metaData','pages'].includes(listItem?.getId() ?? '')
+            ),
+        ],
+                
+        )

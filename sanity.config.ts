@@ -23,6 +23,7 @@ export default defineConfig({
   schema,
   plugins: [
     structureTool({ structure: myStructure }),
+    // structureTool({ structure }),
     visionTool({ defaultApiVersion: apiVersion }),
   ],
 })
