@@ -1,6 +1,6 @@
 const metaData = {
     name: 'metaData',
-    title: 'Meta Data',
+    title: 'Site details for search engines',
     type: 'document',
     preview: {
       prepare() {

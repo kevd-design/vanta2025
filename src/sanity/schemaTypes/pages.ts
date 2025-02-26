@@ -22,7 +22,7 @@ const pages = {
     preview: {
         prepare() {
             return {
-                title: 'Website Pages'
+                title: 'Website Page Names'
             }
         }
     },
