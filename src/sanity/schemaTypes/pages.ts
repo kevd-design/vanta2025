@@ -16,7 +16,7 @@ const descriptions = {
 }
 
 const pages = {
-    name: 'pages',
+    name: 'pageNamesSingleton',
     title: 'Pages',
     type: 'document',
     preview: {

@@ -1,11 +1,12 @@
 const metaData = {
-    name: 'metaData',
+    name: 'metaDataSingleton',
     title: 'Site details for search engines',
+    subtitle: 'AKA Metadata',
     type: 'document',
     preview: {
       prepare() {
           return {
-              title: 'Site details for search engines'
+              title: 'Site details for search engines',
           }
       }
   },
