@@ -23,49 +23,41 @@ export const myStructure: StructureResolver = (S) =>
                     .title('Company Settings')
 
             ),
-        S.listItem()
+
+            S.listItem()
             .title('Site Settings')
             .child(
-                S.list()
-                    .title('Available Settings')
-                    
-                    .items([
-                        S.listItem()
-                            .title('Site details for search engines')
-                            .child(metaDataId => 
-                                S.documentList()
-                                    .title('Settings')
-                                    .filter('_type == "metaData"')
-                                    .params({ metaDataId })
-                                    ),
-                        S.listItem()
-                            .title('Website page name settings')
-                            .child(pageId => 
-                                S.documentList()
-                                    .title('Settings')
-                                    .filter('_type == "pages"')
-                                    .params({ pageId })
-                                    ),
-                            ] )),
-
-                        
-                        
-
-                        // S.listItem()
-                        //     .title('Site details for search engines')
-                        //     .child(S.document().schemaType('metaData')),
-
-                        // S.listItem()
-                        //     .title('Website page name settings')
-                        //     .child(S.document().schemaType('pages').documentId('pages'))
-               
-        
-        
-        
-        
-        ...S.documentTypeListItems().filter(
-            (listItem) => !['metaData','pages','project'].includes(listItem?.getId() ?? '')
+              S.list()
+                .title('Available Settings')
+                .items([
+                  S.listItem()
+                    .title('Site details for search engines')
+                    .child(
+                      S.document()
+                        .schemaType('metaDataSingleton')
+                        .documentId('metaDataSingleton') // Use a fixed id for the singleton
+                    ),
+                  S.listItem()
+                    .title('Website page name settings')
+                    .child(
+                      S.document()
+                        .schemaType('pageNamesSingleton')
+                        .documentId('pageNamesSingleton') // Use a fixed id for the singleton
+                    )
+                ])
             ),
-        ],
-                
-        )
+
+
+
+
+                            
+        ...S.documentTypeListItems().filter(
+            (listItem) => !['metaDataSingleton','pageNamesSingleton','project'].includes(listItem?.getId() ?? '')
+            ),
+                     ])
+
+
+        
+        
+        
+        

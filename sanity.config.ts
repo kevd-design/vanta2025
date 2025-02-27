@@ -7,8 +7,8 @@ import { apiVersion, dataset, projectId } from './src/sanity/env'
 import { schema } from './src/sanity/schemaTypes'
 import { myStructure } from './src/sanity/newStructure'
 // import { structure } from './src/sanity/structure'
-// import { preventPublish } from './src/sanity/filters/preventPublish'
-import { filterNewDocumentOptions } from './src/sanity/filters/filterNewDocumentOptions'
+import { preserveSingleton }  from './src/sanity/filters/preserveSingleton'
+import { filteredOptions } from './src/sanity/filters/filterNewDocumentOptions'
 
 
 
@@ -17,11 +17,11 @@ export default defineConfig({
   projectId,
   dataset,
   document: {
-    // actions: (prev, context) => {
-    //   return preventPublish(prev, context)
-    // },
+    actions: (prev, context) => {
+      return preserveSingleton(prev, context)
+    },
     newDocumentOptions: (prev) => {
-        return filterNewDocumentOptions(prev);
+        return filteredOptions(prev);
 
     },
 
