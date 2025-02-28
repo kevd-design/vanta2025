@@ -13,7 +13,7 @@ import { filteredOptions } from './src/sanity/filters/filterNewDocumentOptions'
 
 
 export default defineConfig({
-  basePath: '/studio',
+  basePath: '/admin',
   projectId,
   dataset,
   document: {
