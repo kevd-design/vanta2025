@@ -12,6 +12,10 @@ import { filteredOptions } from './src/sanity/filters/filterNewDocumentOptions'
 
 
 
+
+
+
+
 export default defineConfig({
   basePath: '/admin',
   projectId,

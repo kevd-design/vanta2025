@@ -3,17 +3,39 @@
 const project = {
     name: 'project',
     type: 'document',
+    title: 'Projects',
     fields: [
         {
             name: 'projectName',            
             type: 'string'
         },
         {
-           name: 'isPublished',
-           type: 'boolean',
-           title: 'Published',
-           description: 'Set to published when you want this project to be visible on the website.'
+            name: 'projectDescription',
+            type: 'text',
+            title: 'Project Description',
+            description: 'A short description of the project.',
         },
+        {
+            name: 'projectImage',
+            type: 'image',
+            title: 'Project Image',
+            options: {
+                hotspot: true,
+            },
+        },
+        {
+            name: 'projectGallery',
+            type: 'array',
+            title: 'Project Gallery',
+            of: [{ type: 'image' }],
+        },
+        { 
+            name: 'projectNeighbourhood',
+            type: 'reference',
+            title: 'Project Neighbourhood',
+            to: [{ type: 'neighbourhood' }],
+
+        }
 
     ]
 

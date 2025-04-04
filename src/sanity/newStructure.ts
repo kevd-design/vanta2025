@@ -1,60 +1,49 @@
 import type {StructureResolver} from 'sanity/structure'
 
 export const myStructure: StructureResolver = (S) =>
-    S.list()
-      .title('Base')
-      .items([
-        S.listItem()
-        .title('Projects')
-        .child(
-            S.list()
-                .title('Projects')
-                .items([
-                    S.listItem()
-                        .title('Live Projects')
-                        .child(S.document().schemaType('project').documentId('project'))
-                ])
+  
+  S.list()
+  
+    .title('Editable Content')
 
-        ),
-        S.listItem()
-            .title('Company Settings')
-            .child(
-                S.list()
-                    .title('Company Settings')
+    //List all document types except singletons
 
-            ),
+    .items([
+      ...S.documentTypeListItems()
+        .filter(
+          (listItem) => !listItem?.getId()?.endsWith('Singleton')
+          ),
+        
+      //Add a divider
+      S.divider(),
 
-            S.listItem()
-            .title('Site Settings')
-            .child(
-              S.list()
-                .title('Available Settings')
-                .items([
-                  S.listItem()
-                    .title('Site details for search engines')
-                    .child(
-                      S.document()
-                        .schemaType('metaDataSingleton')
-                        .documentId('metaDataSingleton') // Use a fixed id for the singleton
-                    ),
-                  S.listItem()
-                    .title('Website page name settings')
-                    .child(
-                      S.document()
-                        .schemaType('pageNamesSingleton')
-                        .documentId('pageNamesSingleton') // Use a fixed id for the singleton
-                    )
-                ])
-            ),
+      //Add the singletons ensuring they open immediately in the editor,
+      //and not in a list view like the other non-singleton document types
+      // by specifying the exact documentId
+      S.listItem()
+      .id('companySettingsSingleton')
+      .schemaType('companySettingsSingleton')
+      .title('Company Settings')
+      .child(
+        S.editor()
+          .id('companySettingsSingleton')
+          .schemaType('companySettingsSingleton')
+      ),
+      S.listItem()
+      .id('siteSettingsSingleton')
+      .schemaType('siteSettingsSingleton')
+      .title('Site Settings')
+      .child(
+        S.editor()
+          .id('metaDataSingleton')
+          .schemaType('siteSettingsSingleton')
+      ),
+    
+    
+  ])
+  
+  
 
-
-
-
-                            
-        ...S.documentTypeListItems().filter(
-            (listItem) => !['metaDataSingleton','pageNamesSingleton','project'].includes(listItem?.getId() ?? '')
-            ),
-                     ])
 
 
         

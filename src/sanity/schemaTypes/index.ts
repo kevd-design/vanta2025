@@ -1,14 +1,21 @@
 import { type SchemaTypeDefinition } from 'sanity';
 
-import metaData from './metaData';
+import companySettings from './companySettings';
 import project from './project';
 import pages from './pages';
+import siteSettingsSingleton from './siteSettings';
+import neighbourhood from './neighbourhood';
+import callToAction from "./callToAction";
+
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
-    metaData,
+    companySettings,
     pages,
-    project
+    project,
+    siteSettingsSingleton,
+    neighbourhood,
+    callToAction
   ],
   
 }
