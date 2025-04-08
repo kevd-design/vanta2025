@@ -1,10 +1,15 @@
 import type { Rule } from 'sanity';
+
+interface CTALinkParent {
+    linkType?: 'reference' | 'toPage' | 'externalLink';
+  }
 interface CTATargetDocument {
     CTA?: {
       linkType?: 'reference' | 'toPage' | 'externalLink';
     };
   }
 
+// This is the call to action object. It is used to create a call to action button that links to a specific project, a page on the site, or an external link.
 const callToAction = {
     name: 'CTA',
     title: 'Call to Action',
@@ -37,7 +42,7 @@ const callToAction = {
             title: 'Reference to Project',
             type: 'reference',
             to: [{ type: 'project' }],
-            hidden: ({ document }: {document: CTATargetDocument}) => document?.CTA?.linkType !== 'reference',
+            hidden: ({ parent, value }: { parent?: CTALinkParent; value?: string}) => !value && parent?.linkType !== 'reference',
             validation: (Rule: Rule) => Rule.custom((field,context) => {
                 const doc = context.document as CTATargetDocument;
                 if (doc?.CTA?.linkType === 'reference' && !field) {
@@ -62,7 +67,7 @@ const callToAction = {
                 layout: 'radio',
                 direction: 'horizontal',
             },
-            hidden: ({ document }: {document: CTATargetDocument}) => document?.CTA?.linkType !== 'toPage',
+            hidden: ({ parent, value }: { parent?: CTALinkParent; value?: string}) => !value && parent?.linkType !== 'toPage',
             validation: (Rule:Rule) => Rule.custom((field,context) => {
                 const doc = context.document as CTATargetDocument;
                 // Check if the linkType is 'toPage' and the field is empty 
@@ -76,7 +81,7 @@ const callToAction = {
             name: 'externalLink',
             title: 'External Link',
             type: 'url',
-            hidden: ({ document }: {document: CTATargetDocument}) => document?.CTA?.linkType !== 'externalLink',
+            hidden: ({ parent, value }: { parent?: CTALinkParent; value?: string}) => !value && parent?.linkType !== 'externalLink',
             validation: (Rule: Rule) => Rule.required().error('Please enter a URL.')
         }
 
