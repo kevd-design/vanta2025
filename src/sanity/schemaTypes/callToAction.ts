@@ -3,11 +3,7 @@ import type { Rule } from 'sanity';
 interface CTALinkParent {
     linkType?: 'reference' | 'toPage' | 'externalLink';
   }
-interface CTATargetDocument {
-    CTA?: {
-      linkType?: 'reference' | 'toPage' | 'externalLink';
-    };
-  }
+
 
 // This is the call to action object. It is used to create a call to action button that links to a specific project, a page on the site, or an external link.
 const callToAction = {
@@ -24,7 +20,7 @@ const callToAction = {
             validation: (Rule: Rule) => Rule.required().error('Please enter a label for the link.'),
         },
         {   name: 'linkType',
-            title: 'Link Type',
+            title: 'Link Type', 
             type: 'string',
             options: {
                 list: [ 
@@ -44,8 +40,9 @@ const callToAction = {
             to: [{ type: 'project' }],
             hidden: ({ parent, value }: { parent?: CTALinkParent; value?: string}) => !value && parent?.linkType !== 'reference',
             validation: (Rule: Rule) => Rule.custom((field,context) => {
-                const doc = context.document as CTATargetDocument;
-                if (doc?.CTA?.linkType === 'reference' && !field) {
+                const doc = context.parent as CTALinkParent;
+                
+                if (doc?.linkType === 'reference' && !field) {
                     return 'Please select a project.';
                 }
                 return true;
@@ -69,9 +66,9 @@ const callToAction = {
             },
             hidden: ({ parent, value }: { parent?: CTALinkParent; value?: string}) => !value && parent?.linkType !== 'toPage',
             validation: (Rule:Rule) => Rule.custom((field,context) => {
-                const doc = context.document as CTATargetDocument;
+                const doc = context.parent as CTALinkParent;
                 // Check if the linkType is 'toPage' and the field is empty 
-                if (doc?.CTA?.linkType === 'toPage' && !field) {
+                if (doc?.linkType === 'toPage' && !field) {
                     return 'Please select a page.';
                 }
                 return true;
@@ -82,7 +79,15 @@ const callToAction = {
             title: 'External Link',
             type: 'url',
             hidden: ({ parent, value }: { parent?: CTALinkParent; value?: string}) => !value && parent?.linkType !== 'externalLink',
-            validation: (Rule: Rule) => Rule.required().error('Please enter a URL.')
+            validation: (Rule: Rule) => Rule.custom((field,context) => {
+                const doc = context.parent as CTALinkParent;
+                // Check if the linkType is 'externalLink' and the field is empty 
+                if (doc?.linkType === 'externalLink' && !field) {
+                    return 'Please enter an external link.';
+                }
+                return true;
+            })
+            
         }
 
 

@@ -217,7 +217,7 @@ const siteSettings = {
         },
         {
             name: 'heroCTA',
-            title: 'Call to Action',
+            title: 'Hero Call to Action',
             type: 'object',
             group: 'rootPgSet',
             fieldset: 'heroSection',
@@ -253,6 +253,17 @@ const siteSettings = {
             description: `A short description of the services offered by the company.`,
         },
         {
+            name: 'backgroundImageServices',
+            title: 'Background Image',
+            type: 'image',
+            options: {
+                hotspot: true,
+            },
+            group:'rootPgSet',
+            fieldset:'servicesSection',
+            description: 'The background image for the services section.',
+        },
+        {
             name: 'servicesCTA',
             title: 'Services Call to Action',
             type: 'object',
@@ -260,6 +271,8 @@ const siteSettings = {
             fieldset: 'servicesSection',
             fields: callToAction.fields,
         },
+
+        
         // Review Section
         {
             name: 'reviewerName',
@@ -269,17 +282,7 @@ const siteSettings = {
             fieldset: 'reviewSection',
             description: `The name of the person who wrote the review.`,
         },
-        {
-            name: 'backgroundImageReview',
-            title: 'Background Image',
-            type: 'image',
-            options: {
-                hotspot: true,
-            },
-            group:'rootPgSet',
-            fieldset:'reviewSection',
-            description: 'The background image for the review section.',
-        },
+
         {
             name: 'reviewText',
             title: 'Review Text',
