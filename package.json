@@ -1,5 +1,6 @@
 {
   "name": "vanta2025",
+  "type": "module",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,15 +10,18 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@sanity/color": "^3.0.6",
     "@sanity/image-url": "^1.1.0",
     "@sanity/portable-text-editor": "^3.48.1",
-    "@sanity/vision": "^3.76.3",
-    "next": "15.1.7",
-    "next-sanity": "^9.8.59",
+    "@sanity/types": "^3.86.0",
+    "@sanity/vision": "^3.86.1",
+    "next": "^15.3.1",
+    "next-sanity": "^9.10.2",
+    "postcss-preset-env": "^10.1.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "sanity": "^3.77.2",
-    "sanity-plugin-documents-pane": "^2.3.0",
+    "sanity": "^3.86.0",
+    "sanity-plugin-documents-pane": "^2.4.0",
     "styled-components": "^6.1.15"
   },
   "devDependencies": {
@@ -27,7 +31,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.1.7",
-    "postcss": "^8",
+    "postcss": "^8.5.3",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }

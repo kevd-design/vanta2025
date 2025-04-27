@@ -4,7 +4,6 @@ import callToAction from "./callToAction";
 const siteSettings = {
     name: 'siteSettingsSingleton',
     title: 'Site Page Settings',
-    subtitle: `Manage the pages and site-wide settings of the website.`,
     type: 'document',
     preview: {
         prepare() {
@@ -361,6 +360,16 @@ const siteSettings = {
             description: 'The background image for the review page.',
         },
         {
+            name: 'reviewPageDescriptiveImage',
+            title: 'Review Page Descriptive Image',
+            type: 'image',
+            options: {
+                hotspot: true,
+            },
+            group: 'reviewPgSet',
+            description: 'The image that appears in the  review section of the review page. This image should be relevant to the review and help to convey where the reviews are located.',
+        },
+        {
             name: 'reviewPageSummary',
             title: 'Location of Reviews Summary',
             type: 'text',
@@ -446,9 +455,28 @@ const siteSettings = {
             group: 'contactPgSet',
         },
         {
+            name: 'instagramIcon',
+            title: 'Instagram Icon',
+            type: 'image',
+            options: {
+                hotspot: true,
+            },
+            group: 'contactPgSet',
+        },
+        {
             name: 'instagramLink',
             title: 'Instagram Link',
             type: 'url',
+            group: 'contactPgSet',
+            
+        },
+        {
+            name: 'facebookIcon',
+            title: 'Facebook Icon',
+            type: 'image',
+            options: {
+                hotspot: true,
+            },
             group: 'contactPgSet',
             
         },

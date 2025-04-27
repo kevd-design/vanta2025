@@ -14,7 +14,7 @@ export default async function Home() {
   const heroData = data.data[0]?.heroCTA;
   
   // Check if the data is available
-  if (!data || data.data[0].length === 0) {
+  if (!data || !data.data || !data.data[0]) {
     return <div>No data available</div>;
   }
   
