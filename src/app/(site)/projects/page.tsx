@@ -1,12 +1,12 @@
 
 import { PROJECTS_QUERY } from '@/sanity/lib/queries';
-import { client } from "@/sanity/lib/client";
+import { sanityFetch } from "@/sanity/lib/live";
 import Link from "next/link"
 import type { PROJECTS_QUERYResult } from "@/sanity/types"
 
 
 export default async function Projects() {
-  const projects:PROJECTS_QUERYResult = await client.fetch(PROJECTS_QUERY)
+  const { data: projects } = await sanityFetch({query: PROJECTS_QUERY})
   return (
     <div>
         Projects
