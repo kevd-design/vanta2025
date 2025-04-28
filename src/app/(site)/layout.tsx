@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SanityLive } from "@/sanity/lib/live";
+
 
 
 export const metadata: Metadata = {
@@ -13,17 +15,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <nav>
+    <>
       
-
+    <nav>
       <Link href="/" className="text-3xl text-blue-500 hover:underline"> Home</Link>
       <Link href="/projects" className="text-3xl text-blue-500 hover:underline"> Projects</Link>
       <Link href="/about" className="text-3xl text-blue-500 hover:underline"> About</Link>
       <Link href="/reviews" className="text-3xl text-blue-500 hover:underline"> Reviews</Link>
       <Link href="/contact" className="text-3xl text-blue-500 hover:underline"> Contact</Link>
+    </nav>    
+        
         {children}
 
-
-    </nav>
+        <SanityLive />
+    </>
   );
 }
