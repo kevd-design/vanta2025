@@ -698,6 +698,14 @@ export type PROJECTS_QUERYResult = Array<{
   projectName: string | null;
   projectSlug: Slug | null;
 }>;
+// Variable: PROJECT_QUERY
+// Query: *[  _type == "project" && projectSlug.current == $slug][0]{    _id, projectName, projectSlug, projectDescription  }
+export type PROJECT_QUERYResult = {
+  _id: string;
+  projectName: string | null;
+  projectSlug: Slug | null;
+  projectDescription: string | null;
+} | null;
 
 // Query TypeMap
 import "@sanity/client";
@@ -705,5 +713,6 @@ declare module "@sanity/client" {
   interface SanityQueries {
     "*[\n  _type == \"siteSettingsSingleton\"\n  ]": QUERYResult;
     "*[\n  _type == \"project\" && defined(projectSlug.current)][0...12]{\n    _id, projectName, projectSlug\n  }\n": PROJECTS_QUERYResult;
+    "*[\n  _type == \"project\" && projectSlug.current == $slug][0]{\n    _id, projectName, projectSlug, projectDescription\n  }\n": PROJECT_QUERYResult;
   }
 }

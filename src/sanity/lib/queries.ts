@@ -5,4 +5,10 @@ export const PROJECTS_QUERY = defineQuery(`*[
     _id, projectName, projectSlug
   }
 `);
+
+export const PROJECT_QUERY = defineQuery(`*[
+  _type == "project" && projectSlug.current == $slug][0]{
+    _id, projectName, projectSlug, projectDescription
+  }
+`);
     
