@@ -18,7 +18,12 @@ export default async function Home() {
     return <div>No data available</div>;
   }
   
-  const linkLabel = heroData.linkLabel;
+  if (!data || !data.data || !data.data[0] || !heroData) {
+    return <div>No data available</div>;
+  }
+  
+  
+  const linkLabel = heroData.linkLabel || 'no label';
 
   
   return (
