@@ -352,7 +352,7 @@
             "of": [
               {
                 "type": "string",
-                "value": "reference"
+                "value": "toProject"
               },
               {
                 "type": "string",
@@ -366,7 +366,7 @@
           },
           "optional": true
         },
-        "reference": {
+        "toProject": {
           "type": "objectAttribute",
           "value": {
             "type": "object",
@@ -649,7 +649,7 @@
                 "of": [
                   {
                     "type": "string",
-                    "value": "reference"
+                    "value": "toProject"
                   },
                   {
                     "type": "string",
@@ -663,7 +663,7 @@
               },
               "optional": true
             },
-            "reference": {
+            "toProject": {
               "type": "objectAttribute",
               "value": {
                 "type": "object",
@@ -733,33 +733,106 @@
         },
         "optional": true
       },
-      "selectedProject": {
+      "projectCTA": {
         "type": "objectAttribute",
         "value": {
           "type": "object",
           "attributes": {
-            "_ref": {
+            "linkLabel": {
               "type": "objectAttribute",
               "value": {
                 "type": "string"
-              }
+              },
+              "optional": true
             },
-            "_type": {
+            "linkType": {
               "type": "objectAttribute",
               "value": {
-                "type": "string",
-                "value": "reference"
-              }
+                "type": "union",
+                "of": [
+                  {
+                    "type": "string",
+                    "value": "toProject"
+                  },
+                  {
+                    "type": "string",
+                    "value": "toPage"
+                  },
+                  {
+                    "type": "string",
+                    "value": "externalLink"
+                  }
+                ]
+              },
+              "optional": true
             },
-            "_weak": {
+            "toProject": {
               "type": "objectAttribute",
               "value": {
-                "type": "boolean"
+                "type": "object",
+                "attributes": {
+                  "_ref": {
+                    "type": "objectAttribute",
+                    "value": {
+                      "type": "string"
+                    }
+                  },
+                  "_type": {
+                    "type": "objectAttribute",
+                    "value": {
+                      "type": "string",
+                      "value": "reference"
+                    }
+                  },
+                  "_weak": {
+                    "type": "objectAttribute",
+                    "value": {
+                      "type": "boolean"
+                    },
+                    "optional": true
+                  }
+                },
+                "dereferencesTo": "project"
+              },
+              "optional": true
+            },
+            "toPage": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "union",
+                "of": [
+                  {
+                    "type": "string",
+                    "value": "home"
+                  },
+                  {
+                    "type": "string",
+                    "value": "projects"
+                  },
+                  {
+                    "type": "string",
+                    "value": "about"
+                  },
+                  {
+                    "type": "string",
+                    "value": "reviews"
+                  },
+                  {
+                    "type": "string",
+                    "value": "contact"
+                  }
+                ]
+              },
+              "optional": true
+            },
+            "externalLink": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "string"
               },
               "optional": true
             }
-          },
-          "dereferencesTo": "project"
+          }
         },
         "optional": true
       },
@@ -865,7 +938,7 @@
                 "of": [
                   {
                     "type": "string",
-                    "value": "reference"
+                    "value": "toProject"
                   },
                   {
                     "type": "string",
@@ -879,7 +952,7 @@
               },
               "optional": true
             },
-            "reference": {
+            "toProject": {
               "type": "objectAttribute",
               "value": {
                 "type": "object",
@@ -982,7 +1055,7 @@
                 "of": [
                   {
                     "type": "string",
-                    "value": "reference"
+                    "value": "toProject"
                   },
                   {
                     "type": "string",
@@ -996,7 +1069,7 @@
               },
               "optional": true
             },
-            "reference": {
+            "toProject": {
               "type": "objectAttribute",
               "value": {
                 "type": "object",
@@ -1334,7 +1407,7 @@
                 "of": [
                   {
                     "type": "string",
-                    "value": "reference"
+                    "value": "toProject"
                   },
                   {
                     "type": "string",
@@ -1348,7 +1421,7 @@
               },
               "optional": true
             },
-            "reference": {
+            "toProject": {
               "type": "objectAttribute",
               "value": {
                 "type": "object",
@@ -1451,7 +1524,7 @@
                 "of": [
                   {
                     "type": "string",
-                    "value": "reference"
+                    "value": "toProject"
                   },
                   {
                     "type": "string",
@@ -1465,7 +1538,7 @@
               },
               "optional": true
             },
-            "reference": {
+            "toProject": {
               "type": "objectAttribute",
               "value": {
                 "type": "object",

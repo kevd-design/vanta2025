@@ -3,35 +3,60 @@ import { defineQuery } from "next-sanity";
 import { sanityFetch } from "../../sanity/lib/live";
 
 
-const QUERY = defineQuery(`*[
-  _type == "siteSettingsSingleton"
-  ]`); 
+const QUERY = defineQuery(`*[_type == "siteSettingsSingleton"][0]{
+  reviewCTA,
+  heroCTA,
+  viewReviewsCTA,
+  submitReviewCTA,
+  servicesCTA,
+  projectCTA {
+    // keep all the normal CTA fields…
+    ...,
+    // then pull in the referenced page’s slug
+    "toPage": toPage->{
+      _id,
+      title,
+      "slug": slug.current
+    }
+  }
+}`); 
+
 
 export default async function Home() {
 
   // Fetch the data from Sanity
-  const data  = await sanityFetch({query: QUERY,});
-  const heroData = data.data[0]?.heroCTA;
-  
+  const res  = await sanityFetch({query: QUERY,});
+ 
   // Check if the data is available
-  if (!data || !data.data || !data.data[0]) {
+
+  const data = res.data[0];
+
+  if (!data) {
     return <div>No data available</div>;
   }
   
-  if (!data || !data.data || !data.data[0] || !heroData) {
-    return <div>No data available</div>;
-  }
+  // Destructure the data to get the CTAs
+
+  const { reviewCTA, heroCTA, viewReviewsCTA, submitReviewCTA, servicesCTA, projectCTA  } = data;
   
-  
-  const linkLabel = heroData.linkLabel || 'no label';
+  const arrayOfCtas = [reviewCTA, heroCTA, viewReviewsCTA, submitReviewCTA, servicesCTA, projectCTA];
+  console.log(arrayOfCtas)
 
   
+
   return (
     <div>
-      
-      <Cta
-        label ={linkLabel}
-      />
+      {/* Render the CTAs */}
+      {arrayOfCtas.map((cta, index) => (
+        <Cta
+          key={index}
+          label={cta && cta.linkLabel}
+          toPage={cta && cta.toPage}
+          externalLink={cta && cta.externalLink}
+        />
+      ))}
+
+
 
     </div>
   );

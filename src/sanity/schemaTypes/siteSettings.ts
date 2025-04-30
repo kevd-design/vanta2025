@@ -224,14 +224,15 @@ const siteSettings = {
         },
 
         // Project Section
+
+
         {
-            name: 'selectedProject',
-            title: 'Selected Project',
-            type: 'reference',
-            to: [{ type: 'project' }],
+            name: 'projectCTA',
+            title: 'Project Section Call to Action',
+            type: 'object',
             group: 'rootPgSet',
             fieldset: 'projectSection',
-            
+            fields: callToAction.fields,
         },
 
         // Services Section

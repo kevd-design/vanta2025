@@ -1,7 +1,7 @@
 import type { Rule } from 'sanity';
 
 interface CTALinkParent {
-    linkType?: 'reference' | 'toPage' | 'externalLink';
+    linkType?: 'toProject' | 'toPage' | 'externalLink';
   }
 
 
@@ -24,7 +24,7 @@ const callToAction = {
             type: 'string',
             options: {
                 list: [ 
-                    {title: `Reference to Project`, value:`reference`},
+                    {title: `Reference to Project`, value:`toProject`},
                     {title: `Reference to Page`, value: `toPage`},
                     {title: `External Link`, value: `externalLink`}
                 ],
@@ -34,15 +34,15 @@ const callToAction = {
             validation: (Rule: Rule) => Rule.required().error('Please select a link type.'),
         },
         {
-            name: 'reference',
+            name: 'toProject',
             title: 'Reference to Project',
             type: 'reference',
             to: [{ type: 'project' }],
-            hidden: ({ parent, value }: { parent?: CTALinkParent; value?: string}) => !value && parent?.linkType !== 'reference',
+            hidden: ({ parent, value }: { parent?: CTALinkParent; value?: string}) => !value && parent?.linkType !== 'toProject',
             validation: (Rule: Rule) => Rule.custom((field,context) => {
                 const doc = context.parent as CTALinkParent;
                 
-                if (doc?.linkType === 'reference' && !field) {
+                if (doc?.linkType === 'toProject' && !field) {
                     return 'Please select a project.';
                 }
                 return true;

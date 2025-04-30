@@ -71,8 +71,8 @@ export type Geopoint = {
 export type CTA = {
   _type: "CTA";
   linkLabel?: string;
-  linkType?: "reference" | "toPage" | "externalLink";
-  reference?: {
+  linkType?: "toProject" | "toPage" | "externalLink";
+  toProject?: {
     _ref: string;
     _type: "reference";
     _weak?: boolean;
@@ -115,8 +115,8 @@ export type SiteSettingsSingleton = {
   };
   heroCTA?: {
     linkLabel?: string;
-    linkType?: "reference" | "toPage" | "externalLink";
-    reference?: {
+    linkType?: "toProject" | "toPage" | "externalLink";
+    toProject?: {
       _ref: string;
       _type: "reference";
       _weak?: boolean;
@@ -125,11 +125,17 @@ export type SiteSettingsSingleton = {
     toPage?: "home" | "projects" | "about" | "reviews" | "contact";
     externalLink?: string;
   };
-  selectedProject?: {
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "project";
+  projectCTA?: {
+    linkLabel?: string;
+    linkType?: "toProject" | "toPage" | "externalLink";
+    toProject?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "project";
+    };
+    toPage?: "home" | "projects" | "about" | "reviews" | "contact";
+    externalLink?: string;
   };
   servicesTitle?: string;
   servicesDescription?: string;
@@ -147,8 +153,8 @@ export type SiteSettingsSingleton = {
   };
   servicesCTA?: {
     linkLabel?: string;
-    linkType?: "reference" | "toPage" | "externalLink";
-    reference?: {
+    linkType?: "toProject" | "toPage" | "externalLink";
+    toProject?: {
       _ref: string;
       _type: "reference";
       _weak?: boolean;
@@ -161,8 +167,8 @@ export type SiteSettingsSingleton = {
   reviewText?: string;
   reviewCTA?: {
     linkLabel?: string;
-    linkType?: "reference" | "toPage" | "externalLink";
-    reference?: {
+    linkType?: "toProject" | "toPage" | "externalLink";
+    toProject?: {
       _ref: string;
       _type: "reference";
       _weak?: boolean;
@@ -215,8 +221,8 @@ export type SiteSettingsSingleton = {
   reviewPageSummary?: string;
   viewReviewsCTA?: {
     linkLabel?: string;
-    linkType?: "reference" | "toPage" | "externalLink";
-    reference?: {
+    linkType?: "toProject" | "toPage" | "externalLink";
+    toProject?: {
       _ref: string;
       _type: "reference";
       _weak?: boolean;
@@ -229,8 +235,8 @@ export type SiteSettingsSingleton = {
   submitReviewInvitation?: string;
   submitReviewCTA?: {
     linkLabel?: string;
-    linkType?: "reference" | "toPage" | "externalLink";
-    reference?: {
+    linkType?: "toProject" | "toPage" | "externalLink";
+    toProject?: {
       _ref: string;
       _type: "reference";
       _weak?: boolean;
@@ -520,8 +526,8 @@ export type QUERYResult = Array<{
   };
   heroCTA?: {
     linkLabel?: string;
-    linkType?: "externalLink" | "reference" | "toPage";
-    reference?: {
+    linkType?: "externalLink" | "toPage" | "toProject";
+    toProject?: {
       _ref: string;
       _type: "reference";
       _weak?: boolean;
@@ -530,11 +536,17 @@ export type QUERYResult = Array<{
     toPage?: "about" | "contact" | "home" | "projects" | "reviews";
     externalLink?: string;
   };
-  selectedProject?: {
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "project";
+  projectCTA?: {
+    linkLabel?: string;
+    linkType?: "externalLink" | "toPage" | "toProject";
+    toProject?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "project";
+    };
+    toPage?: "about" | "contact" | "home" | "projects" | "reviews";
+    externalLink?: string;
   };
   servicesTitle?: string;
   servicesDescription?: string;
@@ -552,8 +564,8 @@ export type QUERYResult = Array<{
   };
   servicesCTA?: {
     linkLabel?: string;
-    linkType?: "externalLink" | "reference" | "toPage";
-    reference?: {
+    linkType?: "externalLink" | "toPage" | "toProject";
+    toProject?: {
       _ref: string;
       _type: "reference";
       _weak?: boolean;
@@ -566,8 +578,8 @@ export type QUERYResult = Array<{
   reviewText?: string;
   reviewCTA?: {
     linkLabel?: string;
-    linkType?: "externalLink" | "reference" | "toPage";
-    reference?: {
+    linkType?: "externalLink" | "toPage" | "toProject";
+    toProject?: {
       _ref: string;
       _type: "reference";
       _weak?: boolean;
@@ -620,8 +632,8 @@ export type QUERYResult = Array<{
   reviewPageSummary?: string;
   viewReviewsCTA?: {
     linkLabel?: string;
-    linkType?: "externalLink" | "reference" | "toPage";
-    reference?: {
+    linkType?: "externalLink" | "toPage" | "toProject";
+    toProject?: {
       _ref: string;
       _type: "reference";
       _weak?: boolean;
@@ -634,8 +646,8 @@ export type QUERYResult = Array<{
   submitReviewInvitation?: string;
   submitReviewCTA?: {
     linkLabel?: string;
-    linkType?: "externalLink" | "reference" | "toPage";
-    reference?: {
+    linkType?: "externalLink" | "toPage" | "toProject";
+    toProject?: {
       _ref: string;
       _type: "reference";
       _weak?: boolean;
