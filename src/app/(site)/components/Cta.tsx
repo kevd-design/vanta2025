@@ -6,13 +6,15 @@ export default function Cta({
   toPage,
   linkType,
   externalLink,
-  // projectSlug,
+  toProjectSlug
+
 
 }: {
   label?: string;
   linkType?: string;
-  toPage?: string;
+  destination?: string;
   externalLink?: string;
+  toProjectSlug?: string;
 }) {
 
   
@@ -36,6 +38,17 @@ export default function Cta({
       <Link 
          className="m-8 flex justify-between items-center gap-2"
          href={`/${toPage}`}
+      >
+      <div className="text-lg">{label}</div> <ArrowRight />
+      </Link>
+    );
+  }
+
+  if(linkType === "toProject" && toProjectSlug) {
+    return (
+      <Link 
+         className="m-8 flex justify-between items-center gap-2"
+         href={`projects/${toProjectSlug}`}
       >
       <div className="text-lg">{label}</div> <ArrowRight />
       </Link>

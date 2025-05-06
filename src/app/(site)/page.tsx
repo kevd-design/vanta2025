@@ -11,15 +11,13 @@ const QUERY = defineQuery(`*[_type == "siteSettingsSingleton"][0]{
   servicesCTA,
   projectCTA {
     // keep all the normal CTA fields…
-    ...,
+    linkLabel, linkType,
     // then pull in the referenced page’s slug
-    "toPage": toPage->{
-      _id,
-      title,
-      "slug": slug.current
-    }
+    "toProjectSlug": toProject->projectSlug.current,
+   
   }
 }`); 
+
 
 
 export default async function Home() {
@@ -27,37 +25,64 @@ export default async function Home() {
   // Fetch the data from Sanity
   const res  = await sanityFetch({query: QUERY,});
  
+ 
   // Check if the data is available
+  if (!res || !res.data) {
+    console.error("No data found in the response:", res);
+    return <div>No data available</div>;
+  }
 
-  const data = res.data[0];
+  
+  const data = res.data;
 
   if (!data) {
     return <div>No data available</div>;
   }
   
+
+
   // Destructure the data to get the CTAs
 
-  const { reviewCTA, heroCTA, viewReviewsCTA, submitReviewCTA, servicesCTA, projectCTA  } = data;
-  
-  const arrayOfCtas = [reviewCTA, heroCTA, viewReviewsCTA, submitReviewCTA, servicesCTA, projectCTA];
-  console.log(arrayOfCtas)
+  const { reviewCTA, heroCTA, projectCTA,  viewReviewsCTA, submitReviewCTA, servicesCTA } = data;
 
-  
+
+  const arrayOfAllCTAs = [
+    reviewCTA,
+    heroCTA,
+    projectCTA,
+    viewReviewsCTA,
+    submitReviewCTA,
+    servicesCTA
+  ];
+
+
 
   return (
     <div>
-      {/* Render the CTAs */}
-      {arrayOfCtas.map((cta, index) => (
-        <Cta
-          key={index}
-          label={cta && cta.linkLabel}
-          toPage={cta && cta.toPage}
-          externalLink={cta && cta.externalLink}
-        />
-      ))}
+      
 
+      {/* Render all the CTAs */}
+      
+      {arrayOfAllCTAs.map((cta, index) => {
+        if (cta) {
+          return (
+            <Cta
+              key={index}
+              label={cta.linkLabel ?? undefined}
+              linkType={cta.linkType ?? undefined}
+              toPage={cta.toPage ?? undefined}
+              externalLink={cta.externalLink ?? undefined}
+              toProjectSlug={cta.toProjectSlug ?? undefined}
+            />
+          );
+        } else {
+          return null; // or some fallback UI
+        }
+      }
+      )}
 
 
     </div>
   );
 }
+

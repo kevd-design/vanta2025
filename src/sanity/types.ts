@@ -492,39 +492,9 @@ export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./src/app/(site)/page.tsx
 // Variable: QUERY
-// Query: *[  _type == "siteSettingsSingleton"  ]
-export type QUERYResult = Array<{
-  _id: string;
-  _type: "siteSettingsSingleton";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  homePageNavLabel?: string;
-  projectsPageNavLabel?: string;
-  aboutPageNavLabel?: string;
-  reviewsPageNavLabel?: string;
-  contactPageNavLabel?: string;
-  displayCopyright?: boolean;
-  textBeforeCopyright?: string;
-  copyrightText?: string;
-  copyrightYear?: boolean;
-  textAfterCopyright?: string;
-  Sitetitle?: string;
-  description?: string;
-  heroHeadline?: string;
-  heroImage?: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  };
-  heroCTA?: {
+// Query: *[_type == "siteSettingsSingleton"][0]{  reviewCTA,  heroCTA,  viewReviewsCTA,  submitReviewCTA,  servicesCTA,  projectCTA {    // keep all the normal CTA fields…    linkLabel, linkType,    // then pull in the referenced page’s slug    "toProjectSlug": toProject->projectSlug.current,     }}
+export type QUERYResult = {
+  reviewCTA: {
     linkLabel?: string;
     linkType?: "externalLink" | "toPage" | "toProject";
     toProject?: {
@@ -535,8 +505,8 @@ export type QUERYResult = Array<{
     };
     toPage?: "about" | "contact" | "home" | "projects" | "reviews";
     externalLink?: string;
-  };
-  projectCTA?: {
+  } | null;
+  heroCTA: {
     linkLabel?: string;
     linkType?: "externalLink" | "toPage" | "toProject";
     toProject?: {
@@ -547,22 +517,8 @@ export type QUERYResult = Array<{
     };
     toPage?: "about" | "contact" | "home" | "projects" | "reviews";
     externalLink?: string;
-  };
-  servicesTitle?: string;
-  servicesDescription?: string;
-  backgroundImageServices?: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  };
-  servicesCTA?: {
+  } | null;
+  viewReviewsCTA: {
     linkLabel?: string;
     linkType?: "externalLink" | "toPage" | "toProject";
     toProject?: {
@@ -573,10 +529,8 @@ export type QUERYResult = Array<{
     };
     toPage?: "about" | "contact" | "home" | "projects" | "reviews";
     externalLink?: string;
-  };
-  reviewerName?: string;
-  reviewText?: string;
-  reviewCTA?: {
+  } | null;
+  submitReviewCTA: {
     linkLabel?: string;
     linkType?: "externalLink" | "toPage" | "toProject";
     toProject?: {
@@ -587,50 +541,8 @@ export type QUERYResult = Array<{
     };
     toPage?: "about" | "contact" | "home" | "projects" | "reviews";
     externalLink?: string;
-  };
-  projectIndexPageTitle?: string;
-  projectIndexPageDescription?: string;
-  gallaryTitle?: string;
-  aboutPageTitle?: string;
-  aboutPageHeroImage?: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  };
-  reviewPageTitle?: string;
-  reviewPageBackgroundImage?: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  };
-  reviewPageDescriptiveImage?: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  };
-  reviewPageSummary?: string;
-  viewReviewsCTA?: {
+  } | null;
+  servicesCTA: {
     linkLabel?: string;
     linkType?: "externalLink" | "toPage" | "toProject";
     toProject?: {
@@ -641,66 +553,13 @@ export type QUERYResult = Array<{
     };
     toPage?: "about" | "contact" | "home" | "projects" | "reviews";
     externalLink?: string;
-  };
-  submitReviewTitle?: string;
-  submitReviewInvitation?: string;
-  submitReviewCTA?: {
-    linkLabel?: string;
-    linkType?: "externalLink" | "toPage" | "toProject";
-    toProject?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "project";
-    };
-    toPage?: "about" | "contact" | "home" | "projects" | "reviews";
-    externalLink?: string;
-  };
-  contactPageTitle?: string;
-  contactsPagebackgroundImage?: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  };
-  PhoneLabel?: string;
-  PhoneNumber?: string;
-  emailLabel?: string;
-  emailAddress?: string;
-  socialMediaLabel?: string;
-  instagramIcon?: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  };
-  instagramLink?: string;
-  facebookIcon?: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  };
-  facebookLink?: string;
-}>;
+  } | null;
+  projectCTA: {
+    linkLabel: string | null;
+    linkType: "externalLink" | "toPage" | "toProject" | null;
+    toProjectSlug: string | null;
+  } | null;
+} | null;
 
 // Source: ./src/sanity/lib/queries.ts
 // Variable: PROJECTS_QUERY
@@ -723,7 +582,7 @@ export type PROJECT_QUERYResult = {
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    "*[\n  _type == \"siteSettingsSingleton\"\n  ]": QUERYResult;
+    "*[_type == \"siteSettingsSingleton\"][0]{\n  reviewCTA,\n  heroCTA,\n  viewReviewsCTA,\n  submitReviewCTA,\n  servicesCTA,\n  projectCTA {\n    // keep all the normal CTA fields\u2026\n    linkLabel, linkType,\n    // then pull in the referenced page\u2019s slug\n    \"toProjectSlug\": toProject->projectSlug.current,\n   \n  }\n}": QUERYResult;
     "*[\n  _type == \"project\" && defined(projectSlug.current)][0...12]{\n    _id, projectName, projectSlug\n  }\n": PROJECTS_QUERYResult;
     "*[\n  _type == \"project\" && projectSlug.current == $slug][0]{\n    _id, projectName, projectSlug, projectDescription\n  }\n": PROJECT_QUERYResult;
   }
