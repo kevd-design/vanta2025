@@ -491,9 +491,9 @@ export type SanityImageMetadata = {
 export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | CTA | SiteSettingsSingleton | Project | Neighbourhood | Slug | PageNamesSingleton | CompanySettingsSingleton | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./src/app/(site)/page.tsx
-// Variable: QUERY
+// Variable: QUERY_CTAs
 // Query: *[_type == "siteSettingsSingleton"][0]{  reviewCTA,  heroCTA,  viewReviewsCTA,  submitReviewCTA,  servicesCTA,  projectCTA {    // keep all the normal CTA fields…    linkLabel, linkType,    // then pull in the referenced page’s slug    "toProjectSlug": toProject->projectSlug.current,     }}
-export type QUERYResult = {
+export type QUERY_CTAsResult = {
   reviewCTA: {
     linkLabel?: string;
     linkType?: "externalLink" | "toPage" | "toProject";
@@ -560,6 +560,58 @@ export type QUERYResult = {
     toProjectSlug: string | null;
   } | null;
 } | null;
+// Variable: QUERY_LOGO
+// Query: *[_type == "companySettingsSingleton"][0]{  logoForLightBG {    asset->{      ...,      metadata    }  },  logoForDarkBG{    asset->{      ...,      metadata    }  },}
+export type QUERY_LOGOResult = {
+  logoForLightBG: {
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata: SanityImageMetadata | null;
+      source?: SanityAssetSourceData;
+    } | null;
+  } | null;
+  logoForDarkBG: {
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata: SanityImageMetadata | null;
+      source?: SanityAssetSourceData;
+    } | null;
+  } | null;
+} | null;
 
 // Source: ./src/sanity/lib/queries.ts
 // Variable: PROJECTS_QUERY
@@ -582,7 +634,8 @@ export type PROJECT_QUERYResult = {
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    "*[_type == \"siteSettingsSingleton\"][0]{\n  reviewCTA,\n  heroCTA,\n  viewReviewsCTA,\n  submitReviewCTA,\n  servicesCTA,\n  projectCTA {\n    // keep all the normal CTA fields\u2026\n    linkLabel, linkType,\n    // then pull in the referenced page\u2019s slug\n    \"toProjectSlug\": toProject->projectSlug.current,\n   \n  }\n}": QUERYResult;
+    "*[_type == \"siteSettingsSingleton\"][0]{\n  reviewCTA,\n  heroCTA,\n  viewReviewsCTA,\n  submitReviewCTA,\n  servicesCTA,\n  projectCTA {\n    // keep all the normal CTA fields\u2026\n    linkLabel, linkType,\n    // then pull in the referenced page\u2019s slug\n    \"toProjectSlug\": toProject->projectSlug.current,\n   \n  }\n}": QUERY_CTAsResult;
+    "*[_type == \"companySettingsSingleton\"][0]{\n  logoForLightBG {\n    asset->{\n      ...,\n      metadata\n    }\n  },\n  logoForDarkBG{\n    asset->{\n      ...,\n      metadata\n    }\n  },\n\n}": QUERY_LOGOResult;
     "*[\n  _type == \"project\" && defined(projectSlug.current)][0...12]{\n    _id, projectName, projectSlug\n  }\n": PROJECTS_QUERYResult;
     "*[\n  _type == \"project\" && projectSlug.current == $slug][0]{\n    _id, projectName, projectSlug, projectDescription\n  }\n": PROJECT_QUERYResult;
   }

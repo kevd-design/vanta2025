@@ -15,6 +15,7 @@ export default function Cta({
   destination?: string;
   externalLink?: string;
   toProjectSlug?: string;
+  toPage?: string;
 }) {
 
   
