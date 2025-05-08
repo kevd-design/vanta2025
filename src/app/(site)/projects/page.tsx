@@ -2,7 +2,7 @@
 import { PROJECTS_QUERY } from '@/sanity/lib/queries';
 import { sanityFetch } from "@/sanity/lib/live";
 import Link from "next/link"
-import type { PROJECTS_QUERYResult } from "@/sanity/types"
+
 
 
 export default async function Projects() {

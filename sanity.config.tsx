@@ -9,6 +9,8 @@ import { myStructure } from './src/sanity/newStructure'
 // import { structure } from './src/sanity/structure'
 import { preserveSingleton }  from './src/sanity/filters/preserveSingleton'
 import { filteredOptions } from './src/sanity/filters/filterNewDocumentOptions'
+import { media } from 'sanity-plugin-media'
+
 
 
 
@@ -35,6 +37,7 @@ export default defineConfig({
     structureTool({structure: myStructure}),
     // structureTool({ structure }),
     visionTool({ defaultApiVersion: apiVersion }),
+    media(),
   ],
   
 

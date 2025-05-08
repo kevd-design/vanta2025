@@ -22,6 +22,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/input.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/input.jsx", "src/sanity/schemaTypes/image/utils/handleGlobalMetadataConfirm.js", "src/sanity/schemaTypes/image/components/Metadata.jsx", "src/sanity/schemaTypes/image/utils/sleep.js", "src/sanity/schemaTypes/image/components/ImageInput.jsx"],
   "exclude": ["node_modules"]
 }

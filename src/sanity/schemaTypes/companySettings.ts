@@ -39,6 +39,19 @@ const companySettings = {
       
     },
     {
+      name: 'testImage',
+      title: 'Test Image',
+      type: 'imageWithMetadata',
+      fieldset: 'logos',
+      options: {
+        hotspot: true,
+        metadata: ['blurhash', 'lqip', 'palette'],
+        requiredFields: ['title', 'altText'],
+      },
+
+    },
+   
+    {
       name: 'aboutHistory',
       title: 'History of the Company',
       type: 'text',
