@@ -6,7 +6,6 @@ import pages from './pages';
 import siteSettingsSingleton from './siteSettings';
 import neighbourhood from './neighbourhood';
 import callToAction from "./callToAction";
-import imageWithAlt from './imageWithAlt';
 import { imageType } from './image/imageType';
 
 
@@ -18,7 +17,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     siteSettingsSingleton,
     neighbourhood,
     callToAction,
-    imageWithAlt,
     imageType
   ],
   
