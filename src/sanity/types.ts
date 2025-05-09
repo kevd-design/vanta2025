@@ -166,7 +166,9 @@ export type SiteSettingsSingleton = {
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
-    _type: "image";
+    decorative?: boolean;
+    changed?: boolean;
+    _type: "imageWithMetadata";
   };
   servicesCTA?: {
     linkLabel?: string;
@@ -422,6 +424,7 @@ export type CompanySettingsSingleton = {
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
+    decorative?: boolean;
     changed?: boolean;
     _type: "imageWithMetadata";
   };
@@ -466,6 +469,7 @@ export type ImageWithMetadata = {
   media?: unknown;
   hotspot?: SanityImageHotspot;
   crop?: SanityImageCrop;
+  decorative?: boolean;
   changed?: boolean;
 };
 

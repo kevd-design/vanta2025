@@ -41,7 +41,7 @@ const ImageInput: ComponentType<
       .trim(), // Remove any extra spaces
     required: true
   }));
-  console.log('fields', fields)
+  
 
   /** # Toast component
    *
@@ -125,6 +125,10 @@ const ImageInput: ComponentType<
     },
     [fieldsToValidate]
   )
+ 
+
+  const decorative = props.value?.decorative || false;
+  
 
   /*
    * Fetching the global image data
@@ -156,6 +160,7 @@ const ImageInput: ComponentType<
         .fetch(query, params)
         .then((res) => {
           setSanityImage(res)
+          
           // check if all required fields are filled by checking if validationStatus fields have values in res
           const resValidationStatus = Object.entries(res).reduce(
             (acc, [key, value]) => {
@@ -223,7 +228,7 @@ const inputs = fields.map((field: Field) => {
             }
             placeholder={`Enter ${field.title.toLowerCase()}`}
             value={sanityImage ? (sanityImage[field.name] as string) : ''}
-            required={field.required}
+            required={field.required && !decorative}
           />
         </Stack>
       </label>
@@ -231,7 +236,7 @@ const inputs = fields.map((field: Field) => {
   )
 });
 
-  console.log('inputs', inputs)
+
 
   return (
     <div>
@@ -241,7 +246,7 @@ const inputs = fields.map((field: Field) => {
 
       {/* * * METADATA PREVIEW DISPLAYED UNDERNEATH INPUT * * *
        */}
-      <Stack paddingY={3}>
+      {!decorative && (<Stack paddingY={3}>
         {sanityImage && (
           <Stack space={3} paddingBottom={2}>
             <Metadata key="title" title="Title" value={sanityImage?.title as string} />
@@ -261,7 +266,7 @@ const inputs = fields.map((field: Field) => {
             text="Edit metadata"
           />
         </Flex>
-      </Stack>
+      </Stack>)}
       {/* * * METADATA INPUT MODAL * *
        */}
       {open && (
@@ -277,6 +282,7 @@ const inputs = fields.map((field: Field) => {
               {/*
                * * * INPUT FIELDS * * *
                */}
+               
               {inputs}
 
               {/*

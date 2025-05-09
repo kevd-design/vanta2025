@@ -72,13 +72,14 @@ export const imageType = defineType({
   validation: (Rule) =>
     Rule.custom(async (value, context) => {
       const client = context.getClient({ apiVersion: '2021-03-25' })
+      const isDecorative = value?.decorative ?? false
 
-      /** Stop validation when no value is set
+      /** Stop validation when no value is set OR the image is decorative
        * If you want to set the image as `required`,
        * you should change `true` to "Image is required"
        * or another error message
        */
-      if (!value) return true
+      if (!value || isDecorative) return true
 
       /** Get global metadata for set image asset */
       const imageMeta = await client.fetch(
@@ -101,6 +102,18 @@ export const imageType = defineType({
       return true
     }),
   fields: [
+
+    defineField({
+      name: 'decorative',
+      type: 'boolean',
+
+      title: 'Decorative',
+      description: 'Check this if the image is decorative. Decorative images do not need alt text.',
+      options: {
+        layout: 'checkbox',
+      },
+      initialValue: false,
+    }),
     // we use this to cause revalidation of document when the image is changed
     // A listener would also be an option, but more complex
     defineField({

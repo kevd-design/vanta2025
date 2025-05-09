@@ -255,10 +255,13 @@ const siteSettings = {
         {
             name: 'backgroundImageServices',
             title: 'Background Image',
-            type: 'image',
+            type: 'imageWithMetadata',
+            
             options: {
                 hotspot: true,
-            },
+                metadata: ['blurhash', 'lqip', 'palette'],
+                requiredFields: ['title', 'altText'],
+              },
             group:'rootPgSet',
             fieldset:'servicesSection',
             description: 'The background image for the services section.',
