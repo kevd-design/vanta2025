@@ -7,6 +7,8 @@ import {
   Stack,
   TextInput,
   useToast,
+  Text
+
 } from '@sanity/ui'
 import { ComponentType, useCallback, useEffect, useState } from 'react'
 import { Subscription } from 'rxjs'
@@ -17,6 +19,8 @@ import {
   pathToString,
   useClient,
   useFormValue,
+  PatchEvent,
+  set
 } from 'sanity'
 
 import Metadata from './Metadata'
@@ -80,6 +84,8 @@ const ImageInput: ComponentType<
    *
    * */
   const [sanityImage, setSanityImage] = useState<MetadataImage | null>(null)
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false)
+  const [originalMetadata, setOriginalMetadata] = useState<MetadataImage | null>(null);
 
   /** get object for error state from required values in `fields` array
    * @see {@link fields}
@@ -125,6 +131,10 @@ const ImageInput: ComponentType<
     },
     [fieldsToValidate]
   )
+
+
+
+
  
 
   const decorative = props.value?.decorative || false;
@@ -160,6 +170,11 @@ const ImageInput: ComponentType<
         .fetch(query, params)
         .then((res) => {
           setSanityImage(res)
+          
+          // Store original metadata when first fetched
+          if (!originalMetadata) {
+            setOriginalMetadata(res);
+          }
           
           // check if all required fields are filled by checking if validationStatus fields have values in res
           const resValidationStatus = Object.entries(res).reduce(
@@ -204,6 +219,31 @@ const ImageInput: ComponentType<
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageId, client])
+
+    // Watches for changes to props.value.decorative
+    //
+  useEffect(() => {
+    const isDecorative = props.value?.decorative;
+    if (isDecorative && (sanityImage?.altText || sanityImage?.title)) {
+      setShowConfirmDialog(true);
+    }
+    
+  }, [props.value?.decorative, sanityImage]);
+
+  // Watches for changes to props.value.decorative and originalMetadata
+  // Restores original metadata when decorative is turned off
+  // This is to ensure that the user can revert back to the original metadata if they change their mind
+  // about making the image decorative.
+  useEffect(() => {
+  if (!props.value?.decorative && originalMetadata) {
+    // Restore original metadata when decorative is turned off
+    setSanityImage(prev => prev && ({
+      ...prev,
+      altText: originalMetadata.altText,
+      title: originalMetadata.title
+    }));
+  }
+}, [props.value?.decorative, originalMetadata]);
 
   /** Input fields based on the `fields` array */
 interface Field {
@@ -269,6 +309,52 @@ const inputs = fields.map((field: Field) => {
       </Stack>)}
       {/* * * METADATA INPUT MODAL * *
        */}
+       {showConfirmDialog && (
+        <Dialog
+          header="Confirm Decorative Image"
+          id="dialog-decorative-confirm"
+          onClose={() => setShowConfirmDialog(false)}
+          zOffset={1001}
+          width={1}
+        >
+          <Card padding={4}>
+            <Stack space={4}>
+              <Text>
+                Making this image decorative will clear its title and alt text if you publish the changes. 
+                Do you want to continue?
+              </Text>
+              <Flex gap={2} justify="flex-end">
+                <Button
+                  mode="ghost"
+                  text="Cancel"
+                  onClick={() => {
+                     // Reset the decorative checkbox in the schema
+                props.onChange(PatchEvent.from([
+                  set({
+                    ...props.value,
+                    decorative: false
+                  })
+                ]));
+                    setShowConfirmDialog(false);
+                  }}
+                />
+                <Button
+                  tone="primary"
+                  text="Continue"
+                  onClick={() => {
+                    setSanityImage(prev => prev && ({
+                      ...prev,
+                      altText: '',
+                      title: ''
+                    }));
+                    setShowConfirmDialog(false);
+                  }}
+                />
+              </Flex>
+            </Stack>
+          </Card>
+        </Dialog>
+      )}
       {open && (
         <Dialog
           header="Edit image metadata"

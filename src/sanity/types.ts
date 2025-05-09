@@ -400,21 +400,11 @@ export type CompanySettingsSingleton = {
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
-    _type: "image";
+    decorative?: boolean;
+    changed?: boolean;
+    _type: "imageWithMetadata";
   };
   logoForDarkBG?: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  };
-  testImage?: {
     asset?: {
       _ref: string;
       _type: "reference";
@@ -456,21 +446,6 @@ export type CompanySettingsSingleton = {
     crop?: SanityImageCrop;
     _type: "image";
   };
-};
-
-export type ImageWithMetadata = {
-  _type: "imageWithMetadata";
-  asset?: {
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-  };
-  media?: unknown;
-  hotspot?: SanityImageHotspot;
-  crop?: SanityImageCrop;
-  decorative?: boolean;
-  changed?: boolean;
 };
 
 export type SanityImageCrop = {
@@ -530,6 +505,21 @@ export type SanityImageMetadata = {
   isOpaque?: boolean;
 };
 
+export type ImageWithMetadata = {
+  _type: "imageWithMetadata";
+  asset?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+  };
+  media?: unknown;
+  hotspot?: SanityImageHotspot;
+  crop?: SanityImageCrop;
+  decorative?: boolean;
+  changed?: boolean;
+};
+
 export type MediaTag = {
   _id: string;
   _type: "media.tag";
@@ -545,7 +535,7 @@ export type Slug = {
   source?: string;
 };
 
-export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | ImageWithAlt | CTA | SiteSettingsSingleton | Project | Neighbourhood | PageNamesSingleton | CompanySettingsSingleton | ImageWithMetadata | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | MediaTag | Slug;
+export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | ImageWithAlt | CTA | SiteSettingsSingleton | Project | Neighbourhood | PageNamesSingleton | CompanySettingsSingleton | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | ImageWithMetadata | MediaTag | Slug;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./src/app/(site)/page.tsx
 // Variable: QUERY_CTAs

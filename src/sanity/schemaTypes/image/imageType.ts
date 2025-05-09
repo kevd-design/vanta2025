@@ -107,8 +107,8 @@ export const imageType = defineType({
       name: 'decorative',
       type: 'boolean',
 
-      title: 'Decorative',
-      description: 'Check this if the image is decorative. Decorative images do not need alt text.',
+      title: 'Set image as decorative',
+      description: `A decorative image is purely visual and does not convey content-critical information. Marking it as decorative helps screen readers skip non-essential elements.`,
       options: {
         layout: 'checkbox',
       },

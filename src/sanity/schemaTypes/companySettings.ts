@@ -27,29 +27,28 @@ const companySettings = {
     {
       name: 'logoForLightBG',
       title: 'Logo for Light Background',
-      type: 'image',
+      type: 'imageWithMetadata',
       fieldset: 'logos',
+      options: {
+        hotspot: false,
+        metadata: ['blurhash', 'lqip', 'palette'],
+        requiredFields: ['title', 'altText'],
+      },
       
     },
     {
       name: 'logoForDarkBG',
       title: 'Logo for Dark Background',
-      type: 'image',
-      fieldset: 'logos',
-      
-    },
-    {
-      name: 'testImage',
-      title: 'Test Image',
       type: 'imageWithMetadata',
       fieldset: 'logos',
       options: {
-        hotspot: true,
+        hotspot: false,
         metadata: ['blurhash', 'lqip', 'palette'],
         requiredFields: ['title', 'altText'],
       },
-
+      
     },
+  
    
     {
       name: 'aboutHistory',
