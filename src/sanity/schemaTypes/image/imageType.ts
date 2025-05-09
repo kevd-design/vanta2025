@@ -122,4 +122,18 @@ export const imageType = defineType({
       hidden: true,
     }),
   ],
+    preview: {
+    select: {
+      title: 'asset.title',
+      filename: 'asset.originalFilename',
+      media: 'asset'
+    },
+    prepare(selection) {
+      const { title, filename, media } = selection
+      return {
+        title: title || filename || 'Untitled',
+        media
+      }
+    }
+  },
 })
