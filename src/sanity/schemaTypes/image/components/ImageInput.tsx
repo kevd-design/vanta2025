@@ -1,21 +1,16 @@
 import {
   Button,
   Card,
-  Dialog,
   Flex,
-  Label,
   Stack,
-  TextInput,
   useToast,
-  Text
+  Text,
+  Grid
 
 } from '@sanity/ui'
 import { ComponentType, useCallback, useEffect, useState } from 'react'
 import { Subscription } from 'rxjs'
 import {
-  ImageValue,
-  ObjectInputProps,
-  ObjectSchemaType,
   pathToString,
   useClient,
   useFormValue,
@@ -23,14 +18,20 @@ import {
   set
 } from 'sanity'
 
-import Metadata from './Metadata'
-import { MetadataImage } from '../types'
+
+import { 
+  ImageInputProps, 
+  DialogStates, 
+  MetadataImage
+} from '../types'
 import { handleGlobalMetadataConfirm } from '../utils/handleGlobalMetadataConfirm'
 import { sleep } from '../utils/sleep'
 
-const ImageInput: ComponentType<
-  ObjectInputProps<ImageValue, ObjectSchemaType>
-> = (props: ObjectInputProps<ImageValue>) => {
+import { FilenameDialog } from './dialogs/FilenameDialog'
+import { MetadataDialog } from './dialogs/MetadataDialog'
+import { DecorativeDialog } from './dialogs/DecorativeDialog'
+
+const ImageInput: ComponentType<ImageInputProps> = (props: ImageInputProps)  => {
   /*
    * Variables and Definitions used in the component
    */
@@ -84,61 +85,97 @@ const ImageInput: ComponentType<
    *
    * */
   const [sanityImage, setSanityImage] = useState<MetadataImage | null>(null)
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false)
+  const [showConfirmDialog, setShowConfirmDialog] = useState<DialogStates['showConfirmDialog']>(false)
   const [originalMetadata, setOriginalMetadata] = useState<MetadataImage | null>(null);
-
-  /** get object for error state from required values in `fields` array
-   * @see {@link fields}
-   */
-  const fieldsToValidate = fields.reduce((acc: Record<string, boolean>, field: { name: string; required?: boolean }) => {
-    if (field.required) {
-      return { ...acc, [field.name]: false }
-    }
-    return acc
-  }, {})
-
-  /** Error state used for disabling buttons in case of missing data */
-  const [validationStatus, setValidationStatus] = useState(fieldsToValidate)
+  const [openFilenameDialog, setOpenFilenameDialog] = useState<DialogStates['openFilenameDialog']>(false);
+  
 
   /** Dialog (dialog-image-defaults) */
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState<DialogStates['open']>(false)
   const onClose = useCallback(() => setOpen(false), [])
-  const onOpen = useCallback(() => setOpen(true), [])
+  const onOpen = useCallback(() => {
+    setOpen(true)
+  }, [])
 
-  /** Handle Change from Inputs in the metadata modal
-   *
-   * @param {string} event is the value of the input
-   * @param {string} field is the input name the change is made in (corresponds with the field name on the sanity.imageAsset type)
-   */
-  const handleChange = useCallback(
-    (event: string, field: string) => {
-      /* unset value */
-      setSanityImage((prevSanityImage) => {
-        if (!prevSanityImage) return null
-        return {
-          ...prevSanityImage,
-          [field]: event || ''
-        } as MetadataImage
-      })
+  const handleFilenameDialogOpen = useCallback(() => {
+    setOpenFilenameDialog(true);
+  }, []);
 
-      const isFieldToValidate = fieldsToValidate[field] !== undefined
-      if (isFieldToValidate) {
-        setValidationStatus((prevValidationStatus: Record<string, boolean>) => ({
-          ...prevValidationStatus,
-          [field]: event.trim() !== '',
-        }))
-      }
-    },
-    [fieldsToValidate]
-  )
+const handleMetadataSave = useCallback((updatedMetadata: Partial<MetadataImage>) => {
+  setSanityImage(prev => prev && {
+    ...prev,
+    ...updatedMetadata,
+    _id: prev._id // Ensure _id is preserved
+  });
 
-
-
-
+  if (sanityImage) {
+    const updatedImage: MetadataImage = {
+      ...sanityImage,
+      ...updatedMetadata,
+      _id: sanityImage._id // Ensure _id is preserved
+    };
+    
+    handleGlobalMetadataConfirm({
+      sanityImage: updatedImage,
+      toast,
+      client,
+      onClose,
+      docId,
+      changed,
+      imagePath: pathToString(props.path),
+    });
+  }
+}, [sanityImage, client, docId, changed, props.path, onClose, toast]);
  
+const handleFilenameSave = useCallback((newFilename: string) => {
+  if (!sanityImage) return;
+  
+    const updatedImage = {
+      ...sanityImage,
+      originalFilename: newFilename
+    };
+    setSanityImage(updatedImage);
+    handleGlobalMetadataConfirm({
+      sanityImage: updatedImage,
+      toast,
+      client,
+      onClose: () => setOpenFilenameDialog(false),
+      docId,
+      changed,
+      imagePath: pathToString(props.path),
+    });
+  
+}, [sanityImage, client, docId, changed, props.path, toast]);
 
   const decorative = props.value?.decorative || false;
   
+  const { onChange, value } = props;
+  const handleDecorativeConfirm = useCallback((confirmed: boolean) => {
+  if (confirmed) {
+    // Update local state and schema
+    setSanityImage(prev => prev && ({
+      ...prev,
+      altText: '',
+      title: ''
+    }));
+    // Set decorative flag to true
+    onChange(PatchEvent.from([
+      set({
+        ...value,
+        decorative: true
+      })
+    ]));
+  } else {
+    // Reset decorative checkbox to false
+    onChange(PatchEvent.from([
+      set({
+        ...value,
+        decorative: false
+      })
+    ]));
+  }
+  setShowConfirmDialog(false);
+}, [onChange, value]);
 
   /*
    * Fetching the global image data
@@ -155,6 +192,8 @@ const ImageInput: ComponentType<
       altText,
       title, 
       description,
+      originalFilename,
+      extension
     }`
     const params = { imageId: imageId }
 
@@ -175,21 +214,6 @@ const ImageInput: ComponentType<
           if (!originalMetadata) {
             setOriginalMetadata(res);
           }
-          
-          // check if all required fields are filled by checking if validationStatus fields have values in res
-          const resValidationStatus = Object.entries(res).reduce(
-            (acc, [key, value]) => {
-              if (value && fieldsToValidate[key] !== undefined) {
-                return { ...acc, [key]: true }
-              }
-              if (!value && fieldsToValidate[key] !== undefined) {
-                return { ...acc, [key]: false }
-              }
-              return acc
-            },
-            {}
-          )
-          setValidationStatus(resValidationStatus)
         })
         .catch((err) => {
           console.error(err.message)
@@ -245,36 +269,6 @@ const ImageInput: ComponentType<
   }
 }, [props.value?.decorative, originalMetadata]);
 
-  /** Input fields based on the `fields` array */
-interface Field {
-  name: string
-  title: string
-  required?: boolean
-}
-
-const inputs = fields.map((field: Field) => {
-  return (
-    <Card paddingBottom={4} key={field.name}>
-      <label>
-        <Stack space={3}>
-          <Label muted size={1}>
-            {field.title}
-          </Label>
-          <TextInput
-            id={`image-${field.name}`} // Add unique id for each input
-            fontSize={2}
-            onChange={(event) =>
-              handleChange(event.currentTarget.value, field.name)
-            }
-            placeholder={`Enter ${field.title.toLowerCase()}`}
-            value={sanityImage ? (sanityImage[field.name] as string) : ''}
-            required={field.required && !decorative}
-          />
-        </Stack>
-      </label>
-    </Card>
-  )
-});
 
 
 
@@ -284,117 +278,132 @@ const inputs = fields.map((field: Field) => {
        */}
       {props.renderDefault(props)}
 
-      {/* * * METADATA PREVIEW DISPLAYED UNDERNEATH INPUT * * *
+      {/* * * METADATA AND FILENAME CARDS * * *
+       * * * * * * * * * * * * * * *
        */}
-      {!decorative && (<Stack paddingY={3}>
-        {sanityImage && (
-          <Stack space={3} paddingBottom={2}>
-            <Metadata key="title" title="Title" value={sanityImage?.title as string} />
-            <Metadata key="altText" title="Alt Text" value={sanityImage?.altText as string} />
-            {/* * * Disabled description as it's not necessary for SEO * * *
-       */}
-            {/* <Metadata key="description" title="Description" value={sanityImage?.description as string} /> */}
-          </Stack>
-        )}
-        {/* * * BUTTON TO OPEN EDIT MODAL * * *
-         */}
-        <Flex paddingY={3}>
+
+
+
+<Grid columns={2} gap={4} marginTop={4}>
+  {/* Metadata Column */}
+  <Card padding={3} radius={2} shadow={1} tone="default">
+    <Stack space={4} style={{ minHeight: '300px', display: 'flex', flexDirection: 'column' }}>
+      {/* Header */}
+      <Stack space={3}>
+        <Text weight="medium" size={2}>
+          Metadata
+        </Text>
+        <Card padding={3} tone="transparent" border radius={2}>
+          <Text size={1} muted style={{ lineHeight: '1.5' }}>
+            Clear, descriptive text that helps users understand the image content and enhances SEO.
+          </Text>
+        </Card>
+      </Stack>
+
+      {/* Content */}
+      <Flex direction="column" flex={1} justify="space-between">
+        <Stack space={4}>
+          {!decorative ? (
+            sanityImage && (
+              <Stack space={4}>
+                <Stack space={2}>
+                  <Text size={1} weight="medium">Title</Text>
+                  <Text muted>{sanityImage?.title || '—'}</Text>
+                </Stack>
+                <Stack space={2}>
+                  <Text size={1} weight="medium">Alt Text</Text>
+                  <Text muted>{sanityImage?.altText || '—'}</Text>
+                </Stack>
+              </Stack>
+            )
+          ) : (
+            <Text size={1} muted>
+              Metadata hidden - image is decorative
+            </Text>
+          )}
+        </Stack>
+
+        {/* Button */}
+        {!decorative && (
           <Button
             mode="ghost"
             onClick={onOpen}
-            disabled={imageId ? false : true}
+            disabled={!imageId}
             text="Edit metadata"
+            style={{ width: '100%' }}
           />
-        </Flex>
-      </Stack>)}
-      {/* * * METADATA INPUT MODAL * *
+        )}
+      </Flex>
+    </Stack>
+  </Card>
+
+  {/* Filename Column */}
+  <Card padding={3} radius={2} shadow={1} tone="default">
+    <Stack space={4} style={{ minHeight: '300px', display: 'flex', flexDirection: 'column' }}>
+      {/* Header */}
+      <Stack space={3}>
+        <Text weight="medium" size={2}>
+          Filename
+        </Text>
+        <Card padding={3} tone="transparent" border radius={2}>
+          <Text size={1} muted style={{ lineHeight: '1.5' }}>
+            Unique, descriptive filename for SEO and media library organization.
+          </Text>
+        </Card>
+      </Stack>
+
+      {/* Content */}
+      <Flex direction="column" flex={1} justify="space-between">
+        {sanityImage && (
+          <Stack space={4}>
+            <Stack space={2}>
+              <Text size={1} weight="medium">Current filename</Text>
+              <Text muted>{sanityImage?.originalFilename || '—'}</Text>
+            </Stack>
+          </Stack>
+        )}
+
+        {/* Button */}
+        <Button
+          mode="ghost"
+          onClick={handleFilenameDialogOpen}
+          disabled={!imageId}
+          text="Edit filename"
+          style={{ width: '100%' }}
+        />
+      </Flex>
+    </Stack>
+  </Card>
+</Grid>
+
+
+
+{/* * * FILENAME EDIT MODAL * * */}
+      <FilenameDialog
+        isOpen={openFilenameDialog}
+        onClose={() => setOpenFilenameDialog(false)}
+        initialFilename={sanityImage?.originalFilename ?? ''}
+        onSave={handleFilenameSave}
+      />
+    
+
+      {/* * * DECORATIVE DIALOG * *
        */}
        {showConfirmDialog && (
-        <Dialog
-          header="Confirm Decorative Image"
-          id="dialog-decorative-confirm"
+        <DecorativeDialog
+          isOpen={showConfirmDialog}
           onClose={() => setShowConfirmDialog(false)}
-          zOffset={1001}
-          width={1}
-        >
-          <Card padding={4}>
-            <Stack space={4}>
-              <Text>
-                Making this image decorative will clear its title and alt text if you publish the changes. 
-                Do you want to continue?
-              </Text>
-              <Flex gap={2} justify="flex-end">
-                <Button
-                  mode="ghost"
-                  text="Cancel"
-                  onClick={() => {
-                     // Reset the decorative checkbox in the schema
-                props.onChange(PatchEvent.from([
-                  set({
-                    ...props.value,
-                    decorative: false
-                  })
-                ]));
-                    setShowConfirmDialog(false);
-                  }}
-                />
-                <Button
-                  tone="primary"
-                  text="Continue"
-                  onClick={() => {
-                    setSanityImage(prev => prev && ({
-                      ...prev,
-                      altText: '',
-                      title: ''
-                    }));
-                    setShowConfirmDialog(false);
-                  }}
-                />
-              </Flex>
-            </Stack>
-          </Card>
-        </Dialog>
-      )}
+          onConfirm={handleDecorativeConfirm}
+        />
+  )}
       {open && (
-        <Dialog
-          header="Edit image metadata"
-          id="dialog-image-defaults"
+        <MetadataDialog
+          isOpen={open}
           onClose={onClose}
-          zOffset={1000}
-          width={2}
-        >
-          <Card padding={5}>
-            <Stack space={3}>
-              {/*
-               * * * INPUT FIELDS * * *
-               */}
-               
-              {inputs}
-
-              {/*
-               * * * SUBMIT BUTTON * * *
-               */}
-              <Button
-                mode="ghost"
-                onClick={() =>
-                  sanityImage && handleGlobalMetadataConfirm({
-                    sanityImage,
-                    toast,
-                    client,
-                    onClose,
-                    docId,
-                    changed,
-                    imagePath: pathToString(props.path),
-                  })
-                }
-                text="Save global changes"
-                disabled={
-                  !sanityImage || !Object.values(validationStatus).every((isValid) => isValid)
-                }
-              />
-            </Stack>
-          </Card>
-        </Dialog>
+          fields={fields}
+          initialData={sanityImage}
+          onSave={handleMetadataSave}
+        />
       )}
     </div>
   )

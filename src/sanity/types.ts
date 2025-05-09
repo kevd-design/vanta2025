@@ -293,57 +293,6 @@ export type SiteSettingsSingleton = {
   facebookLink?: string;
 };
 
-export type Project = {
-  _id: string;
-  _type: "project";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  projectName?: string;
-  projectSlug?: Slug;
-  projectDescription?: string;
-  projectImage?: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  };
-  projectGallery?: Array<{
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-    _key: string;
-  }>;
-  projectNeighbourhood?: {
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "neighbourhood";
-  };
-};
-
-export type Neighbourhood = {
-  _id: string;
-  _type: "neighbourhood";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  name?: string;
-};
-
 export type SanityImageCrop = {
   _type: "sanity.imageCrop";
   top?: number;
@@ -399,6 +348,61 @@ export type SanityImageMetadata = {
   blurHash?: string;
   hasAlpha?: boolean;
   isOpaque?: boolean;
+};
+
+export type Project = {
+  _id: string;
+  _type: "project";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  projectName?: string;
+  projectSlug?: Slug;
+  projectDescription?: string;
+  projectImage?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    decorative?: boolean;
+    changed?: boolean;
+    _type: "imageWithMetadata";
+  };
+  projectGallery?: Array<{
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    decorative?: boolean;
+    changed?: boolean;
+    _type: "imageWithMetadata";
+    _key: string;
+  }>;
+  projectNeighbourhood?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "neighbourhood";
+  };
+};
+
+export type Neighbourhood = {
+  _id: string;
+  _type: "neighbourhood";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
 };
 
 export type PageNamesSingleton = {
@@ -522,7 +526,7 @@ export type Slug = {
   source?: string;
 };
 
-export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | CTA | SiteSettingsSingleton | Project | Neighbourhood | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | PageNamesSingleton | CompanySettingsSingleton | ImageWithMetadata | MediaTag | Slug;
+export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | CTA | SiteSettingsSingleton | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | Project | Neighbourhood | PageNamesSingleton | CompanySettingsSingleton | ImageWithMetadata | MediaTag | Slug;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./src/app/(site)/page.tsx
 // Variable: QUERY_CTAs

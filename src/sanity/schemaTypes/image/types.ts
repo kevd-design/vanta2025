@@ -1,5 +1,13 @@
 import { ToastContextValue } from '@sanity/ui'
-import { Image, ImageDimensions, ImageMetadata, SanityClient } from 'sanity'
+import { 
+  Image, 
+  ImageDimensions, 
+  ImageMetadata, 
+  SanityClient, 
+  ImageValue, 
+  ObjectInputProps, 
+  ObjectSchemaType 
+} from 'sanity'
 /** # Image with Metadata
  *
  * extends the Sanity Image Value with metadata. 
@@ -34,6 +42,7 @@ export interface MetadataImage extends Image {
   altText?: string
   description?: string
   _id: string
+  originalFilename: string
   imageDimensions?: ImageDimensions
   blurHashURL?: ImageMetadata['lqip']
 }
@@ -59,4 +68,58 @@ export interface GlobalMetadataHandlerProps {
   docId: string
   changed: boolean
   imagePath: string
+}
+
+/** Field configuration for metadata inputs */
+export interface Field {
+  name: string
+  title: string
+  required?: boolean
+}
+
+/** Props for the ImageInput component */
+export type ImageInputProps = ObjectInputProps<ImageValue, ObjectSchemaType>
+/** Validation status record type */
+export type ValidationStatus = Record<string, boolean>
+
+/** Filename validation result */
+export interface FilenameValidation {
+  isValid: boolean
+  error: string | null
+}
+
+/** Dialog states interface */
+export interface DialogStates {
+  open: boolean
+  showConfirmDialog: boolean
+  openFilenameDialog: boolean
+}
+
+/** Temporary states interface */
+export interface TempStates {
+  tempMetadata: MetadataImage | null
+  tempFilename: string
+  isFilenameValid: boolean
+  filenameError: string | null
+}
+
+export interface FilenameDialogProps {
+  isOpen: boolean
+  onClose: () => void
+  initialFilename: string
+  onSave: (filename: string) => void
+}
+
+export interface MetadataDialogProps {
+ isOpen: boolean
+  onClose: () => void
+  fields: Field[]                              
+  initialData: Partial<MetadataImage> | null   
+  onSave: (data: Partial<MetadataImage>) => void
+}
+
+export interface DecorativeDialogProps {
+  isOpen: boolean
+  onClose: () => void
+  onConfirm: (confirmed: boolean) => void
 }
