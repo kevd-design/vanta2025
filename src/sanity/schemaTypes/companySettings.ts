@@ -76,9 +76,11 @@ const companySettings = {
     {
       name: 'founderImage',
       title: 'Founder Image',
-      type: 'image',
+      type: 'imageWithMetadata',
       options: {
         hotspot: true,
+        metadata: ['blurhash', 'lqip', 'palette'],
+        requiredFields: ['title', 'altText'],
       },
       description: 'An image of the founder.',
       fieldset: 'about',
@@ -93,9 +95,11 @@ const companySettings = {
     {
       name: 'teamImage',
       title: 'Team Image',
-      type: 'image',
+      type: 'imageWithMetadata',
       options: {
         hotspot: true,
+        metadata: ['blurhash', 'lqip', 'palette'],
+        requiredFields: ['title', 'altText'],
       },
       description: 'An image of the team.',
       fieldset: 'about',
