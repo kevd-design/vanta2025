@@ -35,17 +35,27 @@ const project = {
         },
         {
             name: 'projectImage',
-            type: 'image',
+            type: 'imageWithMetadata',
             title: 'Project Image',
+            description: 'High-quality image that represents the project.',
+
             options: {
                 hotspot: true,
+                metadata: ['blurhash', 'lqip', 'palette'],
+                requiredFields: ['title', 'altText'],
             },
         },
         {
             name: 'projectGallery',
             type: 'array',
             title: 'Project Gallery',
-            of: [{ type: 'image' }],
+            of: [{ type: 'imageWithMetadata',
+                            options: {
+                                hotspot: true,
+                                metadata: ['blurhash', 'lqip', 'palette'],
+                                requiredFields: ['title', 'altText'],
+                            },
+            }],
         },
         { 
             name: 'projectNeighbourhood',
