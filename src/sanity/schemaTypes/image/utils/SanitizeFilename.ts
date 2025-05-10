@@ -1,11 +1,22 @@
 import { FilenameValidation } from '../types'
 
 /**
- * Sanitizes a filename by removing special characters and spaces
- * @param filename - The filename to sanitize
- * @param extension - Optional file extension to preserve
- * @returns sanitized filename with extension if provided
+ * Sanitizes a filename for use in the Sanity image asset store.
+ * Converts spaces and special characters to hyphens, transforms to lowercase.
+ * 
+ * @param filename - Original filename to sanitize (e.g., "My Image.jpg")
+ * @param extension - Optional file extension to preserve (e.g., "jpg")
+ * @returns Sanitized filename (e.g., "my-image.jpg")
+ * 
+ * @example
+ * sanitizeFilename("My Cool Image!.jpg")
+ * // Returns: "my-cool-image.jpg"
+ * 
+ * sanitizeFilename("Screenshot 2023", "png")
+ * // Returns: "screenshot-2023.png"
  */
+
+
 export const sanitizeFilename = (filename: string, extension?: string): string => {
   // Split current filename and only take the name part
   const name = filename.split('.')[0];

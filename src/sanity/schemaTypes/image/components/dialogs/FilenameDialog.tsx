@@ -13,6 +13,25 @@ import { useState, useEffect } from 'react'
 import { FilenameDialogProps } from '../../types'
 import { sanitizeFilename, validateFilename } from '../../utils/SanitizeFilename'
 
+/**
+ * Dialog component for editing image filenames.
+ * Handles filename validation, sanitization, and submission.
+ * 
+ * @param props Object containing:
+ *   - isOpen: Boolean to control dialog visibility
+ *   - onClose: Callback function to handle dialog close
+ *   - initialFilename: Current filename to edit
+ *   - onSave: Callback function that receives sanitized filename
+ * 
+ * @example
+ * <FilenameDialog
+ *   isOpen={showDialog}
+ *   onClose={() => setShowDialog(false)}
+ *   initialFilename="current-image.jpg"
+ *   onSave={(filename) => handleSave(filename)}
+ * />
+ */
+
 export const FilenameDialog = ({
   isOpen,
   onClose,

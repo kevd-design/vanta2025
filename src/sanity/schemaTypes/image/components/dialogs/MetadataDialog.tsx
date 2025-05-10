@@ -10,6 +10,27 @@ import {
 import { useState, useEffect } from 'react'
 import { MetadataDialogProps, Field, MetadataImage } from '../../types'
 
+/**
+ * Dialog component for editing image metadata (title, alt text, etc.).
+ * Handles form state, validation, and submission of metadata fields.
+ * 
+ * @param props Object containing:
+ *   - isOpen: Boolean to control dialog visibility
+ *   - onClose: Callback function to handle dialog close
+ *   - fields: Array of metadata fields to display
+ *   - initialData: Initial metadata values
+ *   - onSave: Callback function that receives updated metadata
+ * 
+ * @example
+ * <MetadataDialog
+ *   isOpen={open}
+ *   onClose={handleClose}
+ *   fields={[{ name: 'title', title: 'Title', required: true }]}
+ *   initialData={{ title: 'Current Title' }}
+ *   onSave={(data) => handleSave(data)}
+ * />
+ */
+
 export const MetadataDialog = ({
   isOpen,
   onClose,

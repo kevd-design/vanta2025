@@ -1,13 +1,35 @@
-// custom handler to patch changes to the document and the sanity image asset 
+
 
 import { GlobalMetadataHandlerProps } from '../types'
 
-/** ## Handler for handleGlobalMetadata being patched after confirmation
- *
- * when the confirm edit Button is pressed, we send the mutation to the content lake and patch the new data into the Sanity ImageAsset.
- *
- * We also add a toast notification to let the user know what went wrong.
+/**
+ * Handles the confirmation and patching of metadata changes to both the document and Sanity image asset.
+ * Validates image existence and updates metadata through patchImageData.
+ * 
+ * @param props Object containing:
+ *   - sanityImage: Image metadata to be updated (must include _id)
+ *   - toast: Toast notification handler for success/error messages
+ *   - client: Sanity client instance for API operations
+ *   - onClose: Callback to close the dialog after operation
+ *   - docId: Document ID to update changed flag
+ *   - changed: Boolean flag to toggle for revalidation
+ *   - imagePath: Path to the image field in the document
+ * 
+ * @returns Promise that resolves when patches are applied
+ * @throws Displays error toast if image _id is missing
+ * 
+ * @example
+ * handleGlobalMetadataConfirm({
+ *   sanityImage: { _id: 'image-123', title: 'New Title' },
+ *   toast: toastHandler,
+ *   client: sanityClient,
+ *   onClose: () => setOpen(false),
+ *   docId: 'doc-123',
+ *   changed: true,
+ *   imagePath: 'metadata.image'
+ * })
  */
+
 export const handleGlobalMetadataConfirm = (
   props: GlobalMetadataHandlerProps
 ) => {

@@ -8,6 +8,23 @@ import {
 } from '@sanity/ui'
 import { DecorativeDialogProps } from '../../types'
 
+/**
+ * Dialog component for confirming decorative image status.
+ * When confirmed, removes title and alt text from the image.
+ * 
+ * @param props Object containing:
+ *   - isOpen: Boolean to control dialog visibility
+ *   - onClose: Callback function to handle dialog close
+ *   - onConfirm: Callback function that receives boolean confirmation status
+ * 
+ * @example
+ * <DecorativeDialog
+ *   isOpen={showDialog}
+ *   onClose={() => setShowDialog(false)}
+ *   onConfirm={(confirmed) => handleDecorativeMode(confirmed)}
+ * />
+ */
+
 export const DecorativeDialog = ({
   isOpen,
   onClose,
