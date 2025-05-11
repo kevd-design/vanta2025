@@ -1,37 +1,33 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { PatchEvent, set } from 'sanity'
 import { UseDecorativeModeProps, DecorativeModeReturn } from '../types'
 
-
 /**
- * Hook for managing decorative image mode in Sanity image fields.
- * Handles metadata clearing/restoration when toggling decorative status.
- * Used in conjunction with DecorativeDialog for user confirmation.
+ * Hook for managing decorative image mode and associated metadata.
+ * Handles clearing/restoring metadata when toggling decorative mode.
  * 
  * @param props Object containing:
  *   - value: Current form value with decorative flag
- *   - onChange: Callback for updating Sanity document
- *   - sanityImage: Current image metadata from asset
- *   - setSanityImage: Function to update image metadata state
- *   - originalMetadata: Initial metadata for restoration when turning off decorative mode
- *   - setShowConfirmDialog: Function to toggle the confirmation dialog
+ *   - onChange: Callback for updating form value
+ *   - sanityImage: Current image metadata
+ *   - setSanityImage: Function to update image metadata
+ *   - originalMetadata: Initial metadata for restoration
+ *   - setShowConfirmDialog: Function to toggle confirmation dialog
  * 
  * @returns Object containing:
- *   - handleDecorativeConfirm: Callback for handling dialog confirmation
- *   - isDecorative: Boolean indicating if image is currently decorative
+ *   - handleDecorativeConfirm: Function to handle mode confirmation
+ *   - isDecorative: Current decorative mode state
  * 
  * @example
  * const { handleDecorativeConfirm, isDecorative } = useDecorativeMode({
- *   value: props.value,
- *   onChange: props.onChange,
+ *   value,
+ *   onChange,
  *   sanityImage,
  *   setSanityImage,
  *   originalMetadata,
  *   setShowConfirmDialog
  * })
  */
-
-
 
 export const useDecorativeMode = ({
   value,
@@ -41,71 +37,78 @@ export const useDecorativeMode = ({
   originalMetadata,
   setShowConfirmDialog
 }: UseDecorativeModeProps): DecorativeModeReturn => {
+  // Keep track of dialog state to prevent loops
+  const showConfirmDialogRef = useRef(false)
   
-    // Handle confirmation of decorative mode toggle
-const handleDecorativeConfirm = useCallback((confirmed: boolean) => {
-  if (confirmed) {
-    // Clear metadata when switching to decorative
-    if (sanityImage) {
+  const handleDecorativeConfirm = useCallback((confirmed: boolean) => {
+    if (!value || !sanityImage) return
+
+    if (confirmed) {
+      // Clear metadata when switching to decorative
       setSanityImage({
         ...sanityImage,
         altText: '',
         title: ''
-      });
+      })
+      
+      // Update document
+      onChange(PatchEvent.from([
+        set({
+          ...value,
+          decorative: true
+        })
+      ]))
+    } else {
+      // Reset decorative flag if not confirmed
+      onChange(PatchEvent.from([
+        set({
+          ...value,
+          decorative: false
+        })
+      ]))
     }
-    // Update document value if it exists
-    if (value) {
-        onChange(PatchEvent.from([
-          set({
-            ...value,
-            decorative: true
-          })
-        ]));
+    
+    setShowConfirmDialog(false)
+    showConfirmDialogRef.current = false
+  }, [onChange, value, setSanityImage, setShowConfirmDialog, sanityImage])
+
+  useEffect(() => {
+    if (!value || !sanityImage) return
+
+    // Handle non-decorative mode
+    if (!value.decorative && originalMetadata) {
+      const needsRestore = !sanityImage.title || !sanityImage.altText
+      const metadataChanged = 
+        sanityImage.title !== originalMetadata.title || 
+        sanityImage.altText !== originalMetadata.altText
+
+      if (needsRestore && metadataChanged) {
+        setSanityImage({
+          ...sanityImage,
+          altText: originalMetadata.altText || '',
+          title: originalMetadata.title || ''
+        })
       }
-  } else {
-      // Reset decorative flag
-      if (value) {
-        onChange(PatchEvent.from([
-          set({
-            ...value,
-            decorative: false
-          })
-        ]));
+    } 
+    // Handle decorative mode
+    else if (value.decorative) {
+      const hasMetadata = Boolean(sanityImage.altText || sanityImage.title)
+      if (hasMetadata && !showConfirmDialogRef.current) {
+        showConfirmDialogRef.current = true
+        setShowConfirmDialog(true)
       }
     }
-  setShowConfirmDialog(false);
-}, [onChange, value, setSanityImage, setShowConfirmDialog, sanityImage]);
-
-// Watch for decorative mode changes and restore metadata
-useEffect(() => {
-    // Only run if we're switching from decorative to non-decorative
-    // and we have both original metadata and current image
-  if (!value?.decorative && originalMetadata && sanityImage) {
-    const shouldRestore = value?.decorative === false && 
-        (!sanityImage.title || !sanityImage.altText)
-
-    if (shouldRestore) {
-      setSanityImage({
-        ...sanityImage,
-        altText: originalMetadata.altText || '',
-        title: originalMetadata.title || ''
-      });
-    }
-  } 
-}, [value?.decorative, originalMetadata, setSanityImage, sanityImage]);
-
-
-
-  // Watch for metadata changes that might need confirmation
-    useEffect(() => {
-      const hasMetadata = Boolean(sanityImage?.altText || sanityImage?.title)  
-    if (value?.decorative && hasMetadata) {
-      setShowConfirmDialog(true)
-    }
-    }, [value?.decorative, sanityImage?.altText, sanityImage?.title, setShowConfirmDialog])
+  }, [
+    value?.decorative,
+    originalMetadata,
+    sanityImage,
+    setSanityImage,
+    setShowConfirmDialog,
+    value
+  ])
 
   return {
     handleDecorativeConfirm,
     isDecorative: Boolean(value?.decorative)
-  } 
+  }
 }
