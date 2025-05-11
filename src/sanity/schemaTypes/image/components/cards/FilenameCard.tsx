@@ -23,10 +23,10 @@ export const FilenameCard = ({
   onOpen
 }: FilenameCardProps) => {
   return (
-    <Card padding={3} radius={2} shadow={1} tone="default">
-      <Stack space={4} style={{ minHeight: '300px', display: 'flex', flexDirection: 'column' }}>
+    <Card padding={3} radius={2} shadow={1} tone="default" height="fill">
+      <Flex direction="column" style={{ height: '100%' }}>
         {/* Header */}
-        <Stack space={3}>
+        <Stack space={3} marginBottom={4}>
           <Text weight="medium" size={2}>
             Filename
           </Text>
@@ -37,27 +37,29 @@ export const FilenameCard = ({
           </Card>
         </Stack>
 
-        {/* Content */}
-        <Flex direction="column" flex={1} justify="space-between">
+        {/* Content - Grows to fill available space */}
+        <Flex direction="column" flex={1} justify="flex-start">
           {sanityImage && (
-            <Stack space={4}>
+            <Stack space={4} flex={1}>
               <Stack space={2}>
                 <Text size={1} weight="medium">Current filename</Text>
-                <Text muted>{sanityImage?.originalFilename || '—'}</Text>
+                <Text muted style={{ wordBreak: 'break-word' }}>
+                  {sanityImage?.originalFilename || '—'}
+                </Text>
               </Stack>
             </Stack>
           )}
-
-          {/* Button */}
-          <Button
-            mode="ghost"
-            onClick={onOpen}
-            disabled={!imageId}
-            text="Edit filename"
-            style={{ width: '100%' }}
-          />
         </Flex>
-      </Stack>
+
+        {/* Button - Always at bottom */}
+        <Button
+          mode="ghost"
+          onClick={onOpen}
+          disabled={!imageId}
+          text="Edit filename"
+          style={{ width: '100%', marginTop: '16px' }}
+        />
+      </Flex>
     </Card>
   )
 }

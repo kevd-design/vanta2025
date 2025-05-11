@@ -27,10 +27,10 @@ export const MetadataCard = ({
   onOpen 
 }: MetadataCardProps) => {
   return (
-    <Card padding={3} radius={2} shadow={1} tone="default">
-      <Stack space={4} style={{ minHeight: '300px', display: 'flex', flexDirection: 'column' }}>
+    <Card padding={3} radius={2} shadow={1} tone="default" height="fill">
+      <Flex direction="column" style={{ height: '100%' }}>
         {/* Header */}
-        <Stack space={3}>
+        <Stack space={3} marginBottom={4}>
           <Text weight="medium" size={2}>
             Metadata
           </Text>
@@ -41,19 +41,23 @@ export const MetadataCard = ({
           </Card>
         </Stack>
 
-        {/* Content */}
-        <Flex direction="column" flex={1} justify="space-between">
-          <Stack space={4}>
+        {/* Content - Grows to fill available space */}
+        <Flex direction="column" flex={1} justify="flex-start">
+          <Stack space={4} flex={1}>
             {!isDecorative ? (
               sanityImage && (
                 <Stack space={4}>
                   <Stack space={2}>
                     <Text size={1} weight="medium">Title</Text>
-                    <Text muted>{sanityImage?.title || '—'}</Text>
+                    <Text muted style={{ wordBreak: 'break-word' }}>
+                      {sanityImage?.title || '—'}
+                    </Text>
                   </Stack>
                   <Stack space={2}>
                     <Text size={1} weight="medium">Alt Text</Text>
-                    <Text muted>{sanityImage?.altText || '—'}</Text>
+                    <Text muted style={{ wordBreak: 'break-word' }}>
+                      {sanityImage?.altText || '—'}
+                    </Text>
                   </Stack>
                 </Stack>
               )
@@ -63,18 +67,19 @@ export const MetadataCard = ({
               </Text>
             )}
           </Stack>
-
-          {!isDecorative && (
-            <Button
-              mode="ghost"
-              onClick={onOpen}
-              disabled={!imageId}
-              text="Edit metadata"
-              style={{ width: '100%' }}
-            />
-          )}
         </Flex>
-      </Stack>
+
+        {/* Button - Always at bottom */}
+        {!isDecorative && (
+          <Button
+            mode="ghost"
+            onClick={onOpen}
+            disabled={!imageId}
+            text="Edit metadata"
+            style={{ width: '100%', marginTop: '16px' }}
+          />
+        )}
+      </Flex>
     </Card>
   )
 }
