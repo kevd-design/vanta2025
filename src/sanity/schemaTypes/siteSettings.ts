@@ -206,10 +206,13 @@ const siteSettings = {
         {
             name: 'heroImage',
             title: 'Hero Image (Home Page)',
-            type: 'image',
+            type: 'imageWithMetadata',
+            
             options: {
                 hotspot: true,
-            },
+                metadata: ['blurhash', 'lqip', 'palette'],
+                requiredFields: ['title', 'altText'],
+              },
             group:'rootPgSet', 
             fieldset:'heroSection', 
             description:'The background image.'
@@ -254,7 +257,7 @@ const siteSettings = {
         },
         {
             name: 'backgroundImageServices',
-            title: 'Background Image',
+            title: 'Services Background Image',
             type: 'imageWithMetadata',
             
             options: {
@@ -339,10 +342,13 @@ const siteSettings = {
         {
             name: 'aboutPageHeroImage',
             title: 'About Page Hero Image',
-            type: 'image',
+            type: 'imageWithMetadata',
+            
             options: {
                 hotspot: true,
-            },
+                metadata: ['blurhash', 'lqip', 'palette'],
+                requiredFields: ['title', 'altText'],
+              },
             group: 'aboutPgSet',
         },
     // Review Page Settings
@@ -356,20 +362,26 @@ const siteSettings = {
         {
             name: 'reviewPageBackgroundImage',
             title: 'Review Page Background Image',
-            type: 'image',
+            type: 'imageWithMetadata',
+            
             options: {
                 hotspot: true,
-            },
+                metadata: ['blurhash', 'lqip', 'palette'],
+                requiredFields: ['title', 'altText'],
+              },
             group: 'reviewPgSet',
             description: 'The background image for the review page.',
         },
         {
             name: 'reviewPageDescriptiveImage',
             title: 'Review Page Descriptive Image',
-            type: 'image',
+            type: 'imageWithMetadata',
+            
             options: {
                 hotspot: true,
-            },
+                metadata: ['blurhash', 'lqip', 'palette'],
+                requiredFields: ['title', 'altText'],
+              },
             group: 'reviewPgSet',
             description: 'The image that appears in the  review section of the review page. This image should be relevant to the review and help to convey where the reviews are located.',
         },
@@ -419,10 +431,13 @@ const siteSettings = {
         {
             name: 'contactsPagebackgroundImage',
             title: 'Contact Page Background Image',
-            type: 'image',
+            type: 'imageWithMetadata',
+            
             options: {
                 hotspot: true,
-            },
+                metadata: ['blurhash', 'lqip', 'palette'],
+                requiredFields: ['title', 'altText'],
+              },
             group: 'contactPgSet',
         },
         {
@@ -461,10 +476,13 @@ const siteSettings = {
         {
             name: 'instagramIcon',
             title: 'Instagram Icon',
-            type: 'image',
+            type: 'imageWithMetadata',
+            
             options: {
                 hotspot: true,
-            },
+                metadata: ['blurhash', 'lqip', 'palette'],
+                requiredFields: ['title', 'altText'],
+              },
             group: 'contactPgSet',
         },
         {
@@ -477,10 +495,13 @@ const siteSettings = {
         {
             name: 'facebookIcon',
             title: 'Facebook Icon',
-            type: 'image',
+            type: 'imageWithMetadata',
+            
             options: {
                 hotspot: true,
-            },
+                metadata: ['blurhash', 'lqip', 'palette'],
+                requiredFields: ['title', 'altText'],
+              },
             group: 'contactPgSet',
             
         },
