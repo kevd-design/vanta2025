@@ -48,8 +48,8 @@ const siteSettings = {
         // Site-Wide fieldsets
 
         {
-            name: 'navigationLabels',
-            title: 'Navigation Labels',
+            name: 'navigation',
+            title: 'Navigation',
             options: { collapsible: true, collapsed: true },
             description: `The navigation labels are the text that appears in the navigation bar of the website. These labels are used to identify the different sections of the website and help users navigate through the site. `,
         },
@@ -102,35 +102,50 @@ const siteSettings = {
             name: 'homePageNavLabel',
             title: 'Home Page Navigation Label',
             type: 'string',
-            fieldset: 'navigationLabels',
+            fieldset: 'navigation',
             group: 'siteWideSet',
         },
         {
             name: 'projectsPageNavLabel',
             title: 'Projects Page Navigation Label',
             type: 'string',
-            fieldset: 'navigationLabels',
+            fieldset: 'navigation',
             group: 'siteWideSet',
         },
         {
             name: 'aboutPageNavLabel',
             title: 'About Page Navigation Label',
             type: 'string',
-            fieldset: 'navigationLabels',
+            fieldset: 'navigation',
             group: 'siteWideSet',
         },
         {
             name: 'reviewsPageNavLabel',
             title: 'Reviews Page Navigation Label',
             type: 'string',
-            fieldset: 'navigationLabels',
+            fieldset: 'navigation',
             group: 'siteWideSet',
         },
         {
             name: 'contactPageNavLabel',
             title: 'Contact Page Navigation Label',
             type: 'string',
-            fieldset: 'navigationLabels',
+            fieldset: 'navigation',
+            group: 'siteWideSet',
+        },
+
+        // Mobile Background Image
+        {
+            name: 'mobileBackgroundImage',
+            title: 'Mobile Background Image',
+            type: 'imageWithMetadata',
+            
+            options: {
+                hotspot: true,
+                metadata: ['blurhash', 'lqip', 'palette'],
+                requiredFields: ['title', 'altText'],
+              },
+            fieldset: 'navigation',
             group: 'siteWideSet',
         },
 
