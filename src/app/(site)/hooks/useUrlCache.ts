@@ -4,9 +4,6 @@ import type { ImageAsset } from '@sanity/types'
 import { BREAKPOINTS } from '../constants/breakpoints'
 import { IMAGE_OPTIONS } from '../constants/image'
 
-
-const STANDARD_HEIGHTS = [64, 848, 912] as const
-
 const roundToDecimal = (num: number, decimals: number = 2) => 
   Number(Number(num).toFixed(decimals))
 
@@ -14,6 +11,18 @@ const roundToBoundary = (value: number, boundaries: readonly number[]) => {
   return boundaries.reduce((prev, curr) =>
     Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev
   )
+}
+
+const calculateDimensions = (
+  width: number, 
+  height: number, 
+  aspectRatio: number,
+  boundaries: readonly number[]
+) => {
+  const roundedWidth = roundToBoundary(width, boundaries);
+  // Calculate height based on preserved aspect ratio
+  const preservedHeight = Math.round(roundedWidth / aspectRatio);
+  return { width: roundedWidth, height: preservedHeight };
 }
 
 const IS_DEVELOPMENT = process.env.NODE_ENV === 'development'
@@ -39,13 +48,17 @@ export function useUrlCache() {
   ) => {
     if (!asset) return '';
 
+    const originalAspectRatio = asset.metadata?.dimensions?.aspectRatio || 
+      (asset.metadata?.dimensions?.width || width) / (asset.metadata?.dimensions?.height || height);
+
     if (!IS_DEVELOPMENT || !urlCache) {
       return generateDirectUrl(asset, width, height, options);
     }
 
   // Only round dimensions if not explicitly skipped
-  const finalWidth = options?.skipRounding ? width : roundToBoundary(width, BREAKPOINTS)
-  const finalHeight = options?.skipRounding ? height : roundToBoundary(height, STANDARD_HEIGHTS)
+  const { width: finalWidth, height: finalHeight } = options?.skipRounding
+    ? { width, height }
+    : calculateDimensions(width, height, originalAspectRatio, BREAKPOINTS);
     
     // Round focal point coordinates to 2 decimal places
     const focalX = roundToDecimal(options?.hotspot?.x ?? 0.5)
@@ -69,7 +82,7 @@ export function useUrlCache() {
     let urlBuilder = urlFor(asset)
       .width(finalWidth)  // Use rounded width
       .height(finalHeight)  // Use rounded height
-      .fit(options?.preserveAspectRatio ? 'clip' : 'crop')
+      .fit('clip')
       .quality(options?.quality ?? IMAGE_OPTIONS.quality.medium)
       .dpr(options?.dpr ?? 1)
       .auto('format');
@@ -77,8 +90,6 @@ export function useUrlCache() {
     if (options?.hotspot) {
       urlBuilder = urlBuilder
         .focalPoint(focalX, focalY)  // Use rounded focal points
-        .crop('focalpoint')
-        .fit('crop');
     }
 
     const newUrl = urlBuilder.url();
