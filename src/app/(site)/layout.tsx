@@ -35,6 +35,7 @@ export default async function RootLayout({
   const { data: logo } = await sanityFetch({ query: QUERY_LOGO });
   const { data: navData } = await sanityFetch({ query: QUERY_NAV });
 
+
 if (!logo || !navData) {
   return <div>A logo or menu labels are missing. Please check Sanity content.</div>;
 }

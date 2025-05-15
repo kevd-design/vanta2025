@@ -33,6 +33,8 @@ export function useUrlCache() {
       quality?: number
       dpr?: number
       hotspot?: { x: number; y: number }
+      skipRounding?: boolean
+      preserveAspectRatio?: boolean
     }
   ) => {
     if (!asset) return '';
@@ -41,23 +43,23 @@ export function useUrlCache() {
       return generateDirectUrl(asset, width, height, options);
     }
 
-    // Round dimensions to nearest boundary
-    const roundedWidth = roundToBoundary(width, BREAKPOINTS)
-    const roundedHeight = roundToBoundary(height, STANDARD_HEIGHTS)
+  // Only round dimensions if not explicitly skipped
+  const finalWidth = options?.skipRounding ? width : roundToBoundary(width, BREAKPOINTS)
+  const finalHeight = options?.skipRounding ? height : roundToBoundary(height, STANDARD_HEIGHTS)
     
     // Round focal point coordinates to 2 decimal places
     const focalX = roundToDecimal(options?.hotspot?.x ?? 0.5)
     const focalY = roundToDecimal(options?.hotspot?.y ?? 0.5)
     
      // Create simplified cache key
-    const cacheKey = `w${roundedWidth}h${roundedHeight}q${options?.quality ?? 70}d${options?.dpr ?? 1}fp${focalX},${focalY}`;
+    const cacheKey = `w${finalWidth}h${finalHeight}q${options?.quality ?? 70}d${options?.dpr ?? 1}fp${focalX},${focalY}`;
 
     // Check cache and debug log
     if (urlCache.has(cacheKey)) {
       void (DEBUG && console.log('Cache hit:', {
         key: cacheKey,
         url: urlCache.get(cacheKey),
-        dimensions: { width: roundedWidth, height: roundedHeight },
+        dimensions: { width: finalWidth, height: finalHeight },
         focalPoint: { x: focalX, y: focalY }
       }));
       return urlCache.get(cacheKey)!;
@@ -65,9 +67,9 @@ export function useUrlCache() {
 
     // Generate new URL using rounded values
     let urlBuilder = urlFor(asset)
-      .width(roundedWidth)  // Use rounded width
-      .height(roundedHeight)  // Use rounded height
-      .fit('crop')
+      .width(finalWidth)  // Use rounded width
+      .height(finalHeight)  // Use rounded height
+      .fit(options?.preserveAspectRatio ? 'clip' : 'crop')
       .quality(options?.quality ?? IMAGE_OPTIONS.quality.medium)
       .dpr(options?.dpr ?? 1)
       .auto('format');
@@ -85,7 +87,7 @@ export function useUrlCache() {
     void (DEBUG && console.log('Cache miss:', {
       key: cacheKey,
       newUrl,
-      dimensions: { width: roundedWidth, height: roundedHeight },
+      dimensions: { width: finalWidth, height: finalHeight },
       focalPoint: { x: focalX, y: focalY }
     }));
 
@@ -103,12 +105,13 @@ export function useUrlCache() {
       quality?: number
       dpr?: number
       hotspot?: { x: number; y: number }
+      preserveAspectRatio?: boolean
     }
   ) => {
     let urlBuilder = urlFor(asset)
       .width(width)
       .height(height)
-      .fit('crop')
+      .fit('clip') 
       .quality(options?.quality ?? IMAGE_OPTIONS.quality.medium)
       .dpr(options?.dpr ?? 1)
       .auto('format');

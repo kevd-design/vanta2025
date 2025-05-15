@@ -4,22 +4,13 @@ import { useState, useMemo, useEffect } from 'react'
 import { debounce } from 'lodash'
 import Image from 'next/image'
 import { useWindowSize } from '../hooks/useWindowSize'
-
 import { useBestDpr } from '../hooks/useBestDpr'
-import type { LogoType } from '../../types'
+import type { LogoProps } from '../../types'
 import { useUrlCache } from '../hooks/useUrlCache'
-import { DIMENSIONS, IMAGE_OPTIONS, getNearestBreakpoint } from '../constants'
-
-
-
-
-// Types
-interface LogoProps {
-  logo: LogoType
-  debug?: boolean
-}
+import { DIMENSIONS, IMAGE_OPTIONS } from '../constants'
 
 export const Logo = ({ logo, debug = false }: LogoProps) => {
+
   // Hooks
   const { width: screenWidth } = useWindowSize()
   const dpr = useBestDpr()
@@ -30,83 +21,77 @@ export const Logo = ({ logo, debug = false }: LogoProps) => {
   const [hasError, setHasError] = useState(false)
   const [optimizedImageUrl, setOptimizedImageUrl] = useState('')
 
-  
+  // Memoized values with type assertions
+  const asset = useMemo(() => {
+    if (!logo?.logoForLightBG?.asset) throw new Error('Logo asset is required')
+    return logo.logoForLightBG.asset
+  }, [logo])
 
-  // Memoized Values
-  // Memoized Values with internal null checks
-  const aspectRatio = useMemo(() => {
-    if (!logo?.logoForLightBG?.asset?.metadata?.dimensions) {
-      return 1 // Default aspect ratio
-    }
-    const { width, height } = logo.logoForLightBG.asset.metadata.dimensions
-    return width / height
-  }, [logo?.logoForLightBG?.asset?.metadata?.dimensions])
+  const dimensions = useMemo(() => {
+    if (!asset.metadata?.dimensions) throw new Error('Logo dimensions are required')
+    return asset.metadata.dimensions
+  }, [asset])
 
-  
-
-  const width = useMemo(() => {
-    const isMobile = (screenWidth || DIMENSIONS.screen.defaultWidth) < DIMENSIONS.breakpoint.mobile
-    return isMobile ? DIMENSIONS.logo.mobile : DIMENSIONS.logo.desktop
-  }, [screenWidth])
-
-  const height = useMemo(() => 
-    Math.round(width / aspectRatio),
-    [width, aspectRatio]
+  // Calculate dimensions
+  const displayWidth = useMemo(() => 
+    (screenWidth || DIMENSIONS.screen.defaultWidth) < DIMENSIONS.breakpoint.mobile
+      ? DIMENSIONS.logo.mobile 
+      : DIMENSIONS.logo.desktop,
+    [screenWidth]
   )
 
-  
+  const displayHeight = useMemo(() => 
+    Math.ceil(displayWidth / dimensions.aspectRatio),
+    [displayWidth, dimensions.aspectRatio]
+  )
+
 
   // URL Generation
-  const updateImageUrl = useMemo(
+const updateImageUrl = useMemo(
     () =>
-      debounce((width: number) => {
-        if (!logo?.logoForLightBG?.asset) return;
-        
-        const breakpointWidth = getNearestBreakpoint(width);
+      debounce(() => {
+        if (!asset) return;
         const imageUrl = generateCachedUrl(
-          logo.logoForLightBG.asset,
-          breakpointWidth,
-          Math.round(breakpointWidth / aspectRatio),
+          asset,
+          displayWidth,
+          displayHeight,
           {
             quality: IMAGE_OPTIONS.quality.medium,
-            dpr
+            dpr,
+            skipRounding: true,
+            preserveAspectRatio: true
           }
         );
         setOptimizedImageUrl(imageUrl)
       }, IMAGE_OPTIONS.debounce.wait),
-    [logo?.logoForLightBG?.asset, dpr, aspectRatio, generateCachedUrl]
+    [asset, displayWidth, displayHeight, dpr, generateCachedUrl]
   )
 
-  // Effects
   useEffect(() => {
-    if (!width) return
-    updateImageUrl(width)
+    updateImageUrl()
     return () => updateImageUrl.cancel()
-  }, [width, updateImageUrl])
+  }, [updateImageUrl])
 
-  useEffect(() => {
-    if (!width) return
-    updateImageUrl.flush()
-  }, ) // Initial URL generation
-
-  // Guard Clauses
-  if (!logo?.logoForLightBG?.asset) return null
-  if (!optimizedImageUrl) return null
-  if (hasError) {
-    return <div className="w-[149px] h-[33px] bg-gray-200" />
-  }
-
-
+  if (hasError) return <div className="w-[149px] h-[33px] bg-gray-200" />
+  if (!optimizedImageUrl) {
   return (
+    <div className={`relative min-w-[${displayWidth}px] min-h-[${displayHeight}px] bg-gray-50`}>
+      {/* Optional loading skeleton */}
+      <div className="absolute inset-0 animate-pulse bg-gray-200" />
+    </div>
+  )
+}
+
+   return (
     <div>
       <Image
         src={optimizedImageUrl}
-        alt={logo.logoForLightBG.asset.altText ?? "Logo"}
-        title={logo.logoForLightBG.asset.title ?? "Logo"}
-        width={width}
-        height={height}
+        alt={asset.altText ?? "Logo"}
+        title={asset.title ?? "Logo"}
+        width={displayWidth}
+        height={displayHeight}
         placeholder="blur"
-        blurDataURL={logo.logoForLightBG.asset.metadata.lqip}
+        blurDataURL={asset.metadata?.lqip}
         priority
         className={`object-contain transition-opacity duration-300 ${
           isLoading ? 'opacity-0' : 'opacity-100'
@@ -116,11 +101,15 @@ export const Logo = ({ logo, debug = false }: LogoProps) => {
         onError={() => setHasError(true)}
       />
       {debug && (
-        <div className="mt-2 p-2 bg-black/70 text-white text-xs font-mono rounded break-all w-full max-w-xs">
-          <div><b>Logo URL:</b> {optimizedImageUrl}</div>
-          <div><b>DPR:</b> {dpr}</div>
-          <div><b>Width:</b> {width}px</div>
-          <div><b>Height:</b> {height}px</div>
+        <div className="mt-2 p-2 bg-black/70 text-white text-xs font-mono">
+          <pre>
+            {JSON.stringify({
+              original: `${dimensions.width}x${dimensions.height}`,
+              aspectRatio: dimensions.aspectRatio,
+              display: `${displayWidth}x${displayHeight}`,
+              dpr
+            }, null, 2)}
+          </pre>
         </div>
       )}
     </div>

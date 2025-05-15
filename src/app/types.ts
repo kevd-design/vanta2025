@@ -8,6 +8,11 @@ export interface LogoType {
   logoForDarkBG?: SanityImage | null
 }
 
+export interface LogoProps {
+  logo: LogoType
+  debug?: boolean
+}
+
 export interface SanityImage {
   asset?: ImageAsset & {
     altText?: string | null
@@ -100,4 +105,12 @@ export interface CtaProps {
   toPage?: string;
   externalLink?: string;
   toProjectSlug?: string;
+}
+
+export interface UrlOptions {
+  quality?: number
+  dpr?: number
+  hotspot?: { x: number; y: number }
+  skipRounding?: boolean
+  preserveAspectRatio?: boolean
 }

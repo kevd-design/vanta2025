@@ -146,7 +146,7 @@ const updateBackgroundUrl = useMemo(
   }, [screenWidth, updateBackgroundUrl])
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50">
+    <nav>
       {/* Desktop Navigation Bar */}
       <div className="flex items-center justify-between px-4 py-3 bg-white">
         {/* Logo Section */}
