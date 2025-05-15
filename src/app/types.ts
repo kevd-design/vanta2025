@@ -66,7 +66,7 @@ export interface NavigationItem {
 export interface MobileNavigationProps {
   isOpen: boolean;
   onClose: () => void;
-  backgroundImageUrl: string;
+  backgroundImageUrl: string | null;
   navigationItems: NavigationItem[];
   lqip?: string;
   backgroundImage?: {
@@ -93,11 +93,12 @@ export interface MobileNavigationProps {
     };
   };
   debugInfo?: {
-    url: string;
+    url: string | null; 
     width: number;
     dpr: number;
+  } | undefined;
   };
-}
+
 
 export interface CtaProps {
   label?: string;

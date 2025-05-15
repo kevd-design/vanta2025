@@ -82,7 +82,6 @@ export function useUrlCache() {
     let urlBuilder = urlFor(asset)
       .width(finalWidth)  // Use rounded width
       .height(finalHeight)  // Use rounded height
-      .fit('clip')
       .quality(options?.quality ?? IMAGE_OPTIONS.quality.medium)
       .dpr(options?.dpr ?? 1)
       .auto('format');
@@ -90,6 +89,8 @@ export function useUrlCache() {
     if (options?.hotspot) {
       urlBuilder = urlBuilder
         .focalPoint(focalX, focalY)  // Use rounded focal points
+        .fit('crop')
+        .crop('focalpoint');
     }
 
     const newUrl = urlBuilder.url();
@@ -128,9 +129,12 @@ export function useUrlCache() {
       .auto('format');
 
     if (options?.hotspot) {
+      console.log('Applying hotspot:', options.hotspot); // Add debug logging
       urlBuilder = urlBuilder
-        .focalPoint(options.hotspot.x, options.hotspot.y)
-        .crop('focalpoint');
+        .crop('focalpoint')  // This tells Sanity to use focal point cropping
+      .focalPoint(options.hotspot.x, options.hotspot.y);  // Set the focal point coordinates
+    } else {
+      urlBuilder = urlBuilder.fit('clip');
     }
 
     return urlBuilder.url();

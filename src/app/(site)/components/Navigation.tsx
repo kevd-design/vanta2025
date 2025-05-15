@@ -38,11 +38,12 @@ export const Navigation: FC<NavigationProps> = ({ logo, navLabels, mobileBackgro
 
   // State
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [optimizedBackgroundUrl, setOptimizedBackgroundUrl] = useState('')
+  const [optimizedBackgroundUrl, setOptimizedBackgroundUrl] = useState<string | null>(null)
   const [lastBreakpoint, setLastBreakpoint] = useState<number | null>(null)
   const [currentBreakpoint, setCurrentBreakpoint] = useState<number>(() => 
     getNearestBreakpoint(screenWidth || DEFAULT_SCREEN_WIDTH)
   )
+
 
   // Memoized Values
   const navigationItems = useMemo(() => [
@@ -57,17 +58,25 @@ export const Navigation: FC<NavigationProps> = ({ logo, navLabels, mobileBackgro
 
   
 
-  // Screen Size Callbacks
-  const getBestScreenWidth = useCallback(() => 
-    screenWidth || DEFAULT_SCREEN_WIDTH, [screenWidth])
+  // Screen Size Memoization
+const getBestScreenWidth = useMemo(() => 
+  () => screenWidth || DEFAULT_SCREEN_WIDTH, 
+[screenWidth])
 
-  const getBestScreenHeight = useCallback(() => 
-    screenHeight || DEFAULT_SCREEN_HEIGHT, [screenHeight])
+const getBestScreenHeight = useMemo(() => 
+  () => screenHeight || DEFAULT_SCREEN_HEIGHT, 
+[screenHeight])
+
+const isDesktopScreen = useMemo(() => 
+  screenWidth ? screenWidth >= DIMENSIONS.breakpoint.mobile : false,
+[screenWidth])
 
 const generateBackgroundUrl = useCallback((width: number, height: number) => {
-    if (!isMobile || !mobileBackgroundImage?.asset) return '';
+    if (!isMobile || !mobileBackgroundImage?.asset) return null;
+  
     
-  return generateCachedUrl(
+  
+    return generateCachedUrl(
     mobileBackgroundImage.asset,
     width,
     height,
@@ -83,38 +92,45 @@ const generateBackgroundUrl = useCallback((width: number, height: number) => {
 
  // Only initialize mobile-specific state and hooks if mobile
   const mobileNavigation = useMemo(() => {
-    if (!isMobile) return null
+    if (!isMobile || !mobileBackgroundImage?.asset) return null;
     
     return {
-      backgroundUrl: optimizedBackgroundUrl,
+      backgroundUrl: optimizedBackgroundUrl || null,
       updateUrl: generateBackgroundUrl,
       // ... other mobile-specific logic
     }
-  }, [isMobile, optimizedBackgroundUrl, generateBackgroundUrl])
+  }, [isMobile, mobileBackgroundImage, optimizedBackgroundUrl, generateBackgroundUrl])
 
 
   // Debug Information
-  const debugInfo = useMemo(() => ({
+  const debugInfo = useMemo(() => {
+  if (!optimizedBackgroundUrl) return null;
+  
+  return {
     url: optimizedBackgroundUrl,
     width: getBestScreenWidth(),
     dpr: dpr,
-  }), [optimizedBackgroundUrl, getBestScreenWidth, dpr])
+  }
+}, [optimizedBackgroundUrl, getBestScreenWidth, dpr])
 
   // Background URL Generation
-const updateBackgroundUrl = useMemo(
-  () =>
-    debounce(() => {
-      if (!isMobile || !screenWidth || !mobileBackgroundImage) return;
-      
-      const bestWidth = getNearestBreakpoint(getBestScreenWidth());
-      if (lastBreakpoint === bestWidth) return;
-      
-      setLastBreakpoint(bestWidth);
-      const imageUrl = generateBackgroundUrl(bestWidth, getBestScreenHeight());
-      setOptimizedBackgroundUrl(imageUrl);
-    }, IMAGE_OPTIONS.debounce.wait),
-  [isMobile, screenWidth, mobileBackgroundImage, getBestScreenWidth, getBestScreenHeight, lastBreakpoint, generateBackgroundUrl]
-);
+  const updateBackgroundUrl = useMemo(
+    () =>
+      debounce(() => {
+        if (!isMobile || !screenWidth || !mobileBackgroundImage) return;
+        
+        const bestWidth = getNearestBreakpoint(getBestScreenWidth());
+        if (lastBreakpoint === bestWidth) return;
+        
+        setLastBreakpoint(bestWidth);
+        const imageUrl = generateBackgroundUrl(bestWidth, getBestScreenHeight());
+
+        if (imageUrl) {
+        setOptimizedBackgroundUrl(imageUrl);
+      }
+      }, IMAGE_OPTIONS.debounce.wait),
+    [isMobile, screenWidth, mobileBackgroundImage, getBestScreenWidth, getBestScreenHeight, lastBreakpoint, generateBackgroundUrl]
+  );
 
   // Effects
   // 1. Track Breakpoint Changes
@@ -134,7 +150,10 @@ const updateBackgroundUrl = useMemo(
     currentBreakpoint,
     getBestScreenHeight()
   );
-  setOptimizedBackgroundUrl(imageUrl);
+
+  if (imageUrl) {
+    setOptimizedBackgroundUrl(imageUrl);
+  }
 }, [isMobile, mobileBackgroundImage, currentBreakpoint, getBestScreenHeight, generateBackgroundUrl]);
 
   // 3. Clean up debounced function
@@ -144,6 +163,42 @@ const updateBackgroundUrl = useMemo(
       updateBackgroundUrl.cancel()
     }
   }, [screenWidth, updateBackgroundUrl])
+
+  // Effect to handle desktop transition
+useEffect(() => {
+  if (isDesktopScreen) {
+    
+    setIsMenuOpen(false)  // Close menu when going to desktop
+    setOptimizedBackgroundUrl(null)  // Clear background URL
+  } else {
+    // Generate new background URL when returning to mobile
+    if (isMobile && !isDesktopScreen && mobileBackgroundImage) {
+      const bestWidth = getNearestBreakpoint(getBestScreenWidth())
+      const imageUrl = generateBackgroundUrl(bestWidth, getBestScreenHeight())
+      if (imageUrl) {
+        setOptimizedBackgroundUrl(imageUrl)
+      }
+    }
+  }
+}, [
+  isDesktopScreen,
+  screenWidth, 
+  isMobile, 
+  mobileBackgroundImage, 
+  generateBackgroundUrl, 
+  getBestScreenWidth,
+  getBestScreenHeight])
+
+// Cleanup effects
+useEffect(() => {
+  return () => {
+    // Cleanup on unmount
+    setOptimizedBackgroundUrl(null)
+    setIsMenuOpen(false)
+    setLastBreakpoint(null)
+    updateBackgroundUrl.cancel()
+  }
+}, [updateBackgroundUrl])
 
   return (
     <nav>
@@ -169,7 +224,7 @@ const updateBackgroundUrl = useMemo(
         </div>
 
         {/* Mobile Navigation Toggle */}
-        {isMobile && (
+        {isMobile && !isDesktopScreen && (
           <button
             onClick={() => setIsMenuOpen(true)}
             className="block md:hidden"
@@ -181,14 +236,14 @@ const updateBackgroundUrl = useMemo(
       </div>
 
       {/* Mobile Navigation Overlay */}
-      {isMobile && mobileNavigation && (
+      {isMobile && !isDesktopScreen && mobileNavigation?.backgroundUrl && (
         <MobileNavigation
           isOpen={isMenuOpen}
           onClose={() => setIsMenuOpen(false)}
-          backgroundImageUrl={optimizedBackgroundUrl}
+          backgroundImageUrl={mobileNavigation.backgroundUrl || null}
           navigationItems={navigationItems}
           backgroundImage={mobileBackgroundImage}
-          debugInfo={debugInfo}
+          debugInfo={debugInfo || undefined}
           lqip={mobileBackgroundImage?.asset?.metadata?.lqip}
         />
       )}
