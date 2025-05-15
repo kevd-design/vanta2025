@@ -16,11 +16,13 @@ const roundToBoundary = (value: number, boundaries: readonly number[]) => {
   )
 }
 
-const DEBUG = true // Set to false in production;
+const IS_DEVELOPMENT = process.env.NODE_ENV === 'development'
+const DEBUG = IS_DEVELOPMENT // Only debug in development
 
 export function useUrlCache() {
-  // Create URL cache
-  const urlCache = useMemo(() => new Map<string, string>(), [])
+  // Only create cache in development
+  const urlCache = useMemo(() => 
+    IS_DEVELOPMENT ? new Map<string, string>() : null, [])
 
   // Generate cached URL
   const generateCachedUrl = useCallback((
@@ -34,6 +36,10 @@ export function useUrlCache() {
     }
   ) => {
     if (!asset) return '';
+
+    if (!IS_DEVELOPMENT || !urlCache) {
+      return generateDirectUrl(asset, width, height, options);
+    }
 
     // Round dimensions to nearest boundary
     const roundedWidth = roundToBoundary(width, BREAKPOINTS)
@@ -88,5 +94,36 @@ export function useUrlCache() {
     return newUrl;
   }, [urlCache]);
 
-  return { generateCachedUrl };
+    // Helper function for direct URL generation
+  const generateDirectUrl = (
+    asset: ImageAsset,
+    width: number,
+    height: number,
+    options?: {
+      quality?: number
+      dpr?: number
+      hotspot?: { x: number; y: number }
+    }
+  ) => {
+    let urlBuilder = urlFor(asset)
+      .width(width)
+      .height(height)
+      .fit('crop')
+      .quality(options?.quality ?? IMAGE_OPTIONS.quality.medium)
+      .dpr(options?.dpr ?? 1)
+      .auto('format');
+
+    if (options?.hotspot) {
+      urlBuilder = urlBuilder
+        .focalPoint(options.hotspot.x, options.hotspot.y)
+        .crop('focalpoint');
+    }
+
+    return urlBuilder.url();
+  }
+
+  return { 
+    generateCachedUrl,
+    isCacheEnabled: IS_DEVELOPMENT 
+  };
 }
