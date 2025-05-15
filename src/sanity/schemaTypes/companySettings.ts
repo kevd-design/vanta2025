@@ -1,4 +1,4 @@
-
+import type { Rule } from 'sanity';
 
 const companySettings = {
   name: 'companySettingsSingleton',
@@ -34,7 +34,7 @@ const companySettings = {
         metadata: ['blurhash', 'lqip', 'palette'],
         requiredFields: ['title', 'altText'],
       },
-      
+      validation: (Rule: Rule) => Rule.required().error('A logo for light backgrounds is required')
     },
     {
       name: 'logoForDarkBG',
@@ -46,6 +46,7 @@ const companySettings = {
         metadata: ['blurhash', 'lqip', 'palette'],
         requiredFields: ['title', 'altText'],
       },
+      validation: (Rule: Rule) => Rule.required().error('A logo for dark backgrounds is required')
       
     },
   
