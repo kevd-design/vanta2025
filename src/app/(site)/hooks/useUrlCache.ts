@@ -129,7 +129,7 @@ export function useUrlCache() {
       .auto('format');
 
     if (options?.hotspot) {
-      console.log('Applying hotspot:', options.hotspot); // Add debug logging
+      
       urlBuilder = urlBuilder
         .crop('focalpoint')  // This tells Sanity to use focal point cropping
       .focalPoint(options.hotspot.x, options.hotspot.y);  // Set the focal point coordinates

@@ -24,7 +24,7 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
   // of the screen when the menu is open
   // Also shows the hotspot on the image if it exists
   // This is useful for debugging the image loading and hotspot positioning
-  const enableDebug = true
+  const enableDebug = false
   const { width: screenWidth } = useWindowSize()
   const screenHeight = typeof window !== 'undefined' ? window.innerHeight : null;
   const pathname = usePathname();
