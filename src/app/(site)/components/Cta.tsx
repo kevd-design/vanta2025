@@ -1,6 +1,8 @@
 import ArrowRight from "../elements/ArrowRight";
 import Link from "next/link";
 
+import type { CtaProps } from '../../types';
+
 export default function Cta({
   label,
   toPage,
@@ -9,14 +11,7 @@ export default function Cta({
   toProjectSlug
 
 
-}: {
-  label?: string;
-  linkType?: string;
-  destination?: string;
-  externalLink?: string;
-  toProjectSlug?: string;
-  toPage?: string;
-}) {
+}: CtaProps) {
 
   
 
