@@ -556,7 +556,7 @@ export type Slug = {
 
 export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | CTA | SiteSettingsSingleton | Project | Neighbourhood | PageNamesSingleton | CompanySettingsSingleton | ImageWithMetadata | MediaTag | Slug;
 export declare const internalGroqTypeReferenceTo: unique symbol;
-// Source: ./src/app/(site)/page.tsx
+// Source: ./src/app/(site)/layout.tsx
 // Variable: QUERY_NAV
 // Query: *[_type == "siteSettingsSingleton"][0]{  homePageNavLabel,  projectsPageNavLabel,  aboutPageNavLabel,  reviewsPageNavLabel,  contactPageNavLabel,  mobileBackgroundImage {    ...,    asset->{      ...,      metadata    }  }}
 export type QUERY_NAVResult = {
@@ -596,6 +596,8 @@ export type QUERY_NAVResult = {
     _type: "imageWithMetadata";
   } | null;
 } | null;
+
+// Source: ./src/app/(site)/page.tsx
 // Variable: QUERY_CTAs
 // Query: *[_type == "siteSettingsSingleton"][0]{  reviewCTA,  heroCTA,  viewReviewsCTA,  submitReviewCTA,  servicesCTA,  projectCTA {    // keep all the normal CTA fields…    linkLabel, linkType,    // then pull in the referenced page’s slug    "toProjectSlug": toProject->projectSlug.current,     }}
 export type QUERY_CTAsResult = {

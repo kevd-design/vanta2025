@@ -4,213 +4,158 @@ import { FC, useState, useEffect, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import Hamburger from '../elements/Hamburger'
 import { Logo } from './Logo'
-import { urlFor } from '@/sanity/lib/image'
 import { MobileNavigation } from './MobileNavigation'
 import { useWindowSize } from '../hooks/useWindowSize'
 import { debounce } from 'lodash'
+import { useBestDpr } from '../hooks/useBestDpr'
+import { useIsMobile } from '../hooks/useIsMobile'
+import { useUrlCache } from '../hooks/useUrlCache'
+import { DIMENSIONS, getNearestBreakpoint, IMAGE_OPTIONS } from '../constants'
+import type { LogoType, NavLabelsType, MobileBackgroundImageType } from '../../types'
+
+const { 
+  defaultWidth: DEFAULT_SCREEN_WIDTH, 
+  defaultHeight: DEFAULT_SCREEN_HEIGHT 
+} = DIMENSIONS.screen
 
 interface NavigationProps {
-  logo: {
-    logoForLightBG: {
-      asset: {
-        altText?: string
-        title?: string
-        metadata: {
-          lqip: string
-          dimensions: {
-            width: number
-            height: number
-          }
-        }
-      }
-    }
-  }
-  navLabels: {
-    homePageNavLabel: string
-    projectsPageNavLabel: string
-    aboutPageNavLabel: string
-    reviewsPageNavLabel: string
-    contactPageNavLabel: string
-  }
-   mobileBackgroundImage: {
-    asset: {
-      metadata: {
-        lqip: string
-        dimensions: {
-          aspectRatio: number
-          width: number
-          height: number
-        }
-      }
-      
-    }
-    crop?: {
-        top: number
-        bottom: number
-        left: number
-        right: number
-      }
-      hotspot?: {
-        x: number
-        y: number
-        height: number
-        width: number
-      }
-  }
+  logo: LogoType
+  navLabels: NavLabelsType
+  mobileBackgroundImage?: MobileBackgroundImageType
 }
 
-
-
 export const Navigation: FC<NavigationProps> = ({ logo, navLabels, mobileBackgroundImage }) => {
+  
+  
+  // Window and Screen Hooks
+  const isMobile = useIsMobile()
   const { width: screenWidth } = useWindowSize()
   const { height: screenHeight } = useWindowSize()
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [optimizedBackgroundUrl, setOptimizedBackgroundUrl] = useState('')
-  const [lastBreakpoint, setLastBreakpoint] = useState<number | null>(null);
-
+  const { generateCachedUrl } = useUrlCache()
+  const dpr = useBestDpr()
+  
   
 
+  // State
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [optimizedBackgroundUrl, setOptimizedBackgroundUrl] = useState('')
+  const [lastBreakpoint, setLastBreakpoint] = useState<number | null>(null)
+  const [currentBreakpoint, setCurrentBreakpoint] = useState<number>(() => 
+    getNearestBreakpoint(screenWidth || DEFAULT_SCREEN_WIDTH)
+  )
 
-
-  const navigationItems = [
+  // Memoized Values
+  const navigationItems = useMemo(() => [
     { label: navLabels.homePageNavLabel, href: '/' },
     { label: navLabels.projectsPageNavLabel, href: '/projects' },
     { label: navLabels.aboutPageNavLabel, href: '/about' },
     { label: navLabels.reviewsPageNavLabel, href: '/reviews' },
     { label: navLabels.contactPageNavLabel, href: '/contact' },
-  ]
+  ], [navLabels])
 
-const getBestScreenWidth = useCallback(() => {
+    
 
-  return screenWidth || 390 // fallback
-}, [screenWidth])
+  
 
-const getBestScreenHeight = useCallback(() => {
+  // Screen Size Callbacks
+  const getBestScreenWidth = useCallback(() => 
+    screenWidth || DEFAULT_SCREEN_WIDTH, [screenWidth])
 
-  return screenHeight || 844 // fallback
+  const getBestScreenHeight = useCallback(() => 
+    screenHeight || DEFAULT_SCREEN_HEIGHT, [screenHeight])
 
-}, [screenHeight])
+const generateBackgroundUrl = useCallback((width: number, height: number) => {
+    if (!isMobile || !mobileBackgroundImage?.asset) return '';
+    
+  return generateCachedUrl(
+    mobileBackgroundImage.asset,
+    width,
+    height,
+    {
+      quality: IMAGE_OPTIONS.quality.medium,
+      dpr,
+      hotspot: mobileBackgroundImage.hotspot 
+        ? { x: mobileBackgroundImage.hotspot.x, y: mobileBackgroundImage.hotspot.y }
+        : undefined
+    }
+  );
+}, [mobileBackgroundImage, dpr, generateCachedUrl, isMobile]);
 
-const getBestDpr = useCallback(() => {
-  if (typeof window !== 'undefined') {
-    const availWidth = window.screen.availWidth
-    if (availWidth > 1920) return 3
-    if (availWidth > 1024) return 2
-    return 1
-  }
-  return 1 // fallback for SSR
-}, [])
+ // Only initialize mobile-specific state and hooks if mobile
+  const mobileNavigation = useMemo(() => {
+    if (!isMobile) return null
+    
+    return {
+      backgroundUrl: optimizedBackgroundUrl,
+      updateUrl: generateBackgroundUrl,
+      // ... other mobile-specific logic
+    }
+  }, [isMobile, optimizedBackgroundUrl, generateBackgroundUrl])
 
 
+  // Debug Information
+  const debugInfo = useMemo(() => ({
+    url: optimizedBackgroundUrl,
+    width: getBestScreenWidth(),
+    dpr: dpr,
+  }), [optimizedBackgroundUrl, getBestScreenWidth, dpr])
 
-
-    // Debounced URL update for background
+  // Background URL Generation
 const updateBackgroundUrl = useMemo(
   () =>
     debounce(() => {
-      if (!screenWidth) return
+      if (!isMobile || !screenWidth || !mobileBackgroundImage) return;
       
-      const rawWidth = getBestScreenWidth();
-      const bestWidth = getNearestBreakpoint(rawWidth);
-      if (lastBreakpoint === bestWidth) return; // Only update if breakpoint changed
+      const bestWidth = getNearestBreakpoint(getBestScreenWidth());
+      if (lastBreakpoint === bestWidth) return;
+      
       setLastBreakpoint(bestWidth);
+      const imageUrl = generateBackgroundUrl(bestWidth, getBestScreenHeight());
+      setOptimizedBackgroundUrl(imageUrl);
+    }, IMAGE_OPTIONS.debounce.wait),
+  [isMobile, screenWidth, mobileBackgroundImage, getBestScreenWidth, getBestScreenHeight, lastBreakpoint, generateBackgroundUrl]
+);
 
-      const bestHeight = getBestScreenHeight()
-      const dpr = getBestDpr()
-      const flippedX = mobileBackgroundImage?.hotspot
-      ? 1 - mobileBackgroundImage.hotspot.x
-      : 0.5;
-    const focalY = mobileBackgroundImage?.hotspot?.y ?? 0.5;
-    
-    const BREAKPOINTS = [320, 375, 425, 640, 768, 1024, 1280, 1536, 1920];
-    function getNearestBreakpoint(width: number) {
-      return BREAKPOINTS.reduce((prev, curr) =>
-        Math.abs(curr - width) < Math.abs(prev - width) ? curr : prev
-      );
+  // Effects
+  // 1. Track Breakpoint Changes
+  useEffect(() => {
+    if (!isMobile) return;
+    const newBreakpoint = getNearestBreakpoint(screenWidth || DEFAULT_SCREEN_WIDTH)
+    if (newBreakpoint !== currentBreakpoint) {
+      setCurrentBreakpoint(newBreakpoint)
     }
+  }, [screenWidth, currentBreakpoint, isMobile])
 
-      const imageUrl = urlFor(mobileBackgroundImage)
-        .width(Math.round(bestWidth))
-        .height(Math.round(bestHeight))
-        .flipHorizontal()
-        .fit('crop')
-        .focalPoint(flippedX, focalY)
-        .dpr(dpr)
-        .quality(90)
-        .auto('format')
-        .url()
-      setOptimizedBackgroundUrl(imageUrl)
-    }, 1000),
-  [
-    mobileBackgroundImage,
-    getBestScreenWidth,
-    getBestScreenHeight,
-    getBestDpr,
-    screenWidth,
-    setOptimizedBackgroundUrl,
-    lastBreakpoint,
-  ]
-)
+  // 2. Initial Background URL Generation
+  useEffect(() => {
+  if (!isMobile || !mobileBackgroundImage) return;
+  
+  const imageUrl = generateBackgroundUrl(
+    currentBreakpoint,
+    getBestScreenHeight()
+  );
+  setOptimizedBackgroundUrl(imageUrl);
+}, [isMobile, mobileBackgroundImage, currentBreakpoint, getBestScreenHeight, generateBackgroundUrl]);
 
-const debugInfo = {
-  url: optimizedBackgroundUrl,
-  width: getBestScreenWidth(),
-  dpr: getBestDpr(),
-};
-
-    // Update background URL when screen width changes
+  // 3. Clean up debounced function
   useEffect(() => {
     if (!screenWidth) return
-    
-
     return () => {
       updateBackgroundUrl.cancel()
     }
   }, [screenWidth, updateBackgroundUrl])
 
-    // Initial background URL generation
-  useEffect(() => {
-    if (!screenWidth || !mobileBackgroundImage) return
-    
-    const bestWidth = getBestScreenWidth()
-    const bestHeight = getBestScreenHeight()
-    const dpr = getBestDpr()
-    const flippedX = mobileBackgroundImage?.hotspot
-      ? 1 - mobileBackgroundImage.hotspot.x
-      : 0.5;
-    const focalY = mobileBackgroundImage?.hotspot?.y ?? 0.5;
-
-    const initialImageUrl = urlFor(mobileBackgroundImage)
-      .width(Math.round(bestWidth))
-      .height(Math.round(bestHeight))
-      .flipHorizontal()
-      .fit('crop')
-      .focalPoint(flippedX, focalY)
-      
-      .dpr(dpr)
-      .quality(90)
-      .auto('format')
-      .url()
-    setOptimizedBackgroundUrl(initialImageUrl)
-  }, [
-    mobileBackgroundImage, 
-    getBestScreenWidth, 
-    getBestScreenHeight, 
-    getBestDpr, 
-    screenWidth,
-    updateBackgroundUrl
-  ])
-
-    
-
-
   return (
     <nav className="fixed top-0 left-0 right-0 z-50">
-      {/* Main navigation bar */}
+      {/* Desktop Navigation Bar */}
       <div className="flex items-center justify-between px-4 py-3 bg-white">
-        <Logo logo={logo} />
+        {/* Logo Section */}
+        <Logo 
+          logo={logo} 
+          debug={false}
+        />
         
-        {/* Desktop Navigation */}
+        {/* Desktop Navigation Links */}
         <div className="hidden md:flex items-center space-x-8">
           {navigationItems.map((item) => (
             <Link
@@ -223,25 +168,30 @@ const debugInfo = {
           ))}
         </div>
 
-        {/* Mobile Menu Button */}
-        <button
-          onClick={() => setIsMenuOpen(true)}
-          className="block md:hidden"
-          aria-label="Open menu"
-        >
-          <Hamburger />
-        </button>
+        {/* Mobile Navigation Toggle */}
+        {isMobile && (
+          <button
+            onClick={() => setIsMenuOpen(true)}
+            className="block md:hidden"
+            aria-label="Open navigation menu"
+          >
+            <Hamburger />
+          </button>
+        )}
       </div>
 
-      {/* Mobile Navigation */}
-      <MobileNavigation
-        isOpen={isMenuOpen}
-        onClose={() => setIsMenuOpen(false)}
-        backgroundImageUrl={optimizedBackgroundUrl}
-        navigationItems={navigationItems}
-        backgroundImage={mobileBackgroundImage}
-        debugInfo={debugInfo}
-      />
+      {/* Mobile Navigation Overlay */}
+      {isMobile && mobileNavigation && (
+        <MobileNavigation
+          isOpen={isMenuOpen}
+          onClose={() => setIsMenuOpen(false)}
+          backgroundImageUrl={optimizedBackgroundUrl}
+          navigationItems={navigationItems}
+          backgroundImage={mobileBackgroundImage}
+          debugInfo={debugInfo}
+          lqip={mobileBackgroundImage?.asset?.metadata?.lqip}
+        />
+      )}
     </nav>
-  )
-}
+  );
+};

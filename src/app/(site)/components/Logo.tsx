@@ -4,134 +4,125 @@ import { useState, useMemo, useEffect } from 'react'
 import { debounce } from 'lodash'
 import Image from 'next/image'
 import { useWindowSize } from '../hooks/useWindowSize'
-import { urlFor } from '@/sanity/lib/image'
 
-// Constants
-const DIMENSIONS = {
-  breakpoint: {
-    mobile: 768 // Standard md breakpoint matching Tailwind
-  },
-  logo: {
-    mobile: 149,
-    desktop: 215
-  }
-} as const
+import { useBestDpr } from '../hooks/useBestDpr'
+import type { LogoType } from '../../types'
+import { useUrlCache } from '../hooks/useUrlCache'
+import { DIMENSIONS, IMAGE_OPTIONS, getNearestBreakpoint } from '../constants'
 
+
+
+
+// Types
 interface LogoProps {
-  logo: {
-    logoForLightBG: {
-      asset: {
-        altText?: string
-        title?: string
-        metadata: {
-          lqip: string
-          dimensions: {
-            width: number
-            height: number
-          }
-        }
-      }
-    }
-  }
+  logo: LogoType
+  debug?: boolean
 }
 
-/**
- * Logo component that handles responsive sizing and image optimization
- * 
- * @param logo - Logo data from Sanity containing asset information
- * @returns A responsive Image component with optimal sizing and quality
- * 
- * @example
- * <Logo logo={logoData} />
- */
+export const Logo = ({ logo, debug = false }: LogoProps) => {
+  // Hooks
+  const { width: screenWidth } = useWindowSize()
+  const dpr = useBestDpr()
+  const { generateCachedUrl } = useUrlCache()
 
-export const Logo = ({ logo }: LogoProps) => {
-    const { width: screenWidth } = useWindowSize()
-    const [isLoading, setIsLoading] = useState(true)
-    const [hasError, setHasError] = useState(false)
-    const [optimizedImageUrl, setOptimizedImageUrl] = useState('')
+  // State
+  const [isLoading, setIsLoading] = useState(true)
+  const [hasError, setHasError] = useState(false)
+  const [optimizedImageUrl, setOptimizedImageUrl] = useState('')
 
-const aspectRatio = useMemo(() => 
-    logo.logoForLightBG.asset.metadata.dimensions.width / 
-    logo.logoForLightBG.asset.metadata.dimensions.height,
-    [logo.logoForLightBG.asset.metadata.dimensions]
-  )
-
-      // Simplified width calculation - only two sizes
-    const width = useMemo(() => 
-        screenWidth && screenWidth >= DIMENSIONS.breakpoint.mobile 
-            ? DIMENSIONS.logo.desktop 
-            : DIMENSIONS.logo.mobile,
-        [screenWidth]
-    )
-
-    // Debounced URL update
-    const updateImageUrl = useMemo(
-        () =>
-            debounce((width: number) => {
-                const imageUrl = urlFor(logo.logoForLightBG.asset)
-                    .width(Math.round(width * window.devicePixelRatio))
-                    .quality(90)
-                    .auto('format')
-                    .url()
-                setOptimizedImageUrl(imageUrl)
-            }, 5000),
-        [logo.logoForLightBG.asset]
-    )
-
-  // Update image URL when screen width changes
-  useEffect(() => {
-      if (!screenWidth) return
-      updateImageUrl(width)
-
-      return () => {
-          updateImageUrl.cancel()
-      }
-  }, [width, screenWidth, updateImageUrl])
-
-  // Initial image URL generation
-  useEffect(() => {
-      if (!screenWidth) return
-      const initialImageUrl = urlFor(logo.logoForLightBG.asset)
-          .width(Math.round(screenWidth * window.devicePixelRatio))
-          .quality(90)
-          .auto('format')
-          .url()
-      setOptimizedImageUrl(initialImageUrl)
-  }, [screenWidth, logo.logoForLightBG.asset, width])
-
-
-    
-
-  if (!logo?.logoForLightBG) return null
-  if (!optimizedImageUrl) return null
   
 
-  const height = Math.round(width / aspectRatio)
+  // Memoized Values
+  // Memoized Values with internal null checks
+  const aspectRatio = useMemo(() => {
+    if (!logo?.logoForLightBG?.asset?.metadata?.dimensions) {
+      return 1 // Default aspect ratio
+    }
+    const { width, height } = logo.logoForLightBG.asset.metadata.dimensions
+    return width / height
+  }, [logo?.logoForLightBG?.asset?.metadata?.dimensions])
 
+  
+
+  const width = useMemo(() => {
+    const isMobile = (screenWidth || DIMENSIONS.screen.defaultWidth) < DIMENSIONS.breakpoint.mobile
+    return isMobile ? DIMENSIONS.logo.mobile : DIMENSIONS.logo.desktop
+  }, [screenWidth])
+
+  const height = useMemo(() => 
+    Math.round(width / aspectRatio),
+    [width, aspectRatio]
+  )
+
+  
+
+  // URL Generation
+  const updateImageUrl = useMemo(
+    () =>
+      debounce((width: number) => {
+        if (!logo?.logoForLightBG?.asset) return;
+        
+        const breakpointWidth = getNearestBreakpoint(width);
+        const imageUrl = generateCachedUrl(
+          logo.logoForLightBG.asset,
+          breakpointWidth,
+          Math.round(breakpointWidth / aspectRatio),
+          {
+            quality: IMAGE_OPTIONS.quality.medium,
+            dpr
+          }
+        );
+        setOptimizedImageUrl(imageUrl)
+      }, IMAGE_OPTIONS.debounce.wait),
+    [logo?.logoForLightBG?.asset, dpr, aspectRatio, generateCachedUrl]
+  )
+
+  // Effects
+  useEffect(() => {
+    if (!width) return
+    updateImageUrl(width)
+    return () => updateImageUrl.cancel()
+  }, [width, updateImageUrl])
+
+  useEffect(() => {
+    if (!width) return
+    updateImageUrl.flush()
+  }, ) // Initial URL generation
+
+  // Guard Clauses
+  if (!logo?.logoForLightBG?.asset) return null
+  if (!optimizedImageUrl) return null
   if (hasError) {
     return <div className="w-[149px] h-[33px] bg-gray-200" />
   }
 
- return (
-    <Image
-      src={optimizedImageUrl}
-      alt={logo.logoForLightBG.asset.altText ?? "Logo"}
-      title={logo.logoForLightBG.asset.title ?? "Logo"}
-      width={width}
-      height={height}
-      placeholder="blur"
-      blurDataURL={logo.logoForLightBG.asset.metadata.lqip}
-      priority
-      className={`object-contain transition-opacity duration-300 ${
+
+  return (
+    <div>
+      <Image
+        src={optimizedImageUrl}
+        alt={logo.logoForLightBG.asset.altText ?? "Logo"}
+        title={logo.logoForLightBG.asset.title ?? "Logo"}
+        width={width}
+        height={height}
+        placeholder="blur"
+        blurDataURL={logo.logoForLightBG.asset.metadata.lqip}
+        priority
+        className={`object-contain transition-opacity duration-300 ${
           isLoading ? 'opacity-0' : 'opacity-100'
-      }`}
-      sizes={`(min-width: 
-        ${DIMENSIONS.breakpoint.mobile}px) 
-        ${DIMENSIONS.logo.desktop}px, 
-        ${DIMENSIONS.logo.mobile}px`}
-      onLoad={() => setIsLoading(false)}
-      onError={() => setHasError(true)}
-    />
+        }`}
+        sizes={`(min-width: ${DIMENSIONS.breakpoint.mobile}px) ${DIMENSIONS.logo.desktop}px, ${DIMENSIONS.logo.mobile}px`}
+        onLoad={() => setIsLoading(false)}
+        onError={() => setHasError(true)}
+      />
+      {debug && (
+        <div className="mt-2 p-2 bg-black/70 text-white text-xs font-mono rounded break-all w-full max-w-xs">
+          <div><b>Logo URL:</b> {optimizedImageUrl}</div>
+          <div><b>DPR:</b> {dpr}</div>
+          <div><b>Width:</b> {width}px</div>
+          <div><b>Height:</b> {height}px</div>
+        </div>
+      )}
+    </div>
   )
 }

@@ -1,23 +1,10 @@
 import Cta from "./components/Cta";
 import { defineQuery } from "next-sanity";
 import { sanityFetch } from "../../sanity/lib/live";
-import { QUERY_LOGO } from './queries/QUERY_LOGO'
-import { Navigation } from './components/Navigation'
 
-const QUERY_NAV = defineQuery(`*[_type == "siteSettingsSingleton"][0]{
-  homePageNavLabel,
-  projectsPageNavLabel,
-  aboutPageNavLabel,
-  reviewsPageNavLabel,
-  contactPageNavLabel,
-  mobileBackgroundImage {
-    ...,
-    asset->{
-      ...,
-      metadata
-    }
-  }
-}`)
+
+
+
 
 const QUERY_CTAs = defineQuery(`*[_type == "siteSettingsSingleton"][0]{
   reviewCTA,
@@ -42,8 +29,7 @@ export default async function Home() {
 
   // Fetch the data from Sanity
   const resCTAs  = await sanityFetch({query: QUERY_CTAs,});
-  const { data: logo } = await sanityFetch({query: QUERY_LOGO });
-  const { data: navData } = await sanityFetch({ query: QUERY_NAV })
+
 
  
  
@@ -79,41 +65,27 @@ export default async function Home() {
     servicesCTA
   ];
 
+  const normalizedCTAs = arrayOfAllCTAs.map((cta) => {
+  if (!cta) return null;
+  return {
+    label: cta.linkLabel ?? undefined,
+    linkType: cta.linkType ?? undefined,
+    toPage: 'toPage' in cta ? cta.toPage ?? undefined : undefined,
+    externalLink: 'externalLink' in cta ? cta.externalLink ?? undefined : undefined,
+    toProjectSlug: 'toProjectSlug' in cta ? cta.toProjectSlug ?? undefined : undefined,
+  };
+});
+
 
 
 
 
   return (
-    <div>
-      <Navigation 
-        logo={logo} 
-        navLabels={navData} 
-        mobileBackgroundImage={navData.mobileBackgroundImage}
-      />
-
-
-      {/* Render all the CTAs */}
-      
-      {arrayOfAllCTAs.map((cta, index) => {
-        if (cta) {
-          return (
-            <Cta
-              key={index}
-              label={cta.linkLabel ?? undefined}
-              linkType={cta.linkType ?? undefined}
-              toPage={cta.toPage ?? undefined}
-              externalLink={cta.externalLink ?? undefined}
-              toProjectSlug={cta.toProjectSlug ?? undefined}
-            />
-          );
-        } else {
-          return null;
-        }
-      }
-      )}
-
-
-    </div>
+  <div>
+    {normalizedCTAs.map((cta, index) =>
+      cta ? <Cta key={index} {...cta} /> : null
+    )}
+  </div>
   );
 }
 
