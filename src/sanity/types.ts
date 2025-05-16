@@ -490,6 +490,7 @@ export type CompanySettingsSingleton = {
     changed?: boolean;
     _type: "imageWithMetadata";
   };
+  slogan?: string;
   aboutHistory?: string;
   aboutMission?: string;
   aboutFounder?: string;

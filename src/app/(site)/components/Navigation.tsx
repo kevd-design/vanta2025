@@ -1,7 +1,6 @@
 'use client'
 
 import { FC, useState, useEffect, useMemo, useCallback } from 'react'
-import Link from 'next/link'
 import Hamburger from '../elements/Hamburger'
 import { Logo } from './Logo'
 import { MobileNavigation } from './MobileNavigation'

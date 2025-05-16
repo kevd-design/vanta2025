@@ -3061,6 +3061,13 @@
         },
         "optional": true
       },
+      "slogan": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
       "aboutHistory": {
         "type": "objectAttribute",
         "value": {

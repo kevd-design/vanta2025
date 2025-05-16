@@ -1,7 +1,6 @@
 'use client'
 
 import { FC, useState, useEffect, useMemo } from 'react'
-import Link from 'next/link'
 import Image from 'next/image'
 import { useWindowSize } from '../hooks/useWindowSize'
 import { usePathname } from 'next/navigation'
@@ -29,7 +28,6 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
   const enableDebug = false
   const { width: screenWidth } = useWindowSize()
   const screenHeight = typeof window !== 'undefined' ? window.innerHeight : null;
-  const pathname = usePathname();
   
   const [isAnimatingOut, setIsAnimatingOut] = useState(false);
   const [hasEntered, setHasEntered] = useState(false);
