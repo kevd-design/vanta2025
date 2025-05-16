@@ -19,10 +19,12 @@ const calculateDimensions = (
   aspectRatio: number,
   boundaries: readonly number[]
 ) => {
-  const roundedWidth = roundToBoundary(width, boundaries);
-  // Calculate height based on preserved aspect ratio
+  const roundedWidth = Math.round(roundToBoundary(width, boundaries));
   const preservedHeight = Math.round(roundedWidth / aspectRatio);
-  return { width: roundedWidth, height: preservedHeight };
+  return { 
+    width: roundedWidth, 
+    height: preservedHeight 
+  };
 }
 
 const IS_DEVELOPMENT = process.env.NODE_ENV === 'development'

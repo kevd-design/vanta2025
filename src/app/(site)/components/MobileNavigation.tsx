@@ -19,6 +19,7 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
   backgroundImage,
   lqip
 }) => {
+
   // Set to true to enable debug info
   // This will show the image URL, width, and DPR in the bottom left corner
   // of the screen when the menu is open
@@ -32,12 +33,10 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
   const [isAnimatingOut, setIsAnimatingOut] = useState(false);
   const [hasEntered, setHasEntered] = useState(false);
   
-  const imageDimensions = useMemo(() => {
-  if (!screenWidth || !screenHeight) {
-    return { width: DIMENSIONS.screen.defaultWidth, height: DIMENSIONS.screen.defaultHeight }
-  }
-  return { width: screenWidth, height: screenHeight }
-}, [screenWidth, screenHeight])
+  const dimensions = useMemo(() => ({
+    width: Math.round(screenWidth || DIMENSIONS.screen.defaultWidth),
+    height: Math.round(screenHeight || DIMENSIONS.screen.defaultHeight)
+  }), [screenWidth, screenHeight])
   
   // Handle enter animation
   useEffect(() => {
@@ -93,13 +92,12 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
       <div className="relative w-full max-h-[90vh] rounded-b-[32px] shadow-xl">
         {/* Background layer - stays fixed */}
         <div className="fixed inset-x-0 top-0 w-full h-full rounded-b-[32px] overflow-hidden">
+          {dimensions.width > 0 && dimensions.height > 0 && (
             <Image
               src={backgroundImageUrl}
               alt=""
-              width={imageDimensions.width}
-              height={imageDimensions.height}
               priority
-              className="absolute w-full h-full object-cover"
+              className="absolute inset-0 object-cover"
               style={{
                 objectPosition: backgroundImage?.hotspot
                   ? `${backgroundImage.hotspot.x * 100}% ${backgroundImage.hotspot.y * 100}%`
@@ -108,7 +106,8 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
               sizes="100vw"
               placeholder={lqip ? "blur" : undefined}
               blurDataURL={lqip}
-            />
+              fill
+            />)}
 
             {enableDebug && backgroundImage?.hotspot && (
               <div

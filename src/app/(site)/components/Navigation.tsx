@@ -55,17 +55,14 @@ export const Navigation: FC<NavigationProps> = ({ logo, navLabels, mobileBackgro
   ], [navLabels])
 
     
-
-  
-
   // Screen Size Memoization
-const getBestScreenWidth = useMemo(() => 
-  () => screenWidth || DEFAULT_SCREEN_WIDTH, 
-[screenWidth])
-
-const getBestScreenHeight = useMemo(() => 
-  () => screenHeight || DEFAULT_SCREEN_HEIGHT, 
-[screenHeight])
+  const getBestScreenWidth = useMemo(() => 
+    () => Math.round(screenWidth || DEFAULT_SCREEN_WIDTH), 
+  [screenWidth])
+  
+  const getBestScreenHeight = useMemo(() => 
+    () => Math.round(screenHeight || DEFAULT_SCREEN_HEIGHT), 
+  [screenHeight])
 
 const isDesktopScreen = useMemo(() => 
   screenWidth ? screenWidth >= DIMENSIONS.breakpoint.mobile : false,
@@ -113,24 +110,7 @@ const generateBackgroundUrl = useCallback((width: number, height: number) => {
   }
 }, [optimizedBackgroundUrl, getBestScreenWidth, dpr])
 
-  // Background URL Generation
-  const updateBackgroundUrl = useMemo(
-    () =>
-      debounce(() => {
-        if (!isMobile || !screenWidth || !mobileBackgroundImage) return;
-        
-        const bestWidth = getNearestBreakpoint(getBestScreenWidth());
-        if (lastBreakpoint === bestWidth) return;
-        
-        setLastBreakpoint(bestWidth);
-        const imageUrl = generateBackgroundUrl(bestWidth, getBestScreenHeight());
-
-        if (imageUrl) {
-        setOptimizedBackgroundUrl(imageUrl);
-      }
-      }, IMAGE_OPTIONS.debounce.wait),
-    [isMobile, screenWidth, mobileBackgroundImage, getBestScreenWidth, getBestScreenHeight, lastBreakpoint, generateBackgroundUrl]
-  );
+  
 
   // Effects
   // 1. Track Breakpoint Changes
@@ -156,38 +136,49 @@ const generateBackgroundUrl = useCallback((width: number, height: number) => {
   }
 }, [isMobile, mobileBackgroundImage, currentBreakpoint, getBestScreenHeight, generateBackgroundUrl]);
 
-  // 3. Clean up debounced function
-  useEffect(() => {
-    if (!screenWidth) return
-    return () => {
-      updateBackgroundUrl.cancel()
-    }
-  }, [screenWidth, updateBackgroundUrl])
+  
 
   // Effect to handle desktop transition
 useEffect(() => {
-  if (isDesktopScreen) {
+  const handleResize = debounce(() => {
+    const newIsDesktop = (screenWidth || 0) >= DIMENSIONS.breakpoint.mobile;
     
-    setIsMenuOpen(false)  // Close menu when going to desktop
-    setOptimizedBackgroundUrl(null)  // Clear background URL
-  } else {
-    // Generate new background URL when returning to mobile
-    if (isMobile && !isDesktopScreen && mobileBackgroundImage) {
-      const bestWidth = getNearestBreakpoint(getBestScreenWidth())
-      const imageUrl = generateBackgroundUrl(bestWidth, getBestScreenHeight())
-      if (imageUrl) {
-        setOptimizedBackgroundUrl(imageUrl)
+    if (newIsDesktop) {
+      setIsMenuOpen(false);  // Close menu when going to desktop
+      setOptimizedBackgroundUrl(null);  // Clear background URL
+    } else if (isMobile && mobileBackgroundImage) {
+      // Only generate new URL if actually needed
+      const bestWidth = getNearestBreakpoint(getBestScreenWidth());
+      if (bestWidth !== lastBreakpoint) {
+        const imageUrl = generateBackgroundUrl(bestWidth, getBestScreenHeight());
+        if (imageUrl) {
+          setLastBreakpoint(bestWidth);
+          setOptimizedBackgroundUrl(imageUrl);
+        }
       }
     }
-  }
+  }, 150); // Add small debounce to prevent rapid changes
+
+  // Initial check
+  handleResize();
+
+  // Add listener
+  window.addEventListener('resize', handleResize);
+  
+  // Cleanup
+  return () => {
+    handleResize.cancel();
+    window.removeEventListener('resize', handleResize);
+  };
 }, [
-  isDesktopScreen,
-  screenWidth, 
-  isMobile, 
-  mobileBackgroundImage, 
-  generateBackgroundUrl, 
+  screenWidth,
+  isMobile,
+  mobileBackgroundImage,
+  generateBackgroundUrl,
   getBestScreenWidth,
-  getBestScreenHeight])
+  getBestScreenHeight,
+  lastBreakpoint
+]);
 
 // Cleanup effects
 useEffect(() => {
@@ -196,9 +187,9 @@ useEffect(() => {
     setOptimizedBackgroundUrl(null)
     setIsMenuOpen(false)
     setLastBreakpoint(null)
-    updateBackgroundUrl.cancel()
+    
   }
-}, [updateBackgroundUrl])
+}, [])
 
   return (
     <nav>
