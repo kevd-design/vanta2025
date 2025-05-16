@@ -99,28 +99,26 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
               width={imageDimensions.width}
               height={imageDimensions.height}
               priority
-              className="w-full h-full object-cover"
+              className="absolute w-full h-full object-cover"
+              style={{
+                objectPosition: backgroundImage?.hotspot
+                  ? `${backgroundImage.hotspot.x * 100}% ${backgroundImage.hotspot.y * 100}%`
+                  : '50% 50%'
+              }}
               sizes="100vw"
               placeholder={lqip ? "blur" : undefined}
               blurDataURL={lqip}
             />
 
-             {enableDebug && backgroundImage?.hotspot && (
+            {enableDebug && backgroundImage?.hotspot && (
               <div
-                className="absolute z-30"
                 style={{
                   left: `${backgroundImage.hotspot.x * 100}%`,
-                  top: `${backgroundImage.hotspot.y * 100}%`,
-                  transform: 'translate(-50%, -50%)',
-                  pointerEvents: 'none',
+                  top: `${backgroundImage.hotspot.y * 100}%`
                 }}
+                className="absolute z-30 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
               >
-                
-                <div 
-                  className="w-4 h-4 rounded-full bg-red-500 border-2 border-white shadow-lg" 
-            
-                />
-                
+                <div className="w-4 h-4 rounded-full bg-red-500 border-2 border-white shadow-lg" />
               </div>
             )}
             {/* Gradient overlay */}
