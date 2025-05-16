@@ -6,21 +6,20 @@ export function useBestDpr() {
   useEffect(() => {
     function calculateDpr() {
       if (typeof window !== 'undefined') {
-        const availWidth = window.screen.availWidth
-        if (availWidth > 1920) return 3
-        if (availWidth > 1024) return 2
-        return 1
+        const devicePixelRatio = Math.min(Math.max(window.devicePixelRatio || 1, 1), 3)
+        return devicePixelRatio
       }
-      return 1
+      return 2
     }
     setDpr(calculateDpr())
 
-    // Optionally, update on resize:
-    function handleResize() {
-      setDpr(calculateDpr())
-    }
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
+    
+  // Update on resize in case DPR changes (e.g., browser zoom)
+  function handleResize() {
+    setDpr(calculateDpr())
+  }
+  window.addEventListener('resize', handleResize)
+  return () => window.removeEventListener('resize', handleResize)
   }, [])
 
   return dpr
