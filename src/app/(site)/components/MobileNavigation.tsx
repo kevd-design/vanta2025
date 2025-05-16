@@ -8,6 +8,7 @@ import { usePathname } from 'next/navigation'
 import XButton from '../elements/XButton'
 import type { MobileNavigationProps } from '../../types'
 import { DIMENSIONS } from '../constants'
+import { NavLink } from './common/NavLink'
 
 
 export const MobileNavigation: FC<MobileNavigationProps> = ({
@@ -140,32 +141,17 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
 
           {/* Navigation links */}
           <div className="px-12 pt-20 pb-12">
-            <nav className="grid grid-cols-4 gap-4 w-full max-w-lg mx-auto">
-              {navigationItems.map((item) => {
-                const isActive = pathname === item.href;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`
-                      col-span-3 justify-self-start w-full
-                      rounded-lg text-black text-center py-4 px-6 
-                      text-lg font-medium shadow transition-colors 
-                      focus:outline-none focus:ring-4 focus:ring-emerald-400
-                      ${isActive
-                        ? 'bg-amber-100 pointer-events-none'
-                        : 'bg-emerald-100 hover:bg-amber-200'
-                      }
-                    `}
-                    tabIndex={isActive ? -1 : 0}
-                    aria-current={isActive ? 'page' : undefined}
-                    onClick={handleClose}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </nav>
+          <nav className="grid grid-cols-4 gap-4 w-full max-w-lg mx-auto">
+            {navigationItems.map((item) => (
+              <NavLink
+                key={item.href}
+                href={item.href}
+                label={item.label}
+                variant="mobile"
+                onClick={handleClose}
+                />
+              ))}
+          </nav>
           </div>
         </div>
       </div>

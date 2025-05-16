@@ -12,6 +12,7 @@ import { useIsMobile } from '../hooks/useIsMobile'
 import { useUrlCache } from '../hooks/useUrlCache'
 import { DIMENSIONS, getNearestBreakpoint, IMAGE_OPTIONS } from '../constants'
 import type { LogoType, NavLabelsType, MobileBackgroundImageType } from '../../types'
+import { NavLink } from './common/NavLink'
 
 const { 
   defaultWidth: DEFAULT_SCREEN_WIDTH, 
@@ -202,15 +203,14 @@ useEffect(() => {
         />
         
         {/* Desktop Navigation Links */}
-        <div className="hidden md:flex items-center space-x-8">
+        <div className="hidden md:flex items-end justify-between flex-1 px-8">
           {navigationItems.map((item) => (
-            <Link
+            <NavLink
               key={item.href}
               href={item.href}
-              className="text-base font-medium text-gray-700 hover:text-gray-900 transition-colors"
-            >
-              {item.label}
-            </Link>
+              label={item.label}
+              variant="desktop"
+            />
           ))}
         </div>
 
