@@ -50,7 +50,14 @@ const companySettings = {
       
     },
   
-   
+    {
+      name: 'slogan',
+      title: 'Company Slogan',
+      type: 'string',
+      description: 'The company slogan that appears under the logo',
+      fieldset: 'about',
+    },
+
     {
       name: 'aboutHistory',
       title: 'History of the Company',
