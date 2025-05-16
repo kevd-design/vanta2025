@@ -9,28 +9,30 @@ interface WindowSize {
 }
 
 export const useWindowSize = (): WindowSize => {
+  // Move window check to useEffect
   const [windowSize, setWindowSize] = useState<WindowSize>({
-    width: Math.round(typeof window !== 'undefined' ? window.innerWidth : DIMENSIONS.screen.defaultWidth),
-    height: Math.round(typeof window !== 'undefined' ? window.innerHeight : DIMENSIONS.screen.defaultHeight),
+    width: DIMENSIONS.screen.defaultWidth,  // Use default values initially
+    height: DIMENSIONS.screen.defaultHeight
   })
 
   useEffect(() => {
-    function handleResize() {
+    // Update dimensions only on client-side
+    if (typeof window !== 'undefined') {
       setWindowSize({
         width: Math.round(window.innerWidth),
-        height: Math.round(window.innerHeight),
+        height: Math.round(window.innerHeight)
       })
-    }
 
-    // Only add listener if window exists
-    if (typeof window !== 'undefined') {
-      window.addEventListener("resize", handleResize)
-      // Initial size set
-      handleResize()
-      
-      return () => window.removeEventListener("resize", handleResize)
-    }
+      function handleResize() {
+        setWindowSize({
+          width: Math.round(window.innerWidth),
+          height: Math.round(window.innerHeight)
+        })
+      }
 
+      window.addEventListener('resize', handleResize)
+      return () => window.removeEventListener('resize', handleResize)
+    }
   }, [])
 
   return windowSize

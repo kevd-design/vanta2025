@@ -36,9 +36,12 @@ export const Logo = ({ logo, debug = false }: LogoProps) => {
 
   // Calculate display sizes ONCE
   const { displayWidth, displayHeight } = useMemo(() => {
-    const width = (screenWidth || DIMENSIONS.screen.defaultWidth) < DIMENSIONS.breakpoint.mobile
-      ? DIMENSIONS.logo.mobile 
-      : DIMENSIONS.logo.desktop
+    const defaultWidth = DIMENSIONS.logo.mobile
+    const width = typeof window === 'undefined' 
+      ? defaultWidth
+      : (screenWidth || DIMENSIONS.screen.defaultWidth) < DIMENSIONS.breakpoint.mobile
+        ? DIMENSIONS.logo.mobile 
+        : DIMENSIONS.logo.desktop
 
     return {
       displayWidth: width,
