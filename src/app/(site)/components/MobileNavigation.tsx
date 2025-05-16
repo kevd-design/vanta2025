@@ -3,7 +3,6 @@
 import { FC, useState, useEffect, useMemo } from 'react'
 import Image from 'next/image'
 import { useWindowSize } from '../hooks/useWindowSize'
-import { usePathname } from 'next/navigation'
 import XButton from '../elements/XButton'
 import type { MobileNavigationProps } from '../../types'
 import { DIMENSIONS } from '../constants'
