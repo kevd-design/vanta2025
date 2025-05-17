@@ -1,25 +1,12 @@
 import type { Metadata } from "next";
 import { SanityLive } from "@/sanity/lib/live";
-import { defineQuery } from "next-sanity";
 import { sanityFetch } from "../../sanity/lib/live";
-import { QUERY_LOGO } from './queries/QUERY_LOGO';
+import { QUERY_LOGO } from './queries/logoQuery';
+import { QUERY_NAV } from './queries/navQuery';
 import { Navigation } from './components/Navigation';
 import type { LogoType, NavLabelsType, MobileBackgroundImageType } from '../types'
 
-const QUERY_NAV = defineQuery(`*[_type == "siteSettingsSingleton"][0]{
-  homePageNavLabel,
-  projectsPageNavLabel,
-  aboutPageNavLabel,
-  reviewsPageNavLabel,
-  contactPageNavLabel,
-  mobileBackgroundImage {
-    ...,
-    asset->{
-      ...,
-      metadata
-    }
-  }
-}`);
+
 
 export const metadata: Metadata = {
   title: "Create Next App",
