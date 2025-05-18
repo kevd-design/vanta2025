@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react'
 export function useBestDpr() {
   const [dpr, setDpr] = useState(1)
 
+ 
+
   useEffect(() => {
     function calculateDpr() {
       if (typeof window !== 'undefined') {

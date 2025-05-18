@@ -83,7 +83,6 @@ export function useUrlCache() {
     // Generate new URL using rounded values
     let urlBuilder = urlFor(asset)
       .width(finalWidth)  // Use rounded width
-      .height(finalHeight)  // Use rounded height
       .quality(options?.quality ?? IMAGE_OPTIONS.quality.medium)
       .dpr(options?.dpr ?? 1)
       .auto('format');
@@ -124,7 +123,6 @@ export function useUrlCache() {
   ) => {
     let urlBuilder = urlFor(asset)
       .width(width)
-      .height(height)
       .fit('clip') 
       .quality(options?.quality ?? IMAGE_OPTIONS.quality.medium)
       .dpr(options?.dpr ?? 1)
