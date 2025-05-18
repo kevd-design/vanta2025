@@ -91,15 +91,16 @@ export const Logo = ({ logo, debug = false }: LogoProps) => {
         }}
       />
       {debug && (
-        <div className="mt-2 p-2 bg-black/70 text-white text-xs font-mono">
-          <pre>
+        <div className="mt-2 p-2 bg-black/70 text-white text-xs font-mono break-all">
+
             {JSON.stringify({
               original: `${dimensions.width}x${dimensions.height}`,
               aspectRatio: dimensions.aspectRatio,
               display: `${displayWidth}x${displayHeight}`,
-              dpr
+              dpr,
+              imageUrl
             }, null, 2)}
-          </pre>
+
         </div>
       )}
     </div>
