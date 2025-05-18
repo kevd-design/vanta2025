@@ -194,7 +194,7 @@ useEffect(() => {
   return (
     <nav>
       {/* Desktop Navigation Bar */}
-      <div className="flex items-center justify-between px-4 py-3 bg-white">
+      <div className="flex items-center justify-between px-4 py-3 bg-white ">
         {/* Logo Section */}
         <Logo 
           logo={logo} 
@@ -217,7 +217,7 @@ useEffect(() => {
         {isMobile && !isDesktopScreen && (
           <button
             onClick={() => setIsMenuOpen(true)}
-            className="block md:hidden"
+            className="block md:hidden cursor-pointer"
             aria-label="Open navigation menu"
           >
             <Hamburger />
@@ -226,13 +226,12 @@ useEffect(() => {
       </div>
 
       {/* Mobile Navigation Overlay */}
-      {isMobile && !isDesktopScreen && mobileNavigation?.backgroundUrl && (
+      {isMobile && !isDesktopScreen && mobileNavigation?.backgroundUrl &&  (
         <MobileNavigation
           isOpen={isMenuOpen}
           onClose={() => setIsMenuOpen(false)}
-          backgroundImageUrl={mobileNavigation.backgroundUrl || null}
           navigationItems={navigationItems}
-          backgroundImage={mobileBackgroundImage}
+          backgroundImage={mobileBackgroundImage || null}
           debugInfo={debugInfo || undefined}
           lqip={mobileBackgroundImage?.asset?.metadata?.lqip}
         />
