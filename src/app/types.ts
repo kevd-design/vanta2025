@@ -50,12 +50,12 @@ export interface MobileBackgroundImageType {
     left: number
     right: number
   }
-  hotspot?: {
+  hotspot: {
     x: number
     y: number
     height: number
     width: number
-  }
+  }  | null
 }
 
 export interface NavigationItem {
@@ -66,42 +66,33 @@ export interface NavigationItem {
 export interface MobileNavigationProps {
   isOpen: boolean;
   onClose: () => void;
-  backgroundImageUrl: string | null;
-  navigationItems: NavigationItem[];
-  lqip?: string;
-  backgroundImage?: {
-    asset: {
-      metadata: {
-        dimensions: {
-          aspectRatio: number;
-          height: number;
-          width: number;
-        };
-      };
-    };
-    crop?: {
-      top: number;
-      bottom: number;
-      left: number;
-      right: number;
-    };
-    hotspot?: {
+  backgroundImage: {
+    asset: ImageAsset | null;
+    hotspot: {
       x: number;
       y: number;
       height: number;
       width: number;
+    } | null;
+    metadata?: {
+      lqip?: string;
     };
-  };
+  } | null;
+  navigationItems: Array<{
+    label: string;
+    href: string;
+  }>;
   debugInfo?: {
-    url: string | null; 
+    url: string;
     width: number;
     dpr: number;
-  } | undefined;
   };
+  lqip?: string;
+}
 
 
 export interface CtaProps {
-  label?: string;
+  linkLabel?: string;
   linkType?: "toPage" | "externalLink" | "toProject";
   toPage?: string;
   externalLink?: string;
@@ -114,4 +105,85 @@ export interface UrlOptions {
   hotspot?: { x: number; y: number }
   skipRounding?: boolean
   preserveAspectRatio?: boolean
+}
+
+export interface UseOptimizedImageProps {
+  asset: ImageAsset | null;
+  hotspot?: { x: number; y: number }
+  width: number
+  height: number
+  quality?: number
+}
+
+
+
+// Hero Section
+export interface HeroSection {
+  headline: string | null;
+  image: {
+    asset: ImageAsset | null;
+    hotspot: { x: number; y: number } | null; 
+    metadata?: {
+      lqip?: string;
+    };
+    alt?: string;
+  } | null;
+  cta: {
+    linkLabel?: string;
+    linkType?: "toPage" | "externalLink" | "toProject";
+    toProject?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+    };
+    toPage?: "about" | "contact" | "home" | "projects" | "reviews";
+    externalLink?: string;
+  } | null;
+}
+
+// Projects Section
+export interface ProjectsSection {
+  cta: CtaProps;
+}
+
+// Services Section
+export interface ServicesSection {
+  title: string;
+  description: string;
+  backgroundImage: {
+    asset: ImageAsset;
+    hotspot?: { x: number; y: number };
+    metadata?: {
+      lqip?: string;
+    };
+  };
+  cta: CtaProps;
+}
+
+// Review Section
+export interface ReviewSection {
+  reviewerName: string;
+  reviewText: string;
+  cta: CtaProps;
+}
+
+// Meta Section
+export interface MetaSection {
+  title: string;
+  description: string;
+}
+
+// 2. Create the main HomeData interface
+export interface HomeData {
+  hero: HeroSection;
+  projects: ProjectsSection;
+  services: ServicesSection;
+  review: ReviewSection;
+  meta: MetaSection;
+}
+
+// 3. Create a type for the query result
+export interface HomeQueryResult {
+  data: HomeData;
+  tags: string[];
 }

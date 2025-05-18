@@ -3,6 +3,7 @@
 import { FC, useState, useEffect, useMemo } from 'react'
 import Image from 'next/image'
 import { useWindowSize } from '../hooks/useWindowSize'
+import { useOptimizedImage } from '../hooks/useOptimizedImage'
 import XButton from '../elements/XButton'
 import type { MobileNavigationProps } from '../../types'
 import { DIMENSIONS } from '../constants'
@@ -12,7 +13,6 @@ import { NavLink } from './common/NavLink'
 export const MobileNavigation: FC<MobileNavigationProps> = ({
   isOpen,
   onClose,
-  backgroundImageUrl,
   navigationItems,
   debugInfo,
   backgroundImage,
@@ -35,6 +35,18 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
     width: Math.round(screenWidth || DIMENSIONS.screen.defaultWidth),
     height: Math.round(screenHeight || DIMENSIONS.screen.defaultHeight)
   }), [screenWidth, screenHeight])
+
+  const { url: imageUrl, generateUrl, setUrl } = useOptimizedImage({
+    asset: backgroundImage?.asset ?? null,
+    hotspot: backgroundImage?.hotspot ?? undefined,
+    width: dimensions.width,
+    height: dimensions.height
+  })
+
+    useEffect(() => {
+    const url = generateUrl()
+    if (url) setUrl(url)
+  }, [dimensions.width, dimensions.height, generateUrl, setUrl])
   
   // Handle enter animation
   useEffect(() => {
@@ -61,7 +73,7 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
 
 
 
-  if (!backgroundImageUrl || !isOpen && !isAnimatingOut) return null;
+   if (!imageUrl || (!isOpen && !isAnimatingOut)) return null
 
 
   return (
@@ -88,24 +100,26 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
       ${hasEntered ? 'translate-y-0' : '-translate-y-full'}
     `}>
       <div className="relative w-full max-h-[90vh] rounded-b-[32px] shadow-xl">
-        {/* Background layer - stays fixed */}
+    
+    {/* Background layer */}
         <div className="fixed inset-x-0 top-0 w-full h-full rounded-b-[32px] overflow-hidden">
-          {dimensions.width > 0 && dimensions.height > 0 && (
-            <Image
-              src={backgroundImageUrl}
-              alt=""
-              priority
-              className="absolute inset-0 object-cover"
-              style={{
-                objectPosition: backgroundImage?.hotspot
-                  ? `${backgroundImage.hotspot.x * 100}% ${backgroundImage.hotspot.y * 100}%`
-                  : '50% 50%'
-              }}
-              sizes="100vw"
-              placeholder={lqip ? "blur" : undefined}
-              blurDataURL={lqip}
-              fill
-            />)}
+            {imageUrl && backgroundImage?.asset && (
+              <Image
+                src={imageUrl}
+                alt=""
+                priority
+                className="absolute inset-0 object-cover"
+                style={{
+                  objectPosition: backgroundImage?.hotspot
+                    ? `${backgroundImage.hotspot.x * 100}% ${backgroundImage.hotspot.y * 100}%`
+                    : '50% 50%'
+                }}
+                sizes="100vw"
+                placeholder={lqip ? "blur" : undefined}
+                blurDataURL={lqip}
+                fill
+              />
+            )}
 
             {enableDebug && backgroundImage?.hotspot && (
               <div
@@ -129,7 +143,7 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
             <h2 className="text-2xl text-white">Menu</h2>
             <button
               onClick={handleClose}
-              className="p-2 text-white hover:text-gray-200"
+              className="p-2 text-white hover:text-gray-200 cursor-pointer"
               aria-label="Close menu"
             >
               <XButton />
