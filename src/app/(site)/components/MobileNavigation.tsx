@@ -38,7 +38,7 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
 
   const { url: imageUrl, generateUrl, setUrl } = useOptimizedImage({
     asset: backgroundImage?.asset ?? null,
-    hotspot: backgroundImage?.hotspot ?? undefined,
+    hotspot: backgroundImage?.hotspot ?? null,
     width: dimensions.width,
     height: dimensions.height
   })

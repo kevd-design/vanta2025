@@ -1,6 +1,7 @@
 import type { 
   ImageAsset, 
   ImageDimensions,
+  ImageHotspot,
 } from '@sanity/types'
 
 export interface LogoType {
@@ -33,7 +34,7 @@ export interface NavLabelsType {
   contactPageNavLabel: string
 }
 
-export interface MobileBackgroundImageType {
+export interface imageType {
   asset: ImageAsset & {
     metadata: {
       lqip: string
@@ -50,12 +51,7 @@ export interface MobileBackgroundImageType {
     left: number
     right: number
   }
-  hotspot: {
-    x: number
-    y: number
-    height: number
-    width: number
-  }  | null
+  hotspot: ImageHotspot | null;
 }
 
 export interface NavigationItem {
@@ -68,12 +64,7 @@ export interface MobileNavigationProps {
   onClose: () => void;
   backgroundImage: {
     asset: ImageAsset | null;
-    hotspot: {
-      x: number;
-      y: number;
-      height: number;
-      width: number;
-    } | null;
+    hotspot: ImageHotspot | null;
     metadata?: {
       lqip?: string;
     };
@@ -102,14 +93,14 @@ export interface CtaProps {
 export interface UrlOptions {
   quality?: number
   dpr?: number
-  hotspot?: { x: number; y: number }
+  hotspot: ImageHotspot | null;
   skipRounding?: boolean
   preserveAspectRatio?: boolean
 }
 
 export interface UseOptimizedImageProps {
   asset: ImageAsset | null;
-  hotspot?: { x: number; y: number }
+  hotspot: ImageHotspot | null;
   width: number
   height: number
   quality?: number
@@ -122,28 +113,18 @@ export interface HeroSection {
   headline: string | null;
   image: {
     asset: ImageAsset | null;
-    hotspot: { x: number; y: number } | null; 
+    hotspot: ImageHotspot | null;
     metadata?: {
       lqip?: string;
     };
     alt?: string;
   } | null;
-  cta: {
-    linkLabel?: string;
-    linkType?: "toPage" | "externalLink" | "toProject";
-    toProject?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-    };
-    toPage?: "about" | "contact" | "home" | "projects" | "reviews";
-    externalLink?: string;
-  } | null;
+  cta: CTAType | null;
 }
 
 // Projects Section
 export interface ProjectsSection {
-  cta: CtaProps;
+  cta: CTAType;
 }
 
 // Services Section
@@ -152,19 +133,19 @@ export interface ServicesSection {
   description: string;
   backgroundImage: {
     asset: ImageAsset;
-    hotspot?: { x: number; y: number };
+    hotspot: ImageHotspot | null;
     metadata?: {
       lqip?: string;
     };
   };
-  cta: CtaProps;
+  cta: CTAType;
 }
 
 // Review Section
 export interface ReviewSection {
   reviewerName: string;
   reviewText: string;
-  cta: CtaProps;
+  cta: CTAType;
 }
 
 // Meta Section
@@ -182,8 +163,51 @@ export interface HomeData {
   meta: MetaSection;
 }
 
-// 3. Create a type for the query result
-export interface HomeQueryResult {
-  data: HomeData;
-  tags: string[];
+export interface QueryHomeResult {
+  hero: {
+    headline: string | null;
+    image: {
+      asset: ImageAsset | null;
+      hotspot: ImageHotspot | null;
+      alt: string | null;
+    } | null;
+    cta: CTAType | null;
+  };
+  projects: {
+    cta: CTAType;
+  };
+  services: {
+    title: string;
+    description: string;
+    backgroundImage: {
+      asset: ImageAsset;
+      hotspot: ImageHotspot | null;
+      metadata?: {
+      lqip?: string;
+    };
+    };
+    cta: CTAType;
+  };
+  review: {
+    reviewerName: string;
+    reviewText: string;
+    cta: CTAType;
+  };
+  meta: {
+    title: string;
+    description: string;
+  };
 }
+
+export interface CTAType {
+  linkLabel: string;
+  linkType: "toPage" | "externalLink" | "toProject";
+  toProject?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+  };
+  toPage?: "about" | "contact" | "home" | "projects" | "reviews";
+  externalLink?: string;
+}
+

@@ -557,22 +557,10 @@ export type Slug = {
 
 export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | CTA | SiteSettingsSingleton | Project | Neighbourhood | PageNamesSingleton | CompanySettingsSingleton | ImageWithMetadata | MediaTag | Slug;
 export declare const internalGroqTypeReferenceTo: unique symbol;
-// Source: ./src/app/(site)/page.tsx
-// Variable: QUERY_CTAs
-// Query: *[_type == "siteSettingsSingleton"][0]{  reviewCTA,  heroCTA,  viewReviewsCTA,  submitReviewCTA,  servicesCTA,  projectCTA {    // keep all the normal CTA fields…    linkLabel, linkType,    // then pull in the referenced page’s slug    "toProjectSlug": toProject->projectSlug.current,     }}
-export type QUERY_CTAsResult = {
-  reviewCTA: {
-    linkLabel?: string;
-    linkType?: "externalLink" | "toPage" | "toProject";
-    toProject?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "project";
-    };
-    toPage?: "about" | "contact" | "home" | "projects" | "reviews";
-    externalLink?: string;
-  } | null;
+// Source: ./src/app/(site)/queries/homeQuery.ts
+// Variable: QUERY_HOME
+// Query: *[_type == "siteSettingsSingleton"][0]{  heroCTA,  heroHeadline,  heroImage {    ...,    asset->{      ...,      metadata    }  },}
+export type QUERY_HOMEResult = {
   heroCTA: {
     linkLabel?: string;
     linkType?: "externalLink" | "toPage" | "toProject";
@@ -585,175 +573,42 @@ export type QUERY_CTAsResult = {
     toPage?: "about" | "contact" | "home" | "projects" | "reviews";
     externalLink?: string;
   } | null;
-  viewReviewsCTA: {
-    linkLabel?: string;
-    linkType?: "externalLink" | "toPage" | "toProject";
-    toProject?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "project";
-    };
-    toPage?: "about" | "contact" | "home" | "projects" | "reviews";
-    externalLink?: string;
-  } | null;
-  submitReviewCTA: {
-    linkLabel?: string;
-    linkType?: "externalLink" | "toPage" | "toProject";
-    toProject?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "project";
-    };
-    toPage?: "about" | "contact" | "home" | "projects" | "reviews";
-    externalLink?: string;
-  } | null;
-  servicesCTA: {
-    linkLabel?: string;
-    linkType?: "externalLink" | "toPage" | "toProject";
-    toProject?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "project";
-    };
-    toPage?: "about" | "contact" | "home" | "projects" | "reviews";
-    externalLink?: string;
-  } | null;
-  projectCTA: {
-    linkLabel: string | null;
-    linkType: "externalLink" | "toPage" | "toProject" | null;
-    toProjectSlug: string | null;
-  } | null;
-} | null;
-
-// Source: ./src/app/(site)/queries/homeQuery.ts
-// Variable: QUERY_HOME
-// Query: *[_type == "siteSettingsSingleton"][0]{  "hero": {  "headline": heroHeadline,  "image": heroImage {    asset->{      ...,      metadata    },    hotspot,    alt  },  "cta": heroCTA},  "projects": {    "cta": projectCTA {      ...    }  },  "services": {    "title": servicesTitle,    "description": servicesDescription,    "backgroundImage": backgroundImageServices {      asset->,      hotspot,      "metadata": asset->metadata    },    "cta": servicesCTA  },  "review": {    "reviewerName": reviewerName,    "reviewText": reviewText,    "cta": reviewCTA  },  "meta": {    "title": siteTitle,    "description": description  }}
-export type QUERY_HOMEResult = {
-  hero: {
-    headline: string | null;
-    image: {
-      asset: {
-        _id: string;
-        _type: "sanity.imageAsset";
-        _createdAt: string;
-        _updatedAt: string;
-        _rev: string;
-        originalFilename?: string;
-        label?: string;
-        title?: string;
-        description?: string;
-        altText?: string;
-        sha1hash?: string;
-        extension?: string;
-        mimeType?: string;
-        size?: number;
-        assetId?: string;
-        uploadId?: string;
-        path?: string;
-        url?: string;
-        metadata: SanityImageMetadata | null;
-        source?: SanityAssetSourceData;
-      } | null;
-      hotspot: SanityImageHotspot | null;
-      alt: null;
-    } | null;
-    cta: {
-      linkLabel?: string;
-      linkType?: "externalLink" | "toPage" | "toProject";
-      toProject?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "project";
-      };
-      toPage?: "about" | "contact" | "home" | "projects" | "reviews";
-      externalLink?: string;
-    } | null;
-  };
-  projects: {
-    cta: {
-      linkLabel?: string;
-      linkType?: "externalLink" | "toPage" | "toProject";
-      toProject?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "project";
-      };
-      toPage?: "about" | "contact" | "home" | "projects" | "reviews";
-      externalLink?: string;
-    } | null;
-  };
-  services: {
-    title: string | null;
-    description: string | null;
-    backgroundImage: {
-      asset: {
-        _id: string;
-        _type: "sanity.imageAsset";
-        _createdAt: string;
-        _updatedAt: string;
-        _rev: string;
-        originalFilename?: string;
-        label?: string;
-        title?: string;
-        description?: string;
-        altText?: string;
-        sha1hash?: string;
-        extension?: string;
-        mimeType?: string;
-        size?: number;
-        assetId?: string;
-        uploadId?: string;
-        path?: string;
-        url?: string;
-        metadata?: SanityImageMetadata;
-        source?: SanityAssetSourceData;
-      } | null;
-      hotspot: SanityImageHotspot | null;
+  heroHeadline: string | null;
+  heroImage: {
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
       metadata: SanityImageMetadata | null;
+      source?: SanityAssetSourceData;
     } | null;
-    cta: {
-      linkLabel?: string;
-      linkType?: "externalLink" | "toPage" | "toProject";
-      toProject?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "project";
-      };
-      toPage?: "about" | "contact" | "home" | "projects" | "reviews";
-      externalLink?: string;
-    } | null;
-  };
-  review: {
-    reviewerName: string | null;
-    reviewText: string | null;
-    cta: {
-      linkLabel?: string;
-      linkType?: "externalLink" | "toPage" | "toProject";
-      toProject?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "project";
-      };
-      toPage?: "about" | "contact" | "home" | "projects" | "reviews";
-      externalLink?: string;
-    } | null;
-  };
-  meta: {
-    title: null;
-    description: string | null;
-  };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    decorative?: boolean;
+    changed?: boolean;
+    _type: "imageWithMetadata";
+  } | null;
 } | null;
 
 // Source: ./src/app/(site)/queries/logoQuery.ts
 // Variable: QUERY_LOGO
-// Query: *[_type == "companySettingsSingleton"][0]{  logoForLightBG {    asset->{      ...,      metadata {        dimensions,        lqip      },      altText,      title    }  },  logoForDarkBG {    asset->{      ...,      metadata {        dimensions,        lqip      },      altText,      title    }  }}
+// Query: *[_type == "companySettingsSingleton"][0]{  logoForLightBG {    ...,    asset->{      ...,      metadata    }  },  logoForDarkBG {    ...,    asset->{      ...,      metadata    }  }}
 export type QUERY_LOGOResult = {
   logoForLightBG: {
     asset: {
@@ -764,9 +619,9 @@ export type QUERY_LOGOResult = {
       _rev: string;
       originalFilename?: string;
       label?: string;
-      title: string | null;
+      title?: string;
       description?: string;
-      altText: string | null;
+      altText?: string;
       sha1hash?: string;
       extension?: string;
       mimeType?: string;
@@ -775,12 +630,15 @@ export type QUERY_LOGOResult = {
       uploadId?: string;
       path?: string;
       url?: string;
-      metadata: {
-        dimensions: SanityImageDimensions | null;
-        lqip: string | null;
-      } | null;
+      metadata: SanityImageMetadata | null;
       source?: SanityAssetSourceData;
     } | null;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    decorative?: boolean;
+    changed?: boolean;
+    _type: "imageWithMetadata";
   } | null;
   logoForDarkBG: {
     asset: {
@@ -791,9 +649,9 @@ export type QUERY_LOGOResult = {
       _rev: string;
       originalFilename?: string;
       label?: string;
-      title: string | null;
+      title?: string;
       description?: string;
-      altText: string | null;
+      altText?: string;
       sha1hash?: string;
       extension?: string;
       mimeType?: string;
@@ -802,12 +660,15 @@ export type QUERY_LOGOResult = {
       uploadId?: string;
       path?: string;
       url?: string;
-      metadata: {
-        dimensions: SanityImageDimensions | null;
-        lqip: string | null;
-      } | null;
+      metadata: SanityImageMetadata | null;
       source?: SanityAssetSourceData;
     } | null;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    decorative?: boolean;
+    changed?: boolean;
+    _type: "imageWithMetadata";
   } | null;
 } | null;
 
@@ -873,9 +734,8 @@ export type PROJECT_QUERYResult = {
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    "*[_type == \"siteSettingsSingleton\"][0]{\n  reviewCTA,\n  heroCTA,\n  viewReviewsCTA,\n  submitReviewCTA,\n  servicesCTA,\n  projectCTA {\n    // keep all the normal CTA fields\u2026\n    linkLabel, linkType,\n    // then pull in the referenced page\u2019s slug\n    \"toProjectSlug\": toProject->projectSlug.current,\n   \n  }\n}": QUERY_CTAsResult;
-    "*[_type == \"siteSettingsSingleton\"][0]{\n  \"hero\": {\n  \"headline\": heroHeadline,\n  \"image\": heroImage {\n    asset->{\n      ...,\n      metadata\n    },\n    hotspot,\n    alt\n  },\n  \"cta\": heroCTA\n},\n  \"projects\": {\n    \"cta\": projectCTA {\n      ...\n    }\n  },\n  \"services\": {\n    \"title\": servicesTitle,\n    \"description\": servicesDescription,\n    \"backgroundImage\": backgroundImageServices {\n      asset->,\n      hotspot,\n      \"metadata\": asset->metadata\n    },\n    \"cta\": servicesCTA\n  },\n  \"review\": {\n    \"reviewerName\": reviewerName,\n    \"reviewText\": reviewText,\n    \"cta\": reviewCTA\n  },\n  \"meta\": {\n    \"title\": siteTitle,\n    \"description\": description\n  }\n}": QUERY_HOMEResult;
-    "*[_type == \"companySettingsSingleton\"][0]{\n  logoForLightBG {\n    asset->{\n      ...,\n      metadata {\n        dimensions,\n        lqip\n      },\n      altText,\n      title\n    }\n  },\n  logoForDarkBG {\n    asset->{\n      ...,\n      metadata {\n        dimensions,\n        lqip\n      },\n      altText,\n      title\n    }\n  }\n}": QUERY_LOGOResult;
+    "*[_type == \"siteSettingsSingleton\"][0]{\n\n  heroCTA,\n  heroHeadline,\n  heroImage {\n    ...,\n    asset->{\n      ...,\n      metadata\n    }\n  },\n\n}": QUERY_HOMEResult;
+    "*[_type == \"companySettingsSingleton\"][0]{\n  logoForLightBG {\n    ...,\n    asset->{\n      ...,\n      metadata\n    }\n  },\n  logoForDarkBG {\n    ...,\n    asset->{\n      ...,\n      metadata\n    }\n  }\n}": QUERY_LOGOResult;
     "*[_type == \"siteSettingsSingleton\"][0]{\n  homePageNavLabel,\n  projectsPageNavLabel,\n  aboutPageNavLabel,\n  reviewsPageNavLabel,\n  contactPageNavLabel,\n  mobileBackgroundImage {\n    ...,\n    asset->{\n      ...,\n      metadata\n    }\n  }\n}": QUERY_NAVResult;
     "*[\n  _type == \"project\" && defined(projectSlug.current)][0...12]{\n    _id, projectName, projectSlug\n  }\n": PROJECTS_QUERYResult;
     "*[\n  _type == \"project\" && projectSlug.current == $slug][0]{\n    _id, projectName, projectSlug, projectDescription\n  }\n": PROJECT_QUERYResult;

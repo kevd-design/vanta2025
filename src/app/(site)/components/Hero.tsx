@@ -17,7 +17,7 @@ export const Hero: FC<HeroSection> = ({
   
   const { url: imageUrl, generateUrl, setUrl } = useOptimizedImage({
     asset: image?.asset ?? null,
-    hotspot: image?.hotspot ?? undefined,
+    hotspot: image?.hotspot ?? null,
     width: screenWidth,
     height: screenHeight
   })

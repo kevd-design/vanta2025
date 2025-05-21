@@ -10,7 +10,7 @@ import { useBestDpr } from '../hooks/useBestDpr'
 import { useIsMobile } from '../hooks/useIsMobile'
 import { useUrlCache } from '../hooks/useUrlCache'
 import { DIMENSIONS, getNearestBreakpoint, IMAGE_OPTIONS } from '../constants'
-import type { LogoType, NavLabelsType, MobileBackgroundImageType } from '../../types'
+import type { LogoType, NavLabelsType, imageType } from '../../types'
 import { NavLink } from './common/NavLink'
 
 const { 
@@ -21,7 +21,7 @@ const {
 interface NavigationProps {
   logo: LogoType
   navLabels: NavLabelsType
-  mobileBackgroundImage?: MobileBackgroundImageType
+  mobileBackgroundImage?: imageType
 }
 
 export const Navigation: FC<NavigationProps> = ({ logo, navLabels, mobileBackgroundImage }) => {

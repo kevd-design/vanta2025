@@ -4,7 +4,7 @@ import { sanityFetch } from "../../sanity/lib/live";
 import { QUERY_LOGO } from './queries/logoQuery';
 import { QUERY_NAV } from './queries/navQuery';
 import { Navigation } from './components/Navigation';
-import type { LogoType, NavLabelsType, MobileBackgroundImageType } from '../types'
+import type { LogoType, NavLabelsType, imageType } from '../types'
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -32,7 +32,7 @@ if (!logo || !navData) {
       <Navigation
         logo={logo as LogoType}
         navLabels={navData as NavLabelsType}
-        mobileBackgroundImage={navData.mobileBackgroundImage  as MobileBackgroundImageType | undefined}
+        mobileBackgroundImage={navData.mobileBackgroundImage  as imageType | undefined}
       />
         
         {children}
