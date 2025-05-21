@@ -1,39 +1,36 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { DIMENSIONS } from '../constants'
+import { useState, useEffect, useCallback } from 'react';
+import { DIMENSIONS } from '../constants';
+import { useDebounce } from './useDebounce';
+import type { WindowSize } from '../../types/dimensions';
 
-interface WindowSize {
-  width: number
-  height: number
-}
-
-export const useWindowSize = (): WindowSize => {
-  // Move window check to useEffect
+export const useWindowSize = () => {
   const [windowSize, setWindowSize] = useState<WindowSize>({
-    width: DIMENSIONS.screen.defaultWidth,  // Use default values initially
+    width: DIMENSIONS.screen.defaultWidth,
     height: DIMENSIONS.screen.defaultHeight
-  })
+  });
+
+  const handleResize = useCallback(() => {
+    setWindowSize({
+      width: Math.round(window.innerWidth),
+      height: Math.round(window.innerHeight)
+    });
+  }, []);
+
+  const debouncedResize = useDebounce(handleResize, 150); // Match Navigation's timing
 
   useEffect(() => {
-    // Update dimensions only on client-side
-    if (typeof window !== 'undefined') {
-      setWindowSize({
-        width: Math.round(window.innerWidth),
-        height: Math.round(window.innerHeight)
-      })
+    if (typeof window === 'undefined') return;
+    
+    handleResize(); // Initial size
+    window.addEventListener('resize', debouncedResize);
+    
+    return () => {
+      debouncedResize.cancel();
+      window.removeEventListener('resize', debouncedResize);
+    };
+  }, [handleResize, debouncedResize]);
 
-      function handleResize() {
-        setWindowSize({
-          width: Math.round(window.innerWidth),
-          height: Math.round(window.innerHeight)
-        })
-      }
-
-      window.addEventListener('resize', handleResize)
-      return () => window.removeEventListener('resize', handleResize)
-    }
-  }, [])
-
-  return windowSize
-}
+  return windowSize;
+};

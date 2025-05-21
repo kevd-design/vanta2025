@@ -192,9 +192,9 @@ useEffect(() => {
 }, [])
 
   return (
-    <nav>
+    <nav className='absolute top-0 left-0 w-full z-50'>
       {/* Desktop Navigation Bar */}
-      <div className="flex items-center justify-between px-4 py-3 bg-white ">
+      <div className="flex items-center justify-between px-4 h-20 ">
         {/* Logo Section */}
         <Logo 
           logo={logo} 
@@ -232,7 +232,7 @@ useEffect(() => {
           onClose={() => setIsMenuOpen(false)}
           navigationItems={navigationItems}
           backgroundImage={mobileBackgroundImage || null}
-          debugInfo={debugInfo || undefined}
+          debugInfo={debugInfo || null}
           lqip={mobileBackgroundImage?.asset?.metadata?.lqip}
         />
       )}

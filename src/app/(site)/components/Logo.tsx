@@ -61,7 +61,6 @@ export const Logo = ({ logo, debug = false }: LogoProps) => {
         quality: IMAGE_OPTIONS.quality.medium,
         dpr,
         skipRounding: true,
-        preserveAspectRatio: true
       }
     )
   }, [logo, displayWidth, displayHeight, dpr, generateCachedUrl])

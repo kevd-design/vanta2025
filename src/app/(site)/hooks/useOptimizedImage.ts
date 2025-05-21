@@ -7,6 +7,7 @@ import type { UseOptimizedImageProps } from '../../types'
 export const useOptimizedImage = ({
   asset,
   hotspot,
+  crop,
   width,
   height,
   quality = IMAGE_OPTIONS.quality.medium
@@ -22,9 +23,15 @@ export const useOptimizedImage = ({
     return generateCachedUrl(asset, bestWidth, height, {
       quality,
       dpr,
-      hotspot: hotspot ? { x: hotspot.x, y: hotspot.y } : undefined
+      hotspot: hotspot ? { x: hotspot.x, y: hotspot.y } : undefined,
+      crop: crop ? {
+        bottom: crop.bottom,
+        top: crop.top,
+        left: crop.left,
+        right: crop.right
+      } : undefined
     })
-  }, [asset, width, height, quality, dpr, hotspot, generateCachedUrl])
+  }, [asset, width, height, quality, dpr, hotspot, crop, generateCachedUrl])
 
   return {
     url: optimizedUrl,

@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo } from 'react'
 import { useWindowSize } from './useWindowSize'
 import { DIMENSIONS } from '../constants'

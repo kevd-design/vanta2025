@@ -8,17 +8,19 @@ export default function Cta({
   toPage,
   linkType,
   externalLink,
-  toProjectSlug
-
+  toProjectSlug,
+  className
 
 }: CtaProps) {
 
-  console.log("cta label", linkLabel);
+  const classForAll = `flex justify-between items-center gap-2 ${className}`
+
+  console.log('classForAll',classForAll)
 
   if(linkType === "externalLink" && externalLink) {
     return (
       <a
-        className="m-8 flex justify-between items-center gap-2"
+        className={classForAll}
         href={externalLink}
         target="_blank"
         rel="noopener noreferrer"
@@ -32,7 +34,7 @@ export default function Cta({
   if(linkType === "toPage" && toPage) {
     return (
       <Link 
-         className="m-8 flex justify-between items-center gap-2"
+         className={classForAll}
          href={`/${toPage}`}
       >
       <div className="text-lg">{linkLabel}</div> <ArrowRight />
@@ -43,7 +45,7 @@ export default function Cta({
   if(linkType === "toProject" && toProjectSlug) {
     return (
       <Link 
-         className="m-8 flex justify-between items-center gap-2"
+         className={classForAll}
          href={`projects/${toProjectSlug}`}
       >
       <div className="text-lg">{linkLabel}</div> <ArrowRight />

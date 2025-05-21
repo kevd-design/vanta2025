@@ -11,6 +11,7 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        contrast: "var(--contrast-color)",
       },
       fontFamily: {
         sans: ["var(--font-open-sans)", "sans-serif"],

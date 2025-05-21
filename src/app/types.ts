@@ -2,6 +2,8 @@ import type {
   ImageAsset, 
   ImageDimensions,
   ImageHotspot,
+  ImageCrop,
+  
 } from '@sanity/types'
 
 export interface LogoType {
@@ -23,6 +25,8 @@ export interface SanityImage {
       lqip?: string | null
     } | null
   } | null
+  hotspot?: ImageHotspot | null
+  crop?: ImageCrop | null
 }
 
 
@@ -45,12 +49,7 @@ export interface imageType {
       }
     }
   }
-  crop?: {
-    top: number
-    bottom: number
-    left: number
-    right: number
-  }
+  crop?: ImageCrop | null;
   hotspot: ImageHotspot | null;
 }
 
@@ -62,25 +61,11 @@ export interface NavigationItem {
 export interface MobileNavigationProps {
   isOpen: boolean;
   onClose: () => void;
-  backgroundImage: {
-    asset: ImageAsset | null;
-    hotspot: ImageHotspot | null;
-    metadata?: {
-      lqip?: string;
-    };
-  } | null;
-  navigationItems: Array<{
-    label: string;
-    href: string;
-  }>;
-  debugInfo?: {
-    url: string;
-    width: number;
-    dpr: number;
-  };
-  lqip?: string;
+  backgroundImage: SanityImage | null;
+  navigationItems: NavigationItem[];
+  debugInfo: debugInfo | null;
+  lqip: string | undefined;
 }
-
 
 export interface CtaProps {
   linkLabel?: string;
@@ -88,6 +73,7 @@ export interface CtaProps {
   toPage?: string;
   externalLink?: string;
   toProjectSlug?: string;
+  className?: string;
 }
 
 export interface UrlOptions {
@@ -100,25 +86,21 @@ export interface UrlOptions {
 
 export interface UseOptimizedImageProps {
   asset: ImageAsset | null;
-  hotspot: ImageHotspot | null;
-  width: number
-  height: number
-  quality?: number
+  hotspot?: {
+    x: number;
+    y: number;
+  } | null;
+  crop?: ImageCrop | null;
+  width: number;
+  height: number;
+  quality?: number;
 }
-
 
 
 // Hero Section
 export interface HeroSection {
   headline: string | null;
-  image: {
-    asset: ImageAsset | null;
-    hotspot: ImageHotspot | null;
-    metadata?: {
-      lqip?: string;
-    };
-    alt?: string;
-  } | null;
+  image: SanityImage | null;
   cta: CTAType | null;
 }
 
@@ -134,6 +116,7 @@ export interface ServicesSection {
   backgroundImage: {
     asset: ImageAsset;
     hotspot: ImageHotspot | null;
+    crop: ImageCrop | null;
     metadata?: {
       lqip?: string;
     };
@@ -168,6 +151,7 @@ export interface QueryHomeResult {
     headline: string | null;
     image: {
       asset: ImageAsset | null;
+      crop: ImageCrop | null;
       hotspot: ImageHotspot | null;
       alt: string | null;
     } | null;
@@ -182,6 +166,7 @@ export interface QueryHomeResult {
     backgroundImage: {
       asset: ImageAsset;
       hotspot: ImageHotspot | null;
+      ImageCrop: ImageCrop | null;
       metadata?: {
       lqip?: string;
     };
@@ -211,3 +196,9 @@ export interface CTAType {
   externalLink?: string;
 }
 
+
+export interface debugInfo {
+    url: string | null,
+    width: number,
+    dpr: number
+}
