@@ -25,6 +25,7 @@ export default async function Home() {
         headline={heroData.heroHeadline}
         cta={heroData.heroCTA as CTAType | null}
       />
+      <p>content</p>
     </main>
 
   );

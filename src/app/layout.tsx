@@ -1,17 +1,22 @@
 import type { Metadata } from "next";
-import { Open_Sans, Gilda_Display } from "next/font/google";
+
 import "./globals.css";
+import { Open_Sans, Gilda_Display } from "next/font/google";
+
 
 const openSans = Open_Sans({
   subsets: ["latin"],
+  display: 'swap',
   variable: '--font-open-sans',
 });
 
 const gildaDisplay = Gilda_Display({
-  weight: ["400"],
+  weight: ['400'],
   subsets: ["latin"],
+  display: 'swap',
   variable: '--font-gilda-display',
 });
+
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -24,9 +29,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${openSans.variable} ${gildaDisplay.variable} antialiased`}>
       
-      <body className={`${openSans.variable} ${gildaDisplay.variable} font-sans`}>
+      <body>
       
         {children}
         

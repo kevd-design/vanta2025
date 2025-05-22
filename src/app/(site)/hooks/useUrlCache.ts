@@ -1,6 +1,6 @@
 import { useMemo, useCallback } from 'react'
 import { urlFor } from '@/sanity/lib/image'
-import type { ImageAsset } from '@sanity/types'
+import type { Image, ImageAsset, ImageMetadata, Reference } from '@sanity/types'
 import { BREAKPOINTS } from '../constants/breakpoints'
 import { IMAGE_OPTIONS } from '../constants/image'
 
@@ -44,59 +44,24 @@ const IS_DEVELOPMENT = process.env.NODE_ENV === 'development'
 const DEBUG = IS_DEVELOPMENT // Only debug in development
 
 const buildImageUrl = (
-  asset: ImageAsset,
+  image: Image, // Accept full image record
   width: number,
   quality: number,
-  dpr: number,
-  options?: {
-    hotspot?: { x: number; y: number }
-    crop?: { bottom: number; top: number; left: number; right: number } | null
-  }
+  dpr: number
 ) => {
-  let urlBuilder = urlFor(asset)
+  return urlFor(image)
     .auto('format')
+    .width(width)
     .quality(quality)
-    .dpr(dpr);
-
-  if (options?.crop) {
-    // Convert relative values to absolute pixels
-    const originalWidth = asset.metadata?.dimensions?.width || 3600;
-    const originalHeight = asset.metadata?.dimensions?.height || 5400;
-    
-    const rect = {
-      left: Math.round(options.crop.left * originalWidth),
-      top: Math.round(options.crop.top * originalHeight),
-      width: Math.round((1 - (options.crop.left + options.crop.right)) * originalWidth),
-      height: Math.round((1 - (options.crop.top + options.crop.bottom)) * originalHeight)
-    };
-
-    void (DEBUG && console.log('Crop calculations:', {
-      original: { width: originalWidth, height: originalHeight },
-      crop: options.crop,
-      rect
-    }));
-
-    urlBuilder = urlBuilder
-      .rect(rect.left, rect.top, rect.width, rect.height)
-      .width(width) // Apply width after crop
-      .fit('crop');
-  } else {
-    urlBuilder = urlBuilder.width(width);
-  }
-
-  // Apply hotspot only if no crop is specified
-  if (options?.hotspot && !options?.crop) {
-    urlBuilder = urlBuilder
-      .crop('focalpoint')
-      .focalPoint(options.hotspot.x, options.hotspot.y);
-  }
-
-  return urlBuilder;
+    .dpr(dpr)
+    .url();
 };
 
-const getAspectRatio = (asset: ImageAsset, width: number, height: number) => 
-  asset.metadata?.dimensions?.aspectRatio || 
-  (asset.metadata?.dimensions?.width || width) / (asset.metadata?.dimensions?.height || height);
+const getAspectRatio = (image: Image, width: number, height: number) => {
+  const assetMetadata = ((image.asset as Reference) as unknown as ImageAsset)?.metadata as ImageMetadata
+  return assetMetadata?.dimensions?.aspectRatio || 
+    (assetMetadata?.dimensions?.width || width) / (assetMetadata?.dimensions?.height || height)
+}
 
 const generateCacheKey = (
   width: number,
@@ -122,30 +87,28 @@ export function useUrlCache() {
   const urlCache = useMemo(() => 
     IS_DEVELOPMENT ? new Map<string, string>() : null, []);
 
-  const generateDirectUrl = useCallback((
-    asset: ImageAsset,
-    width: number,
-    options?: ImageUrlOptions
-  ) => {
-    if (!asset) return '';
+const generateDirectUrl = useCallback((
+  image: Image,
+  width: number,
+  options?: ImageUrlOptions
+) => {
+  if (!image) return '';
 
-  const urlBuilder = buildImageUrl(
-    asset,
+  return buildImageUrl(
+    image,
     width,
     options?.quality ?? IMAGE_OPTIONS.quality.medium,
-    options?.dpr ?? 1,
-    { hotspot: options?.hotspot, crop: options?.crop }
+    options?.dpr ?? 1
   );
-    return urlBuilder.url();
-  }, []);
+}, []);
 
     const generateCachedUrl = useCallback((
-    asset: ImageAsset,
+    asset: Image,
     width: number,
     height: number,
     options?: ImageUrlOptions
   ) => {
-    if (!asset) return '';
+    if (!Image) return '';
 
     if (!IS_DEVELOPMENT || !urlCache) {
       return generateDirectUrl(asset, width, options);
@@ -169,7 +132,7 @@ export function useUrlCache() {
     logCacheMiss(cacheKey, newUrl, finalWidth, finalHeight, focalX, focalY);
     urlCache.set(cacheKey, newUrl);
     return newUrl;
-  }, [urlCache, generateDirectUrl]); // Add generateDirectUrl as dependency
+  }, [urlCache, generateDirectUrl]); 
 
   return { generateCachedUrl, isCacheEnabled: IS_DEVELOPMENT };
 }

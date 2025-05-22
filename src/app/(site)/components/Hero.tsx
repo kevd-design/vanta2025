@@ -9,6 +9,9 @@ import type { HeroSection } from '../../types'
 import { useImageColorMap } from '../hooks/useImageColorMap';
 import { useElementMap } from '../hooks/useElementMap'
 import { useAccessibilityMap } from '../hooks/useAccessibilityMap'
+import { useImageRenderInfo } from '../hooks/useImageRenderInfo'
+import { ColorMapOverlay, ElementMapOverlay, DebugControls, ImageDebugOverlay } from './overlays'
+import { useDebug } from '../context/DebugContext'
 
 
 export const Hero: FC<HeroSection> = ({
@@ -17,7 +20,9 @@ export const Hero: FC<HeroSection> = ({
   cta
 }) => {
 
-  
+  console.log('image', image)
+
+  const { isDebugMode } = useDebug()
   const [showColorMap, setShowColorMap] = useState(false);
   const [showElementMap, setShowElementMap] = useState(false);
 
@@ -28,9 +33,11 @@ export const Hero: FC<HeroSection> = ({
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
 
-
-
-  
+  const renderInfo = useImageRenderInfo({
+  containerWidth,
+  containerHeight: screenWidth >= 768 ? 1582 : Math.floor(screenHeight * 0.9),
+  hotspot: image?.hotspot
+  })
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -46,20 +53,7 @@ export const Hero: FC<HeroSection> = ({
     return () => observer.disconnect();
   }, []);
 
-  const renderInfo = useMemo(() => ({
-    containerWidth,
-    containerHeight: Math.floor(screenHeight * 0.9),
-    objectFit: 'cover' as const,
-    objectPosition: {
-      x: image?.hotspot?.x ?? 0.5,
-      y: image?.hotspot?.y ?? 0.5
-    }
-  }), [
-    image?.hotspot?.x,
-    image?.hotspot?.y,
-    containerWidth,
-    screenHeight,
-  ]);
+
 
 
 
@@ -68,7 +62,8 @@ const { url: imageUrl, generateUrl, setUrl } = useOptimizedImage({
   hotspot: image?.hotspot ?? null,
   crop: image?.crop ?? null,
   width: screenWidth,
-  height: screenHeight
+  height: screenHeight,
+  quality: 70
 })
 
   // Generate image URL on mount and screen size changes
@@ -136,8 +131,51 @@ useEffect(() => {
   }
 }, [screenWidth, screenHeight, generateUrl, setUrl, image?.crop, image?.hotspot, containerWidth])
 
+
+  // Only render debug controls if debug mode is enabled
+  const renderDebugControls = () => {
+    if (!isDebugMode) return null
+
+    return (
+      <>
+        <ColorMapOverlay 
+          colorMap={colorMap} 
+          show={showColorMap} 
+        />
+        <ElementMapOverlay 
+          elementMap={elementMap} 
+          show={showElementMap}
+        />
+        <ImageDebugOverlay
+          show={true}
+          imageUrl={imageUrl || ''}
+          renderInfo={renderInfo}
+          screenDimensions={{
+            width: screenWidth,
+            height: screenHeight
+          }}
+        />
+        <DebugControls
+          showColorMap={showColorMap}
+          showElementMap={showElementMap}
+          onToggleColorMap={toggleColorMap}
+          onToggleElementMap={toggleElementMap}
+        />
+      </>
+    )
+  }
+
   return (
-    <div ref={containerRef} className="relative w-full h-[90vh]">
+    <div ref={containerRef} className="
+        relative w-full 
+    h-[90vh] 
+    sm:h-[800px]
+    md:h-[1200px] 
+    lg:h-[1582px] 
+    xl:h-[1800px] 
+    2xl:h-[2000px]
+    "
+    >
       {/* Background Image Container */}
       <div className="absolute inset-0 w-full h-full">
         {imageUrl && image?.asset && (
@@ -147,11 +185,7 @@ useEffect(() => {
             alt={image?.asset?.altText || ''}
             priority
             className="w-full h-full object-cover"
-            style={{
-              objectPosition: image?.hotspot
-                ? `${image.hotspot.x * 100}% ${image.hotspot.y * 100}%`
-                : '50% 50%'
-            }}
+
             sizes="100vw"
             placeholder={image?.asset?.metadata?.lqip ? "blur" : undefined}
             blurDataURL={image?.asset?.metadata?.lqip}
@@ -163,103 +197,35 @@ useEffect(() => {
               });
             }}
           />
-          {/* Color Map Overlay */}
-          {showColorMap && (
-            <div className="absolute inset-0 z-10">
-              <div 
-                className="relative w-full h-full" 
-                style={{ 
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(100, 1%)',
-                  gridTemplateRows: 'repeat(100, 1%)',
-                }}
-              >
-                {colorMap.flat().map((cell, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      backgroundColor: cell.color,
-                      opacity: 0.5,
-                      position: 'relative',
-                      width: '100%',
-                      height: '100%'
-                    }}
-                    title={`Luminance: ${cell.luminance.toFixed(2)}`}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
+          {renderDebugControls()}
 
-          {/* Element Map Overlay */}
-        {showElementMap && (
-              <div className="absolute inset-0 z-20">
-                <div 
-                  className="relative w-full h-full border-2 border-black" 
-                  style={{ 
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(100, 1%)',
-                    gridTemplateRows: 'repeat(100, 1%)',
-                  }}
-                >
-                  {elementMap.flat().map((cell, i) => (
-                    <div
-                      key={i}
-                      style={{
-                        backgroundColor: cell.isElement ? 'rgba(255, 0, 0, 0.3)' : 'transparent',
-                        border: cell.isElement ? '1px solid rgba(255, 0, 0, 0.5)' : 'none'
-                      }}
-                      title={cell.elementLabel}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Toggle Button */}
-          <div className="absolute top-24 right-4 z-20 flex flex-col gap-2">
-              <button
-                onClick={toggleColorMap}
-                className="bg-black/50 text-white px-4 py-2 rounded hover:bg-black/70"
-              >
-                {showColorMap ? 'Hide Color Map' : 'Show Color Map'}
-              </button>
-              <button
-                onClick={toggleElementMap}
-                className="bg-black/50 text-white px-4 py-2 rounded hover:bg-black/70"
-              >
-                {showElementMap ? 'Hide Element Map' : 'Show Element Map'}
-              </button>
-            </div>
         </>
         )}
         
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto h-full flex flex-col items-center justify-center pt-30">
-        {headline && (
-          <h1 
-          ref={headlineRef}
-          className={`
-          text-5xl md:text-7xl font-bold 
-          max-w-3xl text-center
-          ${getTextColorClass('Headline')}
-          `}>
-            {headline}
-          </h1>
-        )}
-        {cta && (
-          <div 
-          ref={ctaRef} 
-          className={`
-            mt-8
-            ${getTextColorClass('CTA')}
+      <div className="relative z-10 container mx-auto h-full flex flex-col items-center justify-center md:justify-start">
+        <div className="w-full flex flex-col items-center md:pt-[40vh] space-y-8">
+          {headline && (
+            <h1 
+            ref={headlineRef}
+            className={`font-display font-normal text-5xl md:text-[96px] max-w-3xl text-center leading-tight px-12 ${getTextColorClass('Headline')}`}>
+              {headline}
+            </h1>
+          )}
+          {cta && (
+            <div 
+            ref={ctaRef} 
+            className={`
+              mt-8
+              ${getTextColorClass('CTA')}
 
-          `}>
-            <CTA {...cta} />
-          </div>
-        )}
+            `}>
+              <CTA {...cta} />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

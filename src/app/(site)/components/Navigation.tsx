@@ -13,6 +13,7 @@ import { DIMENSIONS, getNearestBreakpoint, IMAGE_OPTIONS } from '../constants'
 import type { LogoType, NavLabelsType, imageType } from '../../types'
 import { NavLink } from './common/NavLink'
 
+
 const { 
   defaultWidth: DEFAULT_SCREEN_WIDTH, 
   defaultHeight: DEFAULT_SCREEN_HEIGHT 

@@ -20,7 +20,10 @@ export const useOptimizedImage = ({
     if (!asset) return null
 
     const bestWidth = getNearestBreakpoint(width)
-    return generateCachedUrl(asset, bestWidth, height, {
+    const adjustedWidth = Math.round(bestWidth * dpr)
+    
+
+    return generateCachedUrl(asset, adjustedWidth, height, {
       quality,
       dpr,
       hotspot: hotspot ? { x: hotspot.x, y: hotspot.y } : undefined,

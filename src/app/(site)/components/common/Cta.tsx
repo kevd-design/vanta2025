@@ -15,7 +15,6 @@ export default function Cta({
 
   const classForAll = `flex justify-between items-center gap-2 ${className}`
 
-  console.log('classForAll',classForAll)
 
   if(linkType === "externalLink" && externalLink) {
     return (

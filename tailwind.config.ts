@@ -13,10 +13,6 @@ export default {
         foreground: "var(--foreground)",
         contrast: "var(--contrast-color)",
       },
-      fontFamily: {
-        sans: ["var(--font-open-sans)", "sans-serif"],
-        display: ["var(--font-gilda-display)", "sans-serif"],
-      },
       keyframes: {
         'slide-down': {
           '0%': { transform: 'translateY(-100%)' },

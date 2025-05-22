@@ -202,3 +202,14 @@ export interface debugInfo {
     width: number,
     dpr: number
 }
+
+export interface ImageRenderInfo {
+  containerWidth: number
+  containerHeight: number
+  objectFit: 'cover' | 'contain'
+  objectPosition: {
+    x: number
+    y: number
+  }
+}
+

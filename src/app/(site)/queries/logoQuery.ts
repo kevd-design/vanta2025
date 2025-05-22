@@ -1,18 +1,7 @@
 import { defineQuery } from "next-sanity"
+import { IMAGE_WITH_METADATA } from "./fragments/imageFragment"
 
 export const QUERY_LOGO = defineQuery(`*[_type == "companySettingsSingleton"][0]{
-  logoForLightBG {
-    ...,
-    asset->{
-      ...,
-      metadata
-    }
-  },
-  logoForDarkBG {
-    ...,
-    asset->{
-      ...,
-      metadata
-    }
-  }
+  logoForLightBG {${IMAGE_WITH_METADATA}},
+  logoForDarkBG {${IMAGE_WITH_METADATA}}
 }`)

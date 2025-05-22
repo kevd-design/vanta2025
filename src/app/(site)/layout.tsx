@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import { SanityLive } from "@/sanity/lib/live";
 import { sanityFetch } from "../../sanity/lib/live";
@@ -5,6 +6,8 @@ import { QUERY_LOGO } from './queries/logoQuery';
 import { QUERY_NAV } from './queries/navQuery';
 import { Navigation } from './components/Navigation';
 import type { LogoType, NavLabelsType, imageType } from '../types'
+import { DebugProvider } from './context/DebugContext'
+import { DebugKeyboardProvider } from './components/providers/DebugKeyboardProvider'
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -27,17 +30,18 @@ if (!logo || !navData) {
 
 
   return (
-    <>
-    
-      <Navigation
-        logo={logo as LogoType}
-        navLabels={navData as NavLabelsType}
-        mobileBackgroundImage={navData.mobileBackgroundImage  as imageType | undefined}
-      />
-        
-        {children}
+    <DebugProvider>
+      <DebugKeyboardProvider>
+        <Navigation
+          logo={logo as LogoType}
+          navLabels={navData as NavLabelsType}
+          mobileBackgroundImage={navData.mobileBackgroundImage  as imageType | undefined}
+        />
+          
+          {children}
 
-        <SanityLive />
-    </>
+          <SanityLive />
+        </DebugKeyboardProvider>
+    </DebugProvider>
   );
 }

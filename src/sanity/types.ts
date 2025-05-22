@@ -559,7 +559,7 @@ export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./src/app/(site)/queries/homeQuery.ts
 // Variable: QUERY_HOME
-// Query: *[_type == "siteSettingsSingleton"][0]{  heroCTA,  heroHeadline,  heroImage {    ...,    asset->{      ...,      metadata    }  },}
+// Query: *[_type == "siteSettingsSingleton"][0]{  heroCTA,  heroHeadline,  heroImage {  ...,  asset->{    ...,    metadata  }},}
 export type QUERY_HOMEResult = {
   heroCTA: {
     linkLabel?: string;
@@ -608,7 +608,7 @@ export type QUERY_HOMEResult = {
 
 // Source: ./src/app/(site)/queries/logoQuery.ts
 // Variable: QUERY_LOGO
-// Query: *[_type == "companySettingsSingleton"][0]{  logoForLightBG {    ...,    asset->{      ...,      metadata    }  },  logoForDarkBG {    ...,    asset->{      ...,      metadata    }  }}
+// Query: *[_type == "companySettingsSingleton"][0]{  logoForLightBG {  ...,  asset->{    ...,    metadata  }},  logoForDarkBG {  ...,  asset->{    ...,    metadata  }}}
 export type QUERY_LOGOResult = {
   logoForLightBG: {
     asset: {
@@ -674,7 +674,7 @@ export type QUERY_LOGOResult = {
 
 // Source: ./src/app/(site)/queries/navQuery.ts
 // Variable: QUERY_NAV
-// Query: *[_type == "siteSettingsSingleton"][0]{  homePageNavLabel,  projectsPageNavLabel,  aboutPageNavLabel,  reviewsPageNavLabel,  contactPageNavLabel,  mobileBackgroundImage {    ...,    asset->{      ...,      metadata    }  }}
+// Query: *[_type == "siteSettingsSingleton"][0]{  homePageNavLabel,  projectsPageNavLabel,  aboutPageNavLabel,  reviewsPageNavLabel,  contactPageNavLabel,  mobileBackgroundImage {  ...,  asset->{    ...,    metadata  }}}
 export type QUERY_NAVResult = {
   homePageNavLabel: string | null;
   projectsPageNavLabel: string | null;
@@ -734,9 +734,9 @@ export type PROJECT_QUERYResult = {
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    "*[_type == \"siteSettingsSingleton\"][0]{\n\n  heroCTA,\n  heroHeadline,\n  heroImage {\n    ...,\n    asset->{\n      ...,\n      metadata\n    }\n  },\n\n}": QUERY_HOMEResult;
-    "*[_type == \"companySettingsSingleton\"][0]{\n  logoForLightBG {\n    ...,\n    asset->{\n      ...,\n      metadata\n    }\n  },\n  logoForDarkBG {\n    ...,\n    asset->{\n      ...,\n      metadata\n    }\n  }\n}": QUERY_LOGOResult;
-    "*[_type == \"siteSettingsSingleton\"][0]{\n  homePageNavLabel,\n  projectsPageNavLabel,\n  aboutPageNavLabel,\n  reviewsPageNavLabel,\n  contactPageNavLabel,\n  mobileBackgroundImage {\n    ...,\n    asset->{\n      ...,\n      metadata\n    }\n  }\n}": QUERY_NAVResult;
+    "*[_type == \"siteSettingsSingleton\"][0]{\n\n  heroCTA,\n  heroHeadline,\n  heroImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n\n}": QUERY_HOMEResult;
+    "*[_type == \"companySettingsSingleton\"][0]{\n  logoForLightBG {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n  logoForDarkBG {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n}\n}": QUERY_LOGOResult;
+    "*[_type == \"siteSettingsSingleton\"][0]{\n  homePageNavLabel,\n  projectsPageNavLabel,\n  aboutPageNavLabel,\n  reviewsPageNavLabel,\n  contactPageNavLabel,\n  mobileBackgroundImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n}\n}": QUERY_NAVResult;
     "*[\n  _type == \"project\" && defined(projectSlug.current)][0...12]{\n    _id, projectName, projectSlug\n  }\n": PROJECTS_QUERYResult;
     "*[\n  _type == \"project\" && projectSlug.current == $slug][0]{\n    _id, projectName, projectSlug, projectDescription\n  }\n": PROJECT_QUERYResult;
   }
