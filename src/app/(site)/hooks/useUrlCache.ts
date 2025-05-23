@@ -108,7 +108,7 @@ const generateDirectUrl = useCallback((
     height: number,
     options?: ImageUrlOptions
   ) => {
-    if (!Image) return '';
+
 
     if (!IS_DEVELOPMENT || !urlCache) {
       return generateDirectUrl(asset, width, options);
