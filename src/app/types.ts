@@ -1,14 +1,42 @@
 import type { 
   ImageAsset, 
-  ImageDimensions,
   ImageHotspot,
   ImageCrop,
   
 } from '@sanity/types'
 
+import type { 
+  SanityAsset, 
+  SanityImageCrop, 
+  SanityImageHotspot 
+} from '@sanity/image-url/lib/types/types'
+
+import type { RefObject } from 'react'
+
+// Base image types
+export interface SanityImageMetadata {
+  dimensions?: {
+    width: number
+    height: number
+    aspectRatio: number
+  } | null
+  lqip?: string | null
+}
+
+export interface SanityImageObject {
+  _type: 'image' | 'imageWithMetadata'
+  asset: SanityAsset & {
+    altText?: string | null
+    metadata?: SanityImageMetadata
+    url?: string
+  }
+  hotspot?: SanityImageHotspot
+  crop?: SanityImageCrop
+}
+
 export interface LogoType {
-  logoForLightBG?: SanityImage | null
-  logoForDarkBG?: SanityImage | null
+  logoForLightBG?: SanityImageObject | null
+  logoForDarkBG?: SanityImageObject | null
 }
 
 export interface LogoProps {
@@ -16,17 +44,10 @@ export interface LogoProps {
   debug?: boolean
 }
 
-export interface SanityImage {
-  asset?: ImageAsset & {
-    altText?: string | null
-    title?: string | null
-    metadata?: {
-      dimensions?: ImageDimensions | null
-      lqip?: string | null
-    } | null
-  } | null
-  hotspot?: ImageHotspot | null
-  crop?: ImageCrop | null
+export interface NavigationProps {
+  logo: LogoType
+  navLabels: NavLabelsType
+  mobileBackgroundImage?: SanityImageObject
 }
 
 
@@ -37,34 +58,18 @@ export interface NavLabelsType {
   reviewsPageNavLabel: string
   contactPageNavLabel: string
 }
-
-export interface imageType {
-  asset: ImageAsset & {
-    metadata: {
-      lqip: string
-      dimensions: {
-        aspectRatio: number
-        width: number
-        height: number
-      }
-    }
-  }
-  crop?: ImageCrop | null;
-  hotspot: ImageHotspot | null;
-}
-
 export interface NavigationItem {
   label: string;
   href: string;
 }
 
 export interface MobileNavigationProps {
-  isOpen: boolean;
-  onClose: () => void;
-  backgroundImage: SanityImage | null;
-  navigationItems: NavigationItem[];
-  debugInfo: debugInfo | null;
-  lqip: string | undefined;
+  isOpen: boolean
+  onClose: () => void
+  backgroundImage: SanityImageObject
+  navigationItems: NavigationItem[]
+  debugInfo: DebugInfo | null
+  lqip?: string
 }
 
 export interface CtaProps {
@@ -85,23 +90,25 @@ export interface UrlOptions {
 }
 
 export interface UseOptimizedImageProps {
-  asset: ImageAsset | null;
+  asset: SanityAsset | null;
   hotspot?: {
     x: number;
     y: number;
+    width: number;
+    height: number;
   } | null;
-  crop?: ImageCrop | null;
+  crop?: SanityImageCrop | null;
   width: number;
-  height: number;
+  height: number | null;
   quality?: number;
 }
 
 
 // Hero Section
 export interface HeroSection {
-  headline: string | null;
-  image: SanityImage | null;
-  cta: CTAType | null;
+  headline: string | null
+  image: SanityImageObject | null
+  cta: CTAType | null
 }
 
 // Projects Section
@@ -197,19 +204,112 @@ export interface CTAType {
 }
 
 
-export interface debugInfo {
-    url: string | null,
-    width: number,
-    dpr: number
+export interface DebugInfo {
+  hasColorMap: boolean;
+  hasElementMap: boolean;
+  elementColors: Record<string, {
+    color: string;
+    background?: boolean;
+  }>;
 }
 
-export interface ImageRenderInfo {
+interface BaseImageOptions {
   containerWidth: number
   containerHeight: number
+  hotspot?: SanityImageHotspot | null
+}
+
+export interface ImageRenderInfo extends BaseImageOptions {
+  objectFit: 'cover' | 'contain'
+  objectPosition: {
+    x: number
+    y: number
+  };
+  hotspot?: SanityImageHotspot | null;
+}
+
+export interface ColorMapOptions extends BaseImageOptions {
   objectFit: 'cover' | 'contain'
   objectPosition: {
     x: number
     y: number
   }
+}
+
+export interface ImageUrlOptions {
+  quality?: number;
+  dpr?: number;
+  hotspot?: ImageHotspot | null;
+  crop?: SanityImageCrop | null;
+  skipRounding?: boolean;
+}
+
+export interface OptimizedImageProps {
+  image: SanityImageObject
+  width: number
+  height: number
+  quality?: number
+  priority?: boolean
+  className?: string
+  objectFit?: 'cover' | 'contain'
+  showDebug?: boolean
+}
+
+export interface ElementMap {
+  ref: RefObject<HTMLElement | null>;
+  label: string;
+  rect?: DOMRect;
+}
+
+export interface ElementMapRef {
+  ref: RefObject<HTMLDivElement | HTMLHeadingElement | null>;
+  label: string;
+}
+
+// Color Map Types
+export interface ColorMapOptions {
+  containerWidth: number
+  containerHeight: number
+}
+
+export interface ImageColorMapOptions {
+  containerWidth: number;
+  containerHeight: number;
+  hotspot?: SanityImageHotspot | null;
+  objectFit: 'cover' | 'contain'; 
+  objectPosition?: {
+    x: number;
+    y: number;
+  };
+}
+
+export interface ColorMapResult {
+  colorMap: string[];
+  length: number;
+}
+
+export interface ImageDebugOverlayProps {
+  show: boolean
+  imageUrl: string
+  renderInfo: Partial<ImageRenderInfo>
+  screenDimensions: {
+    width: number
+    height: number
+  }
+}
+
+export interface CropDimensions {
+  sourceWidth: number;
+  sourceHeight: number;
+  targetWidth: number;
+  targetHeight: number;
+  hotspot: SanityImageHotspot | null;
+}
+
+export interface CropRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 }
 

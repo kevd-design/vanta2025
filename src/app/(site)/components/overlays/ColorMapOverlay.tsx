@@ -2,17 +2,32 @@ import { FC } from 'react'
 import { OVERLAY_CONFIG } from './constants'
 import type { ColorMapOverlayProps } from './types'
 
-export const ColorMapOverlay: FC<ColorMapOverlayProps> = ({ colorMap, show, className = '' }) => {
+export const ColorMapOverlay: FC<ColorMapOverlayProps> = ({ 
+  colorMap, 
+  show, 
+  className = '' 
+}) => {
   if (!show) return null
 
   return (
-    <div className={`absolute inset-0 z-${OVERLAY_CONFIG.zIndex.colorMap} ${className}`}>
+    <div 
+      className={`absolute inset-0 w-full h-full ${className}`}
+      style={{
+        zIndex: OVERLAY_CONFIG.zIndex.colorMap
+      }}
+    >
       <div 
-        className="relative w-full h-full" 
+        className="w-full h-full" 
         style={{ 
           display: 'grid',
-          gridTemplateColumns: `repeat(${OVERLAY_CONFIG.grid.columns}, 1%)`,
-          gridTemplateRows: `repeat(${OVERLAY_CONFIG.grid.rows}, 1%)`,
+          gridTemplateColumns: `repeat(${OVERLAY_CONFIG.grid.columns}, 1fr)`,
+          gridTemplateRows: `repeat(${OVERLAY_CONFIG.grid.rows}, 1fr)`,
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          overflow: 'hidden'
         }}
       >
         {colorMap.flat().map((cell, i) => (

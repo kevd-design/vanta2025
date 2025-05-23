@@ -1,12 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { ColorMap, ColorMapCell } from '../../types/colorMap';
-
-type ImageRenderInfo = {
-  containerWidth: number;
-  containerHeight: number;
-  objectFit: 'cover' | 'contain';
-  objectPosition: { x: number; y: number };
-};
+import type { CropDimensions, CropRect, ImageRenderInfo } from '../../types'
 
 export const useImageColorMap = (
     imageUrl: string | null, 
@@ -28,45 +22,44 @@ export const useImageColorMap = (
   ]);
 
   const processImage = useCallback((img: HTMLImageElement) => {
+  const { 
+    containerWidth, 
+    containerHeight, 
+    hotspot 
+  } = memoizedRenderInfo as ImageRenderInfo;
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
     if (!ctx) return;
 
-    const { containerWidth, containerHeight, objectPosition } = memoizedRenderInfo;
-
-    // Use exact pixel dimensions
+    // Ensure integer dimensions
     const exactWidth = Math.floor(containerWidth);
     const exactHeight = Math.floor(containerHeight);
 
     canvas.width = exactWidth;
     canvas.height = exactHeight;
-
-    // Calculate image scaling
-    const imageAspectRatio = img.width / img.height;
-    const containerAspectRatio = exactWidth / exactHeight;
-
-    let sourceWidth, sourceHeight, sourceX, sourceY;
-
-    if (containerAspectRatio > imageAspectRatio) {
-      sourceWidth = img.width;
-      sourceHeight = img.width / containerAspectRatio;
-      sourceX = 0;
-      sourceY = (img.height - sourceHeight) * objectPosition.y;
-    } else {
-      sourceHeight = img.height;
-      sourceWidth = img.height * containerAspectRatio;
-      sourceX = (img.width - sourceWidth) * objectPosition.x;
-      sourceY = 0;
-    }
     
-    // Draw image with precise dimensions
-    ctx.drawImage(
-      img,
-      sourceX, sourceY,
-      sourceWidth, sourceHeight,
-      0, 0,
-      exactWidth, exactHeight
-    );
+    // Calculate crop rect using hotspot
+    const cropRect = calculateCropRect({
+      sourceWidth: img.width,
+      sourceHeight: img.height,
+      targetWidth: exactWidth,
+      targetHeight: exactHeight,
+      hotspot: hotspot ?? { x: 0.5, y: 0.5, height: 1, width: 1 }
+    });
+
+    // Clear and draw
+      ctx.drawImage(
+    img,
+    cropRect.x,
+    cropRect.y,
+    cropRect.width,
+    cropRect.height,
+    0,
+    0,
+    exactWidth,
+    exactHeight
+  );
+
 
     // Calculate precise grid cell dimensions
     const cellWidth = exactWidth / gridSize;
@@ -110,6 +103,33 @@ export const useImageColorMap = (
 
     return newColorMap;
   }, [memoizedRenderInfo, gridSize]);
+
+  const calculateCropRect = ({
+  sourceWidth,
+  sourceHeight,
+  targetWidth,
+  targetHeight,
+  hotspot
+}: CropDimensions): CropRect => {
+  const aspect = targetWidth / targetHeight;
+  const sourceAspect = sourceWidth / sourceHeight;
+
+  let width, height, x, y;
+
+  if (aspect > sourceAspect) {
+    width = sourceWidth;
+    height = sourceWidth / aspect;
+    x = 0;
+    y = (sourceHeight - height) * (hotspot?.y ?? 0.5);
+  } else {
+    height = sourceHeight;
+    width = sourceHeight * aspect;
+    x = (sourceWidth - width) * (hotspot?.x ?? 0.5);
+    y = 0;
+  }
+
+  return { x, y, width, height };
+};
 
   useEffect(() => {
     let mounted = true;

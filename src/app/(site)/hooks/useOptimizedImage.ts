@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { useUrlCache } from './useUrlCache'
 import { useBestDpr } from './useBestDpr'
-import { IMAGE_OPTIONS, getNearestBreakpoint } from '../constants'
+import { IMAGE_OPTIONS } from '../constants'
 import type { UseOptimizedImageProps } from '../../types'
 
 export const useOptimizedImage = ({
@@ -19,21 +19,27 @@ export const useOptimizedImage = ({
   const generateUrl = useCallback(() => {
     if (!asset) return null
 
-    const bestWidth = getNearestBreakpoint(width)
-    const adjustedWidth = Math.round(bestWidth * dpr)
+  // Get source dimensions
+  const sourceWidth = asset.metadata?.dimensions?.width || width
+  const sourceHeight = asset.metadata?.dimensions?.height || height
+
+  // Calculate target dimensions maintaining aspect ratio
+  const targetWidth = Math.min(width, sourceWidth)
+  const targetHeight = Math.round((targetWidth / sourceWidth) * sourceHeight)
     
 
-    return generateCachedUrl(asset, adjustedWidth, height, {
-      quality,
-      dpr,
-      hotspot: hotspot ? { x: hotspot.x, y: hotspot.y } : undefined,
-      crop: crop ? {
-        bottom: crop.bottom,
-        top: crop.top,
-        left: crop.left,
-        right: crop.right
-      } : undefined
-    })
+  return generateCachedUrl(asset, targetWidth, targetHeight, {
+    quality,
+    dpr,
+    hotspot: hotspot ? {
+      _type: "sanity.imageHotspot",
+      ...hotspot
+    } : undefined,
+    crop: crop ? {
+      _type: "sanity.imageCrop",
+      ...crop
+    } : undefined
+  })
   }, [asset, width, height, quality, dpr, hotspot, crop, generateCachedUrl])
 
   return {

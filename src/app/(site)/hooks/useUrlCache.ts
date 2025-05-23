@@ -1,21 +1,11 @@
 import { useMemo, useCallback } from 'react'
 import { urlFor } from '@/sanity/lib/image'
 import type { Image, ImageAsset, ImageMetadata, Reference } from '@sanity/types'
+import type { ImageUrlOptions } from '../../types'
 import { BREAKPOINTS } from '../constants/breakpoints'
 import { IMAGE_OPTIONS } from '../constants/image'
 
-interface ImageUrlOptions {
-  quality?: number;
-  dpr?: number;
-  hotspot?: { x: number; y: number };
-  crop?: { 
-    bottom: number; 
-    top: number; 
-    left: number; 
-    right: number; 
-  } | null;
-  skipRounding?: boolean;
-}
+
 
 const roundToDecimal = (num: number, decimals: number = 2) => 
   Number(Number(num).toFixed(decimals))
@@ -44,18 +34,46 @@ const IS_DEVELOPMENT = process.env.NODE_ENV === 'development'
 const DEBUG = IS_DEVELOPMENT // Only debug in development
 
 const buildImageUrl = (
-  image: Image, // Accept full image record
+  image: Image,
   width: number,
+  height: number,
   quality: number,
-  dpr: number
+  dpr: number,
+  options?: ImageUrlOptions
 ) => {
-  return urlFor(image)
-    .auto('format')
+  if (DEBUG) {
+    console.log('buildImageUrl params:', { image, width, height, quality, dpr, options });
+  }
+
+  // Create a complete image object with hotspot/crop data
+  const imageWithHotspot = {
+    ...image,
+    hotspot: options?.hotspot ? {
+      _type: 'sanity.imageHotspot',
+      ...options.hotspot
+    } : undefined,
+    crop: options?.crop ? {
+      _type: 'sanity.imageCrop',
+      ...options.crop
+    } : undefined
+  };
+
+  if (DEBUG) {
+    console.log('Image with hotspot:', imageWithHotspot);
+  }
+
+  // Pass complete image object to urlFor
+  return urlFor(imageWithHotspot)
     .width(width)
+    .height(height)
     .quality(quality)
     .dpr(dpr)
+    .fit('crop')
+    .auto('format')
     .url();
 };
+
+
 
 const getAspectRatio = (image: Image, width: number, height: number) => {
   const assetMetadata = ((image.asset as Reference) as unknown as ImageAsset)?.metadata as ImageMetadata
@@ -90,6 +108,7 @@ export function useUrlCache() {
 const generateDirectUrl = useCallback((
   image: Image,
   width: number,
+  height: number,
   options?: ImageUrlOptions
 ) => {
   if (!image) return '';
@@ -97,8 +116,10 @@ const generateDirectUrl = useCallback((
   return buildImageUrl(
     image,
     width,
+    height,
     options?.quality ?? IMAGE_OPTIONS.quality.medium,
-    options?.dpr ?? 1
+    options?.dpr ?? 1,
+    options
   );
 }, []);
 
@@ -111,7 +132,7 @@ const generateDirectUrl = useCallback((
 
 
     if (!IS_DEVELOPMENT || !urlCache) {
-      return generateDirectUrl(asset, width, options);
+      return generateDirectUrl(asset, width, height, options);
     }
 
     const { width: finalWidth, height: finalHeight } = options?.skipRounding
@@ -128,7 +149,7 @@ const generateDirectUrl = useCallback((
       return urlCache.get(cacheKey)!;
     }
 
-    const newUrl = generateDirectUrl(asset, finalWidth, options);
+    const newUrl = generateDirectUrl(asset, finalWidth, finalHeight, options);
     logCacheMiss(cacheKey, newUrl, finalWidth, finalHeight, focalX, focalY);
     urlCache.set(cacheKey, newUrl);
     return newUrl;

@@ -1,159 +1,156 @@
 'use client'
 
-import { FC, useEffect, useState, useRef, useMemo, useCallback } from 'react'
-import Image from 'next/image'
+import { FC, useEffect, useState, useRef, useMemo, useCallback, RefObject } from 'react'
 import { useWindowSize } from '../hooks/useWindowSize'
-import { useOptimizedImage } from '../hooks/useOptimizedImage'
-import CTA from './common/Cta'
-import type { HeroSection } from '../../types'
-import { useImageColorMap } from '../hooks/useImageColorMap';
+import { useImageColorMap } from '../hooks/useImageColorMap'
 import { useElementMap } from '../hooks/useElementMap'
+import { useOptimizedImage } from '../hooks/useOptimizedImage'
 import { useAccessibilityMap } from '../hooks/useAccessibilityMap'
-import { useImageRenderInfo } from '../hooks/useImageRenderInfo'
-import { ColorMapOverlay, ElementMapOverlay, DebugControls, ImageDebugOverlay } from './overlays'
+import { ColorMapOverlay, ElementMapOverlay, DebugControls } from './overlays'
 import { useDebug } from '../context/DebugContext'
-
+import { OptimizedImage } from './common/OptimizedImage'
+import CTA from './common/Cta'
+import type { HeroSection, ElementMapRef, ImageRenderInfo } from '../../types'
+import { IMAGE_OPTIONS } from '../constants'
 
 export const Hero: FC<HeroSection> = ({
   image,
   headline,
   cta
 }) => {
-
-  console.log('image', image)
-
+  // Debug and window state
   const { isDebugMode } = useDebug()
-  const [showColorMap, setShowColorMap] = useState(false);
-  const [showElementMap, setShowElementMap] = useState(false);
-
   const { width: screenWidth, height: screenHeight } = useWindowSize()
-  const [containerWidth, setContainerWidth] = useState(screenWidth);
+  const [containerWidth, setContainerWidth] = useState(screenWidth)
+  const [showColorMap, setShowColorMap] = useState(false)
+  const [showElementMap, setShowElementMap] = useState(false)
+  const [optimizedImageUrl, setOptimizedImageUrl] = useState<string | null>(null)
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const headlineRef = useRef<HTMLHeadingElement>(null);
-  const ctaRef = useRef<HTMLDivElement>(null);
+  // Refs
+  const containerRef = useRef<HTMLDivElement>(null)
+  const headlineRef = useRef<HTMLHeadingElement>(null)
+  const ctaRef = useRef<HTMLDivElement>(null)
 
-  const renderInfo = useImageRenderInfo({
-  containerWidth,
-  containerHeight: screenWidth >= 768 ? 1582 : Math.floor(screenHeight * 0.9),
-  hotspot: image?.hotspot
-  })
+  // Element tracking
+  const elements = useMemo<ElementMapRef[]>(() => [
+    { ref: headlineRef, label: 'Headline' },
+    { ref: ctaRef, label: 'CTA' }
+  ], [])
 
+  // Container resize handling
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current) return
     
     const observer = new ResizeObserver((entries) => {
-      const width = entries[0]?.contentRect.width;
+      const width = entries[0]?.contentRect.width
       if (width) {
-        setContainerWidth(width);
+        setContainerWidth(width)
       }
-    });
+    })
     
-    observer.observe(containerRef.current);
-    return () => observer.disconnect();
-  }, []);
+    observer.observe(containerRef.current)
+    return () => observer.disconnect()
+  }, [])
 
+  // Image dimension calculation
+  const getImageDimensions = useMemo(() => {
+    const width = Math.round(containerWidth);
+  let height: number;
 
+    // Match height to container breakpoints
+    if (screenWidth >= 2560) height = 2000      // 2xl
+    else if (screenWidth >= 1536) height = 1800  // xl
+    else if (screenWidth >= 1024) height = 1582  // lg
+    else if (screenWidth >= 768) height = 1200   // md
+    else if (screenWidth >= 640) height = 800    // sm
+    else height = Math.floor(screenHeight * 0.9) // mobile
+    
+    return {
+      width,
+      height,
+      aspectRatio: width / height
+    }
+  }, [containerWidth, screenWidth, screenHeight])
 
+  // Image optimization
+  const { generateUrl } = useOptimizedImage({
+    asset: image?.asset ?? null,
+    hotspot: image?.hotspot ?? null,
+    crop: image?.crop ?? null,
+    width: getImageDimensions.width,
+    height: getImageDimensions.height,
+    quality: IMAGE_OPTIONS.quality.medium
+  })
 
-
-const { url: imageUrl, generateUrl, setUrl } = useOptimizedImage({
-  asset: image?.asset ?? null,
-  hotspot: image?.hotspot ?? null,
-  crop: image?.crop ?? null,
-  width: screenWidth,
-  height: screenHeight,
-  quality: 70
-})
-
-  // Generate image URL on mount and screen size changes
+  // URL generation effect
   useEffect(() => {
     const url = generateUrl()
-    if (url) setUrl(url)
-  }, [screenWidth, screenHeight, generateUrl, setUrl])
-
-  const elements = useMemo(() => [
-  { ref: headlineRef, label: 'Headline' },
-  { ref: ctaRef, label: 'CTA' }
-], []);
-
-
-  const colorMap = useImageColorMap(imageUrl, renderInfo);
-  
-  const { elementMap } = useElementMap(
-    containerRef as React.RefObject<HTMLElement>,
-    elements
-  );
-
-  const { elementColors } = useAccessibilityMap(colorMap, elementMap);
-
-  const debugInfo = useMemo(() => ({
-    hasColorMap: colorMap.length > 0,
-    hasElementMap: elementMap.length > 0,
-    elementColors
-  }), [colorMap.length, elementMap.length, elementColors]);
-
-  useEffect(() => {
-    console.log('Maps updated:', debugInfo);
-  }, [debugInfo]);
-
-
-
-const getTextColorClass = useCallback((elementLabel: string): string => {
-  const colorResult = elementColors[elementLabel]?.color;
-  if (colorResult === 'background') {
-    return 'bg-black/50 px-4 py-2 text-white';
-  }
-  return colorResult || 'text-white';
-}, [elementColors]);
-  
-const toggleColorMap = useCallback(() => {
-  setShowColorMap(prev => !prev);
-}, []);
-
-const toggleElementMap = useCallback(() => {
-  setShowElementMap(prev => !prev);
-}, []);
-
-useEffect(() => {
-  const url = generateUrl()
-  if (url) {
-    console.log('Generated Image URL:', {
-      url,
-      crop: image?.crop,
-      hotspot: image?.hotspot,
-      dimensions: {
-        screen: { width: screenWidth, height: screenHeight },
-        container: { width: containerWidth, height: Math.floor(screenHeight * 0.9) }
+    if (url) {
+      setOptimizedImageUrl(url)
+      if (isDebugMode) {
+        console.log('Generated URL:', url)
       }
-    });
-    setUrl(url)
+    }
+  }, [generateUrl, isDebugMode])
+
+  // Color map options
+  const colorMapOptions = useMemo((): ImageRenderInfo => ({
+    containerWidth: Math.round(getImageDimensions.width),
+    containerHeight: Math.round(getImageDimensions.height),
+    hotspot: image?.hotspot ?? null,
+    objectFit: 'cover',
+    objectPosition: image?.hotspot 
+      ? { x: image.hotspot.x, y: image.hotspot.y }
+      : { x: 0.5, y: 0.5 }
+  }), [getImageDimensions, image?.hotspot]);
+
+
+
+  // Color and element mapping
+  const colorMap = useImageColorMap(optimizedImageUrl, colorMapOptions)
+  const elementMap = useElementMap(containerRef as RefObject<HTMLElement>, elements).elementMap
+  const { elementColors } = useAccessibilityMap(colorMap, elementMap)
+
+
+  // Debug logging
+useEffect(() => {
+  if (isDebugMode) {
+    console.group('Hero Dimensions Debug')
+    console.log('Screen:', { width: screenWidth, height: screenHeight })
+    console.log('Container:', { width: containerWidth })
+    console.log('Image:', getImageDimensions)
+    console.log('Color Map:', {
+      width: colorMapOptions.containerWidth,
+      height: colorMapOptions.containerHeight
+    })
+    console.groupEnd()
   }
-}, [screenWidth, screenHeight, generateUrl, setUrl, image?.crop, image?.hotspot, containerWidth])
+}, [isDebugMode, screenWidth, screenHeight, containerWidth, getImageDimensions, colorMapOptions])
 
+  // UI helpers
+  const getTextColorClass = useCallback((elementLabel: string): string => {
+    const colorResult = elementColors[elementLabel]?.color
+    return colorResult === 'background' 
+      ? 'bg-black/50 px-4 py-2 text-white'
+      : colorResult || 'text-white'
+  }, [elementColors])
 
-  // Only render debug controls if debug mode is enabled
+  const toggleColorMap = useCallback(() => setShowColorMap(prev => !prev), [])
+  const toggleElementMap = useCallback(() => setShowElementMap(prev => !prev), [])
+
+  // Debug controls renderer
   const renderDebugControls = () => {
     if (!isDebugMode) return null
 
     return (
       <>
         <ColorMapOverlay 
-          colorMap={colorMap} 
-          show={showColorMap} 
+          colorMap={colorMap ?? []}
+          show={showColorMap}
         />
         <ElementMapOverlay 
-          elementMap={elementMap} 
+          elementMap={elementMap}
           show={showElementMap}
-        />
-        <ImageDebugOverlay
-          show={true}
-          imageUrl={imageUrl || ''}
-          renderInfo={renderInfo}
-          screenDimensions={{
-            width: screenWidth,
-            height: screenHeight
-          }}
         />
         <DebugControls
           showColorMap={showColorMap}
@@ -166,67 +163,61 @@ useEffect(() => {
   }
 
   return (
-    <div ref={containerRef} className="
+    <div 
+      ref={containerRef} 
+      className="
         relative w-full 
-    h-[90vh] 
-    sm:h-[800px]
-    md:h-[1200px] 
-    lg:h-[1582px] 
-    xl:h-[1800px] 
-    2xl:h-[2000px]
-    "
+        h-[90vh] 
+        sm:h-[800px]
+        md:h-[1200px] 
+        lg:h-[1582px] 
+        xl:h-[1800px] 
+        2xl:h-[2000px]
+      "
     >
       {/* Background Image Container */}
       <div className="absolute inset-0 w-full h-full">
-        {imageUrl && image?.asset && (
-          <>
-          <Image
-            src={imageUrl}
-            alt={image?.asset?.altText || ''}
-            priority
-            className="w-full h-full object-cover"
-
-            sizes="100vw"
-            placeholder={image?.asset?.metadata?.lqip ? "blur" : undefined}
-            blurDataURL={image?.asset?.metadata?.lqip}
-            fill
-            onError={(e) => {
-              console.error('Image failed to load:', {
-                src: imageUrl,
-                error: e
-              });
+        {image?.asset && (
+          <OptimizedImage
+            image={{
+              _type: 'imageWithMetadata',
+              asset: image.asset,
+              hotspot: image.hotspot ?? undefined,
+              crop: image.crop ?? undefined
             }}
+            width={getImageDimensions.width}
+            height={getImageDimensions.height}
+            priority
+            quality={IMAGE_OPTIONS.quality.medium}
+            className="w-full h-full"
+            showDebug={isDebugMode}
           />
-          {renderDebugControls()}
-
-        </>
         )}
-        
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto h-full flex flex-col items-center justify-center md:justify-start">
+      <div className="relative z-15 container mx-auto h-full flex flex-col items-center justify-center md:justify-start">
         <div className="w-full flex flex-col items-center md:pt-[40vh] space-y-8">
           {headline && (
             <h1 
-            ref={headlineRef}
-            className={`font-display font-normal text-5xl md:text-[96px] max-w-3xl text-center leading-tight px-12 ${getTextColorClass('Headline')}`}>
+              ref={headlineRef}
+              className={`font-display font-normal text-5xl md:text-[96px] max-w-3xl text-center leading-tight px-12 ${getTextColorClass('Headline')}`}
+            >
               {headline}
             </h1>
           )}
           {cta && (
             <div 
-            ref={ctaRef} 
-            className={`
-              mt-8
-              ${getTextColorClass('CTA')}
-
-            `}>
+              ref={ctaRef} 
+              className={getTextColorClass('CTA')}
+            >
               <CTA {...cta} />
             </div>
           )}
         </div>
       </div>
+
+      {renderDebugControls()}
     </div>
   )
 }

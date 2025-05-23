@@ -5,7 +5,7 @@ import { sanityFetch } from "../../sanity/lib/live";
 import { QUERY_LOGO } from './queries/logoQuery';
 import { QUERY_NAV } from './queries/navQuery';
 import { Navigation } from './components/Navigation';
-import type { LogoType, NavLabelsType, imageType } from '../types'
+import type { LogoType, NavLabelsType, SanityImageObject } from '../types'
 import { DebugProvider } from './context/DebugContext'
 import { DebugKeyboardProvider } from './components/providers/DebugKeyboardProvider'
 
@@ -32,11 +32,11 @@ if (!logo || !navData) {
   return (
     <DebugProvider>
       <DebugKeyboardProvider>
-        <Navigation
-          logo={logo as LogoType}
-          navLabels={navData as NavLabelsType}
-          mobileBackgroundImage={navData.mobileBackgroundImage  as imageType | undefined}
-        />
+      <Navigation
+        logo={logo as LogoType}
+        navLabels={navData as NavLabelsType}
+        mobileBackgroundImage={navData.mobileBackgroundImage as SanityImageObject | undefined}
+      />
           
           {children}
 

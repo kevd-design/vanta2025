@@ -9,7 +9,9 @@ export const DebugControls: FC<DebugControlsProps> = ({
   onToggleElementMap
 }) => {
   return (
-    <div className={`absolute top-24 right-4 z-${OVERLAY_CONFIG.zIndex.controls} flex flex-col gap-2`}>
+    <div className={`absolute top-24 right-4 flex flex-col gap-2`}
+    style={{ zIndex: OVERLAY_CONFIG.zIndex.controls }}
+    >
       <button
         onClick={onToggleColorMap}
         className="bg-black/50 text-white px-4 py-2 rounded hover:bg-black/70"

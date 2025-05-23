@@ -1,15 +1,7 @@
 import { FC } from 'react'
-import type { ImageRenderInfo } from '@/app/types'
+import type { ImageDebugOverlayProps } from '@/app/types'
 
-interface ImageDebugOverlayProps {
-  show: boolean
-  imageUrl: string
-  renderInfo: ImageRenderInfo
-  screenDimensions: {
-    width: number
-    height: number
-  }
-}
+
 
 export const ImageDebugOverlay: FC<ImageDebugOverlayProps> = ({
   show,
@@ -26,7 +18,7 @@ export const ImageDebugOverlay: FC<ImageDebugOverlayProps> = ({
         <p>Container: {renderInfo.containerWidth}x{renderInfo.containerHeight}</p>
         <p className="break-all">URL: {imageUrl}</p>
         <p>Object Fit: {renderInfo.objectFit}</p>
-        <p>Position: x:{renderInfo.objectPosition.x} y:{renderInfo.objectPosition.y}</p>
+        <p>Position: x:{renderInfo.objectPosition?.x ?? 0} y:{renderInfo.objectPosition?.y ?? 0}</p>
       </div>
     </div>
   )

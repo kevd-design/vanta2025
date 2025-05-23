@@ -40,10 +40,12 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
 
   // Image and render info
   const { url: imageUrl, generateUrl, setUrl } = useOptimizedImage({
-    asset: backgroundImage?.asset ?? null,
-    hotspot: backgroundImage?.hotspot ?? null,
-    width: dimensions.width,
-    height: dimensions.height
+    asset: backgroundImage.asset ?? null,
+    hotspot: backgroundImage.hotspot ?? null,
+    crop: backgroundImage.crop ?? null,
+    width: screenWidth,
+    height: screenHeight,
+    quality: 70
   })
 
   const renderInfo = useImageRenderInfo({
