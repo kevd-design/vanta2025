@@ -11,12 +11,18 @@ export const useWindowSize = () => {
     height: DIMENSIONS.screen.defaultHeight
   });
 
-  const handleResize = useCallback(() => {
-    setWindowSize({
-      width: Math.round(window.innerWidth),
-      height: Math.round(window.innerHeight)
-    });
-  }, []);
+const handleResize = useCallback(() => {
+  const newWidth = Math.round(window.innerWidth);
+  const newHeight = Math.round(window.innerHeight);
+  
+  // Only update if dimensions actually changed
+  setWindowSize(prev => {
+    if (prev.width === newWidth && prev.height === newHeight) {
+      return prev;
+    }
+    return { width: newWidth, height: newHeight };
+  });
+}, []);
 
   const debouncedResize = useDebounce(handleResize, 150); // Match Navigation's timing
 

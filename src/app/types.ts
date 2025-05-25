@@ -13,6 +13,9 @@ import type {
 
 import type { RefObject } from 'react'
 
+import { ColorMap } from './types/colorMap'
+
+
 // Base image types
 export interface SanityImageMetadata {
   dimensions?: {
@@ -21,6 +24,12 @@ export interface SanityImageMetadata {
     aspectRatio: number
   } | null
   lqip?: string | null
+}
+
+export interface Dimensions {
+  width: number
+  height: number
+  aspectRatio: number
 }
 
 export interface SanityImageObject {
@@ -32,6 +41,7 @@ export interface SanityImageObject {
   }
   hotspot?: SanityImageHotspot
   crop?: SanityImageCrop
+  alt?: string 
 }
 
 export interface LogoType {
@@ -99,7 +109,7 @@ export interface UseOptimizedImageProps {
   } | null;
   crop?: SanityImageCrop | null;
   width: number;
-  height: number | null;
+  height: number;
   quality?: number;
 }
 
@@ -215,17 +225,26 @@ export interface DebugInfo {
 
 interface BaseImageOptions {
   containerWidth: number
-  containerHeight: number
+  containerHeight: number 
   hotspot?: SanityImageHotspot | null
 }
 
 export interface ImageRenderInfo extends BaseImageOptions {
-  objectFit: 'cover' | 'contain'
+  objectFit?: 'cover' | 'contain'
   objectPosition: {
     x: number
     y: number
-  };
-  hotspot?: SanityImageHotspot | null;
+  }
+  hotspot?: SanityImageHotspot | null
+  debug?: {
+    sourceAspectRatio: number
+    calculatedAspectRatio: number
+    originalDimensions?: {
+      width: number
+      height: number
+      aspectRatio: number
+    } | null
+  }
 }
 
 export interface ColorMapOptions extends BaseImageOptions {
@@ -247,12 +266,13 @@ export interface ImageUrlOptions {
 export interface OptimizedImageProps {
   image: SanityImageObject
   width: number
-  height: number
+  height: number | null
   quality?: number
   priority?: boolean
   className?: string
   objectFit?: 'cover' | 'contain'
   showDebug?: boolean
+  onColorMapChange?: (colorMap: ColorMap) => void
 }
 
 export interface ElementMap {
@@ -272,22 +292,29 @@ export interface ColorMapOptions {
   containerHeight: number
 }
 
+export interface ColorMapOverlayProps {
+  colorMap: ColorMap 
+  show: boolean
+}
+
 export interface ImageColorMapOptions {
   containerWidth: number;
   containerHeight: number;
   hotspot?: SanityImageHotspot | null;
   objectFit: 'cover' | 'contain'; 
-  objectPosition?: {
+  objectPosition: {
     x: number;
     y: number;
   };
 }
 
 export interface ColorMapResult {
-  colorMap: string[];
-  length: number;
+  colorMap: ColorMap
+  dimensions: {
+    width: number
+    height: number
+  }
 }
-
 export interface ImageDebugOverlayProps {
   show: boolean
   imageUrl: string
@@ -311,5 +338,48 @@ export interface CropRect {
   y: number;
   width: number;
   height: number;
+}
+
+export interface HeroBackgroundProps {
+  image: SanityImageObject | null
+  dimensions: Dimensions
+  isDebugMode?: boolean
+  onColorMapChange?: (colorMap: ColorMap) => void
+}
+
+export interface ElementMapResult {
+  elementMap: ElementMapCell[][];
+  debugInfo: {
+    totalElements: number;
+    coveredCells: number;
+  };
+}
+
+export interface UseElementMapReturn {
+  elementMap: ElementMap[]
+}
+
+export interface ElementMapCell {
+  isElement: boolean;
+  elementLabel?: string;
+}
+
+export interface ElementMapOverlayProps {
+  elementMap: ElementMapCell[][];
+  show: boolean;
+}
+
+export interface HeroContentProps {
+  headline: string | null
+  cta: CTAType | null
+  headlineRef: RefObject<HTMLHeadingElement | null>
+  ctaRef: RefObject<HTMLDivElement | null>
+  getTextColorClass: (elementLabel: string) => string
+}
+
+export type DebouncedFunction<Args extends unknown[], Return> = {
+  (...args: Args): Return
+  cancel: () => void
+  flush: () => void
 }
 

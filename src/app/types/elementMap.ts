@@ -12,10 +12,14 @@ export type ElementMapCell = {
 
 export type ElementMap = ElementMapCell[][];
 
-export type ElementMapResult = {
+export interface ElementMapResult {
   elementMap: ElementMap;
   debugInfo: {
     totalElements: number;
     coveredCells: number;
+    grid: {
+      width: number;
+      height: number;
+    };
   };
-};
+}

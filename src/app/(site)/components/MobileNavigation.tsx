@@ -4,9 +4,6 @@ import { FC, useState, useEffect, useMemo, useRef } from 'react'
 import Image from 'next/image'
 import { useWindowSize } from '../hooks/useWindowSize'
 import { useOptimizedImage } from '../hooks/useOptimizedImage'
-import { useDebug } from '../context/DebugContext'
-import { ImageDebugOverlay } from './overlays'
-import { useImageRenderInfo } from '../hooks/useImageRenderInfo'
 import XButton from '../elements/XButton'
 import { NavLink } from './common/NavLink'
 import type { MobileNavigationProps } from '../../types'
@@ -19,8 +16,6 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
   backgroundImage,
   lqip
 }) => {
-  // Debug state
-  const { isDebugMode } = useDebug()
 
   // Animation state
   const [isAnimatingOut, setIsAnimatingOut] = useState(false)
@@ -44,15 +39,11 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
     hotspot: backgroundImage.hotspot ?? null,
     crop: backgroundImage.crop ?? null,
     width: screenWidth,
-    height: screenHeight,
+    height: screenHeight ?? DIMENSIONS.screen.defaultHeight,
     quality: 70
   })
 
-  const renderInfo = useImageRenderInfo({
-    containerWidth: dimensions.width,
-    containerHeight: dimensions.height,
-    hotspot: backgroundImage?.hotspot
-  })
+
 
   // Effects
   useEffect(() => {
@@ -81,19 +72,6 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
     }, 300)
   }
 
-  // Debug controls render
-  const renderDebugControls = () => {
-      if (!isDebugMode) return null
-
-      return (
-        <ImageDebugOverlay
-          show={true}
-          imageUrl={imageUrl || ''}
-          renderInfo={renderInfo}
-          screenDimensions={dimensions}
-        />
-      )
-    }
 
   if (!imageUrl || (!isOpen && !isAnimatingOut)) return null
 
@@ -163,7 +141,6 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
               >
                 <XButton />
               </button>
-              {renderDebugControls()}
             </div>
 
             {/* Navigation links */}

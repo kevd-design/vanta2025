@@ -6,7 +6,8 @@ export const OVERLAY_CONFIG = {
   zIndex: {
     colorMap: 10,
     elementMap: 20,
-    controls: 30
+    controls: 30,
+    debug: 40 
   },
   opacity: {
     colorMap: 0.5,

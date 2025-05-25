@@ -7,14 +7,18 @@ import type { ElementMap, ElementInfo, ElementMapResult } from '../../types/elem
 export const useElementMap = (
   containerRef: RefObject<HTMLElement>,
   elements: ElementInfo[],
-  gridSize = 100
+  baseGridSize = 100
 ): ElementMapResult => {
   const [result, setResult] = useState<ElementMapResult>({
-    elementMap: [],
-    debugInfo: {
-      totalElements: 0,
-      coveredCells: 0
+  elementMap: [],
+  debugInfo: {
+    totalElements: 0,
+    coveredCells: 0,
+    grid: {
+      width: 0,
+      height: 0
     }
+  }
   });
 
   // Memoize the map update function
@@ -24,9 +28,24 @@ export const useElementMap = (
     const container = containerRef.current;
     const containerRect = container.getBoundingClientRect();
     
-    // Initialize empty map
-    const newMap: ElementMap = Array(gridSize).fill(null)
-      .map(() => Array(gridSize).fill(null)
+    // Calculate grid dimensions based on container aspect ratio
+    const containerAspectRatio = containerRect.width / containerRect.height;
+    let gridWidth: number;
+    let gridHeight: number;
+
+    if (containerAspectRatio > 1) {
+      // Landscape: maintain base size for height
+      gridHeight = baseGridSize;
+      gridWidth = Math.round(baseGridSize * containerAspectRatio);
+    } else {
+      // Portrait: maintain base size for width
+      gridWidth = baseGridSize;
+      gridHeight = Math.round(baseGridSize / containerAspectRatio);
+    }
+
+    // Initialize empty map with proportional dimensions
+    const newMap: ElementMap = Array(gridHeight).fill(null)
+      .map(() => Array(gridWidth).fill(null)
       .map(() => ({ isElement: false })));
 
     let coveredCells = 0;
@@ -44,15 +63,15 @@ export const useElementMap = (
         height: elementRect.height
       };
 
-      // Calculate grid cells covered by element
-      const startCol = Math.floor((relativeRect.left / containerRect.width) * gridSize);
-      const endCol = Math.ceil(((relativeRect.left + relativeRect.width) / containerRect.width) * gridSize);
-      const startRow = Math.floor((relativeRect.top / containerRect.height) * gridSize);
-      const endRow = Math.ceil(((relativeRect.top + relativeRect.height) / containerRect.height) * gridSize);
+      // Calculate grid cells covered by element using proportional grid
+      const startCol = Math.floor((relativeRect.left / containerRect.width) * gridWidth);
+      const endCol = Math.ceil(((relativeRect.left + relativeRect.width) / containerRect.width) * gridWidth);
+      const startRow = Math.floor((relativeRect.top / containerRect.height) * gridHeight);
+      const endRow = Math.ceil(((relativeRect.top + relativeRect.height) / containerRect.height) * gridHeight);
 
       // Mark cells as covered by element
-      for (let row = startRow; row < endRow && row < gridSize; row++) {
-        for (let col = startCol; col < endCol && col < gridSize; col++) {
+      for (let row = startRow; row < endRow && row < gridHeight; row++) {
+        for (let col = startCol; col < endCol && col < gridWidth; col++) {
           if (row >= 0 && col >= 0) {
             newMap[row][col] = {
               isElement: true,
@@ -68,10 +87,11 @@ export const useElementMap = (
       elementMap: newMap,
       debugInfo: {
         totalElements: elements.length,
-        coveredCells
+        coveredCells,
+        grid: { width: gridWidth, height: gridHeight }
       }
     });
-  }, [containerRef, elements, gridSize]);
+  }, [containerRef, elements, baseGridSize]);
 
   // Debounce the update function
   const debouncedUpdate = useDebounce(updateElementMap, 100);

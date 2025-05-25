@@ -14,7 +14,9 @@ export interface BaseOverlayProps {
 }
 
 export interface ColorMapOverlayProps extends BaseOverlayProps {
-  colorMap: ColorMapCell[][]
+  colorMap: ColorMapCell[][];
+  show: boolean;
+  className?: string;
 }
 
 export interface ElementMapOverlayProps extends BaseOverlayProps {

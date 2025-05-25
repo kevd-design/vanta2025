@@ -1,6 +1,3 @@
-export { ColorMapOverlay } from './ColorMapOverlay'
-export { ElementMapOverlay } from './ElementMapOverlay'
-export { DebugControls } from './DebugControls'
+
 export * from './types'
 export { OVERLAY_CONFIG } from './constants'
-export { ImageDebugOverlay } from './ImageDebugOverlay'

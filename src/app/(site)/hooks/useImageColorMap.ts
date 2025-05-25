@@ -1,76 +1,123 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { ColorMap, ColorMapCell } from '../../types/colorMap';
-import type { CropDimensions, CropRect, ImageRenderInfo } from '../../types'
+import { calculateCropRect, calculateDimensions } from '../utils/imageDimensions'
+import type { ImageRenderInfo } from '../../types'
+import { BREAKPOINTS } from '../constants'
 
 export const useImageColorMap = (
-    imageUrl: string | null, 
-    renderInfo: ImageRenderInfo,
-    gridSize = 100
+  imageUrl: string | null, 
+  renderInfo: ImageRenderInfo,
+  baseGridSize = 100  // Base size for calculating grid dimensions
 ) => {
   const [colorMap, setColorMap] = useState<ColorMap>([]);
 
+  // Memoize render info with all required properties
   const memoizedRenderInfo = useMemo(() => ({
-    containerWidth: Math.floor(renderInfo.containerWidth),
-    containerHeight: Math.floor(renderInfo.containerHeight),
+    containerWidth: Math.round(renderInfo.containerWidth),
+    containerHeight: Math.round(renderInfo.containerHeight),
     objectFit: renderInfo.objectFit,
     objectPosition: renderInfo.objectPosition,
+    hotspot: renderInfo.hotspot
   }), [
-    renderInfo.objectPosition,
     renderInfo.containerWidth,
     renderInfo.containerHeight,
     renderInfo.objectFit,
+    renderInfo.objectPosition,
+    renderInfo.hotspot
   ]);
 
+  // Process image with minimal dependencies
   const processImage = useCallback((img: HTMLImageElement) => {
-  const { 
-    containerWidth, 
-    containerHeight, 
-    hotspot 
-  } = memoizedRenderInfo as ImageRenderInfo;
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
-    if (!ctx) return;
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })
+    if (!ctx) {
+      console.debug('ColorMap: Failed to get canvas context')
+      return null
+    }
 
-    // Ensure integer dimensions
-    const exactWidth = Math.floor(containerWidth);
-    const exactHeight = Math.floor(containerHeight);
+    // First calculate the source aspect ratio
+    const sourceAspectRatio = img.width / img.height
 
-    canvas.width = exactWidth;
-    canvas.height = exactHeight;
-    
-    // Calculate crop rect using hotspot
-    const cropRect = calculateCropRect({
-      sourceWidth: img.width,
-      sourceHeight: img.height,
-      targetWidth: exactWidth,
-      targetHeight: exactHeight,
-      hotspot: hotspot ?? { x: 0.5, y: 0.5, height: 1, width: 1 }
-    });
+    // Match the OptimizedImage dimension calculation
+    const dimensions = calculateDimensions(
+      memoizedRenderInfo.containerWidth,
+      memoizedRenderInfo.containerWidth / sourceAspectRatio, // Force height from width
+      sourceAspectRatio,
+      BREAKPOINTS
+    )
 
-    // Clear and draw
+    // Calculate effective dimensions and aspect ratio
+    const containerAspectRatio = memoizedRenderInfo.containerWidth / memoizedRenderInfo.containerHeight
+
+    // Calculate grid dimensions based on container
+    let gridWidth: number
+    let gridHeight: number
+
+    if (containerAspectRatio > 1) {
+      // Landscape: maintain base size for height
+      gridHeight = baseGridSize
+      gridWidth = Math.round(baseGridSize * containerAspectRatio)
+    } else {
+      // Portrait: maintain base size for width
+      gridWidth = baseGridSize
+      gridHeight = Math.round(baseGridSize / containerAspectRatio)
+    }
+
+    // Remove window.innerWidth/Height from debug
+    console.debug('Grid calculations:', {
+      container: {
+        width: memoizedRenderInfo.containerWidth,
+        height: memoizedRenderInfo.containerHeight,
+        aspectRatio: containerAspectRatio
+      },
+      grid: {
+        width: gridWidth,
+        height: gridHeight,
+        aspectRatio: gridWidth / gridHeight
+      },
+      matches: Math.abs((gridWidth / gridHeight) - containerAspectRatio) < 0.01
+    })
+
+    console.debug('ColorMap processing:', {
+      source: { width: img.width, height: img.height },
+      container: memoizedRenderInfo,
+      calculated: dimensions,
+      grid: { width: gridWidth, height: gridHeight },
+      imageUrl
+    })
+
+    canvas.width = dimensions.width
+    canvas.height = dimensions.height
+
+    const cropRect = calculateCropRect(
+      img.width,
+      img.height,
+      dimensions.width,
+      dimensions.height,
+      memoizedRenderInfo.hotspot?.x ?? 0.5,
+      memoizedRenderInfo.hotspot?.y ?? 0.5
+    )
+
       ctx.drawImage(
-    img,
-    cropRect.x,
-    cropRect.y,
-    cropRect.width,
-    cropRect.height,
-    0,
-    0,
-    exactWidth,
-    exactHeight
-  );
+        img,
+        Math.round(cropRect.x),      // Source X
+        Math.round(cropRect.y),      // Source Y
+        Math.round(cropRect.width),  // Source Width
+        Math.round(cropRect.height), // Source Height
+        0,                          // Destination X
+        0,                          // Destination Y
+        dimensions.width,           // Destination Width
+        dimensions.height           // Destination Height
+      )
 
-
-    // Calculate precise grid cell dimensions
-    const cellWidth = exactWidth / gridSize;
-    const cellHeight = exactHeight / gridSize;
-
+    const cellWidth = dimensions.width / gridWidth
+    const cellHeight = dimensions.height / gridHeight
     const newColorMap: ColorMap = [];
 
-    // Sample colors with precise boundaries
-    for (let y = 0; y < gridSize; y++) {
-      const row: ColorMapCell[] = [];
-      for (let x = 0; x < gridSize; x++) {
+    // Sample colors
+    for (let y = 0; y < gridHeight; y++) {
+      const row: ColorMapCell[] = []
+      for (let x = 0; x < gridWidth; x++) {
         const startX = Math.floor(x * cellWidth);
         const startY = Math.floor(y * cellHeight);
         const width = Math.ceil(cellWidth);
@@ -78,7 +125,6 @@ export const useImageColorMap = (
 
         const data = ctx.getImageData(startX, startY, width, height);
         
-        // Calculate average color for this cell
         let r = 0, g = 0, b = 0;
         for (let i = 0; i < data.data.length; i += 4) {
           r += data.data[i];
@@ -90,81 +136,68 @@ export const useImageColorMap = (
         g = Math.round(g / pixels);
         b = Math.round(b / pixels);
 
-        // Calculate luminance using WCAG formula
         const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
 
         row.push({
+          position: [x, y],  // Add position
           color: `rgb(${r},${g},${b})`,
           luminance
         });
       }
-      newColorMap.push(row);
+      newColorMap.push(row)
     }
 
-    return newColorMap;
-  }, [memoizedRenderInfo, gridSize]);
+    return newColorMap
+  }, [memoizedRenderInfo, baseGridSize, imageUrl]);
 
-  const calculateCropRect = ({
-  sourceWidth,
-  sourceHeight,
-  targetWidth,
-  targetHeight,
-  hotspot
-}: CropDimensions): CropRect => {
-  const aspect = targetWidth / targetHeight;
-  const sourceAspect = sourceWidth / sourceHeight;
-
-  let width, height, x, y;
-
-  if (aspect > sourceAspect) {
-    width = sourceWidth;
-    height = sourceWidth / aspect;
-    x = 0;
-    y = (sourceHeight - height) * (hotspot?.y ?? 0.5);
-  } else {
-    height = sourceHeight;
-    width = sourceHeight * aspect;
-    x = (sourceWidth - width) * (hotspot?.x ?? 0.5);
-    y = 0;
-  }
-
-  return { x, y, width, height };
-};
-
+  // Load and process image
   useEffect(() => {
     let mounted = true;
+    let img: HTMLImageElement | null = null;
 
-    if (!imageUrl) {
+    const cleanup = () => {
+      if (img) {
+        img.onload = null;
+        img.onerror = null;
+      }
+      mounted = false;
+    };
+
+    if (!imageUrl || !memoizedRenderInfo.containerWidth || !memoizedRenderInfo.containerHeight) {
+      console.debug('ColorMap skipped:', { 
+        imageUrl, 
+        width: memoizedRenderInfo.containerWidth, 
+        height: memoizedRenderInfo.containerHeight 
+      });
       setColorMap([]);
-      return;
+      return cleanup;
     }
 
-    const img = new Image();
+    img = new Image();
     img.crossOrigin = 'anonymous';
     
     img.onload = () => {
       if (!mounted) return;
-      const newMap = processImage(img);
+      const newMap = processImage(img!);
       if (newMap) {
+        console.debug('ColorMap generated:', { 
+          mapSize: newMap.length,
+          imageSize: { width: img!.width, height: img!.height }
+        });
         setColorMap(newMap);
       }
     };
 
-    img.onerror = () => {
-      console.error('Failed to load image:', imageUrl);
-      if (mounted) {
-        setColorMap([]);
-      }
+    img.onerror = (error) => {
+      console.error('ColorMap image load error:', error);
+      setColorMap([]);
     };
 
+    console.debug('ColorMap loading image:', imageUrl);
     img.src = imageUrl;
 
-    return () => {
-      mounted = false;
-      img.onload = null;
-      img.onerror = null;
-    };
-  }, [imageUrl, processImage]);
+    return cleanup;
+  }, [imageUrl, memoizedRenderInfo, processImage]);
 
   return colorMap;
 };

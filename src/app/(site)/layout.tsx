@@ -7,7 +7,9 @@ import { QUERY_NAV } from './queries/navQuery';
 import { Navigation } from './components/Navigation';
 import type { LogoType, NavLabelsType, SanityImageObject } from '../types'
 import { DebugProvider } from './context/DebugContext'
+import { DebugLayoutProvider } from './context/DebugLayoutContext'
 import { DebugKeyboardProvider } from './components/providers/DebugKeyboardProvider'
+import { DebugLayout } from './components/debug'
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -31,17 +33,19 @@ if (!logo || !navData) {
 
   return (
     <DebugProvider>
-      <DebugKeyboardProvider>
-      <Navigation
-        logo={logo as LogoType}
-        navLabels={navData as NavLabelsType}
-        mobileBackgroundImage={navData.mobileBackgroundImage as SanityImageObject | undefined}
-      />
-          
-          {children}
-
-          <SanityLive />
-        </DebugKeyboardProvider>
+      <DebugLayoutProvider>
+        <DebugKeyboardProvider>
+          <DebugLayout>
+            <Navigation
+              logo={logo as LogoType}
+              navLabels={navData as NavLabelsType}
+              mobileBackgroundImage={navData.mobileBackgroundImage as SanityImageObject | undefined}
+            />
+              {children}
+              <SanityLive />
+            </DebugLayout>
+          </DebugKeyboardProvider>
+      </DebugLayoutProvider>
     </DebugProvider>
   );
 }

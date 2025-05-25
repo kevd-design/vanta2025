@@ -1,7 +1,9 @@
-
 export type ColorMapCell = {
-  color: string;
-  luminance: number;
+  position: [number, number]
+  color: string
+  background?: boolean
+  luminance: number
 };
 
-export type ColorMap = ColorMapCell[][];
+export type ColorMap = ColorMapCell[][]; 
+export type ColorGrid = ColorMap;

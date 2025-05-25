@@ -1,17 +1,20 @@
 'use client'
 
-import { FC, useEffect, useState, useRef, useMemo, useCallback, RefObject } from 'react'
-import { useWindowSize } from '../hooks/useWindowSize'
-import { useImageColorMap } from '../hooks/useImageColorMap'
-import { useElementMap } from '../hooks/useElementMap'
-import { useOptimizedImage } from '../hooks/useOptimizedImage'
-import { useAccessibilityMap } from '../hooks/useAccessibilityMap'
-import { ColorMapOverlay, ElementMapOverlay, DebugControls } from './overlays'
+import { FC, useRef, useState, useCallback, RefObject, useEffect } from 'react'
 import { useDebug } from '../context/DebugContext'
-import { OptimizedImage } from './common/OptimizedImage'
-import CTA from './common/Cta'
-import type { HeroSection, ElementMapRef, ImageRenderInfo } from '../../types'
+import { useWindowSize } from '../hooks/useWindowSize'
+import { useElementMap } from '../hooks/useElementMap'
+import { useAccessibilityMap } from '../hooks/useAccessibilityMap'
+import { useImageDimensions } from '../hooks/useImageDimensions'
+import { useImageDebug } from '../hooks/useImageDebug'
+import { useOptimizedImage } from '../hooks/useOptimizedImage'
+import { useDebounce } from '../hooks/useDebounce'
+import { HeroBackground } from './HeroBackground'
+import { HeroContent } from './HeroContent'
+import type { HeroSection } from '../../types'
 import { IMAGE_OPTIONS } from '../constants'
+import type { ColorMap } from '../../types/colorMap'
+import { useDebugLayout } from '../context/DebugLayoutContext'
 
 export const Hero: FC<HeroSection> = ({
   image,
@@ -20,112 +23,79 @@ export const Hero: FC<HeroSection> = ({
 }) => {
   // Debug and window state
   const { isDebugMode } = useDebug()
+  const { setDebugContent } = useDebugLayout()
+
   const { width: screenWidth, height: screenHeight } = useWindowSize()
   const [containerWidth, setContainerWidth] = useState(screenWidth)
-  const [showColorMap, setShowColorMap] = useState(false)
-  const [showElementMap, setShowElementMap] = useState(false)
-  const [optimizedImageUrl, setOptimizedImageUrl] = useState<string | null>(null)
+  
 
   // Refs
   const containerRef = useRef<HTMLDivElement>(null)
   const headlineRef = useRef<HTMLHeadingElement>(null)
   const ctaRef = useRef<HTMLDivElement>(null)
 
-  // Element tracking
-  const elements = useMemo<ElementMapRef[]>(() => [
-    { ref: headlineRef, label: 'Headline' },
-    { ref: ctaRef, label: 'CTA' }
-  ], [])
+  const handleResize = useDebounce<[number], void>((width) => {
+    setContainerWidth(width)
+  }, 150)
 
-  // Container resize handling
+  // Resize observer to track container width
   useEffect(() => {
-    if (!containerRef.current) return
-    
     const observer = new ResizeObserver((entries) => {
       const width = entries[0]?.contentRect.width
       if (width) {
-        setContainerWidth(width)
+        handleResize(width)
       }
     })
     
-    observer.observe(containerRef.current)
-    return () => observer.disconnect()
-  }, [])
-
-  // Image dimension calculation
-  const getImageDimensions = useMemo(() => {
-    const width = Math.round(containerWidth);
-  let height: number;
-
-    // Match height to container breakpoints
-    if (screenWidth >= 2560) height = 2000      // 2xl
-    else if (screenWidth >= 1536) height = 1800  // xl
-    else if (screenWidth >= 1024) height = 1582  // lg
-    else if (screenWidth >= 768) height = 1200   // md
-    else if (screenWidth >= 640) height = 800    // sm
-    else height = Math.floor(screenHeight * 0.9) // mobile
-    
-    return {
-      width,
-      height,
-      aspectRatio: width / height
+    if (containerRef.current) {
+      observer.observe(containerRef.current)
     }
-  }, [containerWidth, screenWidth, screenHeight])
 
-  // Image optimization
-  const { generateUrl } = useOptimizedImage({
+    return () => {
+      handleResize.cancel()
+      observer.disconnect()
+    }
+  }, [handleResize])
+
+  // Element tracking
+  const { elementMap } = useElementMap(
+    containerRef as RefObject<HTMLElement>,
+    [
+      { ref: headlineRef, label: 'Headline' },
+      { ref: ctaRef, label: 'CTA' }
+  ])
+
+  // Image and color mapping
+  const dimensions = useImageDimensions(containerWidth, screenWidth, screenHeight)
+
+  // Get optimized image URL
+  const { url: optimizedImageUrl } = useOptimizedImage({
     asset: image?.asset ?? null,
     hotspot: image?.hotspot ?? null,
     crop: image?.crop ?? null,
-    width: getImageDimensions.width,
-    height: getImageDimensions.height,
+    width: dimensions.width,
+    height: dimensions.height,
     quality: IMAGE_OPTIONS.quality.medium
   })
 
-  // URL generation effect
-  useEffect(() => {
-    const url = generateUrl()
-    if (url) {
-      setOptimizedImageUrl(url)
-      if (isDebugMode) {
-        console.log('Generated URL:', url)
-      }
-    }
-  }, [generateUrl, isDebugMode])
-
-  // Color map options
-  const colorMapOptions = useMemo((): ImageRenderInfo => ({
-    containerWidth: Math.round(getImageDimensions.width),
-    containerHeight: Math.round(getImageDimensions.height),
-    hotspot: image?.hotspot ?? null,
-    objectFit: 'cover',
-    objectPosition: image?.hotspot 
-      ? { x: image.hotspot.x, y: image.hotspot.y }
-      : { x: 0.5, y: 0.5 }
-  }), [getImageDimensions, image?.hotspot]);
 
 
 
-  // Color and element mapping
-  const colorMap = useImageColorMap(optimizedImageUrl, colorMapOptions)
-  const elementMap = useElementMap(containerRef as RefObject<HTMLElement>, elements).elementMap
-  const { elementColors } = useAccessibilityMap(colorMap, elementMap)
+const [colorMap, setColorMap] = useState<ColorMap>([])
+const { elementColors } = useAccessibilityMap(colorMap, elementMap)
+
 
 
   // Debug logging
-useEffect(() => {
-  if (isDebugMode) {
-    console.group('Hero Dimensions Debug')
-    console.log('Screen:', { width: screenWidth, height: screenHeight })
-    console.log('Container:', { width: containerWidth })
-    console.log('Image:', getImageDimensions)
-    console.log('Color Map:', {
-      width: colorMapOptions.containerWidth,
-      height: colorMapOptions.containerHeight
-    })
-    console.groupEnd()
-  }
-}, [isDebugMode, screenWidth, screenHeight, containerWidth, getImageDimensions, colorMapOptions])
+  useImageDebug(
+    'Hero',
+    isDebugMode,
+    screenWidth,
+    screenHeight,
+    containerWidth,
+    dimensions,
+    optimizedImageUrl
+  )
 
   // UI helpers
   const getTextColorClass = useCallback((elementLabel: string): string => {
@@ -135,89 +105,66 @@ useEffect(() => {
       : colorResult || 'text-white'
   }, [elementColors])
 
-  const toggleColorMap = useCallback(() => setShowColorMap(prev => !prev), [])
-  const toggleElementMap = useCallback(() => setShowElementMap(prev => !prev), [])
+  // Update debug content whenever relevant data changes
+  useEffect(() => {
+    if (isDebugMode) {
+      setDebugContent({
+        colorMap,
+        elementMap,
+        dimensions,
+        accessibilityResults: { elementColors },
+        imageDebug: {
+          imageUrl: optimizedImageUrl || '',
+          renderInfo: {
+            containerWidth: dimensions.width,
+            containerHeight: dimensions.height,
+            objectFit: 'cover',
+            objectPosition: image?.hotspot 
+              ? { x: image.hotspot.x, y: image.hotspot.y }
+              : { x: 0.5, y: 0.5 }
+          },
+          screenDimensions: { 
+            width: screenWidth, 
+            height: screenHeight 
+          }
+        }
+      })
+    }
+  }, [
+    isDebugMode,
+    colorMap,
+    elementMap,
+    dimensions,
+    elementColors,
+    optimizedImageUrl,
+    screenWidth,
+    screenHeight,
+    image?.hotspot,
+    setDebugContent
+  ])
 
-  // Debug controls renderer
-  const renderDebugControls = () => {
-    if (!isDebugMode) return null
-
-    return (
-      <>
-        <ColorMapOverlay 
-          colorMap={colorMap ?? []}
-          show={showColorMap}
-        />
-        <ElementMapOverlay 
-          elementMap={elementMap}
-          show={showElementMap}
-        />
-        <DebugControls
-          showColorMap={showColorMap}
-          showElementMap={showElementMap}
-          onToggleColorMap={toggleColorMap}
-          onToggleElementMap={toggleElementMap}
-        />
-      </>
-    )
-  }
 
   return (
     <div 
       ref={containerRef} 
-      className="
-        relative w-full 
-        h-[90vh] 
-        sm:h-[800px]
-        md:h-[1200px] 
-        lg:h-[1582px] 
-        xl:h-[1800px] 
-        2xl:h-[2000px]
-      "
+      className="relative w-full h-[90vh] sm:h-[800px] md:h-[1200px] lg:h-[1582px] xl:h-[1800px] 2xl:h-[2000px]"
     >
-      {/* Background Image Container */}
-      <div className="absolute inset-0 w-full h-full">
-        {image?.asset && (
-          <OptimizedImage
-            image={{
-              _type: 'imageWithMetadata',
-              asset: image.asset,
-              hotspot: image.hotspot ?? undefined,
-              crop: image.crop ?? undefined
-            }}
-            width={getImageDimensions.width}
-            height={getImageDimensions.height}
-            priority
-            quality={IMAGE_OPTIONS.quality.medium}
-            className="w-full h-full"
-            showDebug={isDebugMode}
-          />
-        )}
-      </div>
+      <HeroBackground 
+        image={image}
+        dimensions={dimensions}
+        isDebugMode={isDebugMode}
+        onColorMapChange={setColorMap}
+      />
 
-      {/* Content */}
-      <div className="relative z-15 container mx-auto h-full flex flex-col items-center justify-center md:justify-start">
-        <div className="w-full flex flex-col items-center md:pt-[40vh] space-y-8">
-          {headline && (
-            <h1 
-              ref={headlineRef}
-              className={`font-display font-normal text-5xl md:text-[96px] max-w-3xl text-center leading-tight px-12 ${getTextColorClass('Headline')}`}
-            >
-              {headline}
-            </h1>
-          )}
-          {cta && (
-            <div 
-              ref={ctaRef} 
-              className={getTextColorClass('CTA')}
-            >
-              <CTA {...cta} />
-            </div>
-          )}
-        </div>
-      </div>
+      <HeroContent
+        headline={headline}
+        cta={cta}
+        headlineRef={headlineRef}
+        ctaRef={ctaRef}
+        getTextColorClass={getTextColorClass}
+      />
 
-      {renderDebugControls()}
+
     </div>
   )
 }

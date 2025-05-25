@@ -4,31 +4,20 @@ import type { Image, ImageAsset, ImageMetadata, Reference } from '@sanity/types'
 import type { ImageUrlOptions } from '../../types'
 import { BREAKPOINTS } from '../constants/breakpoints'
 import { IMAGE_OPTIONS } from '../constants/image'
+import { calculateDimensions } from '../utils/imageDimensions'
 
 
+
+type DimensionTracker = {
+  width: number;
+  height: number;
+};
+
+const dimensionsMap = new Map<string, DimensionTracker>();
 
 const roundToDecimal = (num: number, decimals: number = 2) => 
   Number(Number(num).toFixed(decimals))
 
-const roundToBoundary = (value: number, boundaries: readonly number[]) => {
-  return boundaries.reduce((prev, curr) =>
-    Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev
-  )
-}
-
-const calculateDimensions = (
-  width: number, 
-  height: number, 
-  aspectRatio: number,
-  boundaries: readonly number[]
-) => {
-  const roundedWidth = Math.round(roundToBoundary(width, boundaries));
-  const preservedHeight = Math.round(roundedWidth / aspectRatio);
-  return { 
-    width: roundedWidth, 
-    height: preservedHeight 
-  };
-}
 
 const IS_DEVELOPMENT = process.env.NODE_ENV === 'development'
 const DEBUG = IS_DEVELOPMENT // Only debug in development
@@ -87,21 +76,39 @@ const generateCacheKey = (
   options?: ImageUrlOptions,
   focalX?: number,
   focalY?: number
-) => `w${width}h${height}q${options?.quality ?? 70}d${options?.dpr ?? 1}fp${focalX},${focalY}${
-  options?.crop 
-    ? `crop${options.crop.top},${options.crop.right},${options.crop.bottom},${options.crop.left}` 
-    : ''
-}`;
+) => {
+  const roundedWidth = Math.round(width)
+  const roundedHeight = Math.round(height)
+  const roundedQuality = Math.round(options?.quality ?? 70)
+  const roundedDpr = Number((options?.dpr ?? 1).toFixed(1))
+  const roundedFocalX = focalX?.toFixed(4) ?? '0.5000'
+  const roundedFocalY = focalY?.toFixed(4) ?? '0.5000'
+  
+  return `w${roundedWidth}h${roundedHeight}q${roundedQuality}d${roundedDpr}fp${roundedFocalX},${roundedFocalY}${
+    options?.crop 
+      ? `crop${options.crop.top},${options.crop.right},${options.crop.bottom},${options.crop.left}` 
+      : ''
+  }`
+}
 
-const logCacheHit = (key: string, url: string, width: number, height: number, focalX: number, focalY: number) => {
-  void (DEBUG && console.log('Cache hit:', { key, url, dimensions: { width, height }, focalPoint: { x: focalX, y: focalY } }));
-};
 
 const logCacheMiss = (key: string, url: string, width: number, height: number, focalX: number, focalY: number) => {
   void (DEBUG && console.log('Cache miss:', { key, url, dimensions: { width, height }, focalPoint: { x: focalX, y: focalY } }));
 };
 
 export function useUrlCache() {
+
+const logCacheHit = useCallback((key: string, url: string, width: number, height: number, focalX: number, focalY: number) => {
+  if (!DEBUG) return;
+
+  console.log('Cache hit:', { 
+    key, 
+    url, 
+    dimensions: { width, height }, 
+    focalPoint: { x: focalX, y: focalY } 
+  });
+}, []);
+
   const urlCache = useMemo(() => 
     IS_DEVELOPMENT ? new Map<string, string>() : null, []);
 
@@ -138,14 +145,45 @@ const generateDirectUrl = useCallback((
     const { width: finalWidth, height: finalHeight } = options?.skipRounding
       ? { width, height }
       : calculateDimensions(width, height, getAspectRatio(asset, width, height), BREAKPOINTS);
+      
 
     const focalX = roundToDecimal(options?.hotspot?.x ?? 0.5);
     const focalY = roundToDecimal(options?.hotspot?.y ?? 0.5);
 
-    const cacheKey = generateCacheKey(finalWidth, finalHeight, options, focalX, focalY);
+    const cacheKey = generateCacheKey(width, height, options);
 
-    if (urlCache.has(cacheKey)) {
-      logCacheHit(cacheKey, urlCache.get(cacheKey)!, finalWidth, finalHeight, focalX, focalY);
+     // Check if dimensions have changed
+    const lastDimensions = dimensionsMap.get(cacheKey);
+    
+    if (lastDimensions && 
+        lastDimensions.width === finalWidth && 
+        lastDimensions.height === finalHeight) {
+      if (urlCache?.has(cacheKey)) {
+        if (DEBUG) {
+          logCacheHit(cacheKey, urlCache.get(cacheKey)!, width, height, 
+            options?.hotspot?.x ?? 0.5, 
+            options?.hotspot?.y ?? 0.5
+          );
+        }
+        return urlCache.get(cacheKey)!;
+      }
+    }
+
+        // Update dimensions tracker
+      dimensionsMap.set(cacheKey, {
+        width: finalWidth,
+        height: finalHeight
+      });
+
+
+    if (urlCache?.has(cacheKey)) {
+      // Only log in debug mode and when actually needed
+      if (DEBUG) {
+        logCacheHit(cacheKey, urlCache.get(cacheKey)!, width, height, 
+          options?.hotspot?.x ?? 0.5, 
+          options?.hotspot?.y ?? 0.5
+        );
+      }
       return urlCache.get(cacheKey)!;
     }
 
@@ -153,7 +191,7 @@ const generateDirectUrl = useCallback((
     logCacheMiss(cacheKey, newUrl, finalWidth, finalHeight, focalX, focalY);
     urlCache.set(cacheKey, newUrl);
     return newUrl;
-  }, [urlCache, generateDirectUrl]); 
+  }, [urlCache, generateDirectUrl, logCacheHit]); 
 
   return { generateCachedUrl, isCacheEnabled: IS_DEVELOPMENT };
 }
