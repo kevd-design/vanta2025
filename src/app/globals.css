@@ -14,3 +14,11 @@ body {
   color: var(--foreground);
   background: var(--background);
 }
+
+.js .no-js-content {
+  display: none;
+}
+
+.no-js .js-content {
+  display: none;
+}
