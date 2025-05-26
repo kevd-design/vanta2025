@@ -229,21 +229,28 @@ interface BaseImageOptions {
   hotspot?: SanityImageHotspot | null
 }
 
-export interface ImageRenderInfo extends BaseImageOptions {
-  objectFit?: 'cover' | 'contain'
+export interface ImageRenderInfo {
+  containerWidth: number
+  containerHeight: number
+  objectFit: 'cover' | 'contain'
   objectPosition: {
     x: number
     y: number
   }
-  hotspot?: SanityImageHotspot | null
+  hotspot?: {
+    x: number
+    y: number
+    width: number
+    height: number
+  }
   debug?: {
-    sourceAspectRatio: number
     calculatedAspectRatio: number
+    sourceAspectRatio: number
     originalDimensions?: {
       width: number
       height: number
-      aspectRatio: number
-    } | null
+      aspectRatio?: number
+    }
   }
 }
 
@@ -345,6 +352,7 @@ export interface HeroBackgroundProps {
   dimensions: Dimensions
   isDebugMode?: boolean
   onColorMapChange?: (colorMap: ColorMap) => void
+  onDimensionsChange?: (dimensions: { width: number; height: number }) => void
 }
 
 export interface ElementMapResult {

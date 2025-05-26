@@ -1,12 +1,15 @@
 import { useState, useEffect, RefObject, useCallback } from 'react';
 import { useDebounce } from './useDebounce';
-import type { ElementMap, ElementInfo, ElementMapResult } from '../../types/elementMap';
+import type { ElementMap, ElementMapResult } from '../../types/elementMap';
 
 
 
 export const useElementMap = (
-  containerRef: RefObject<HTMLElement>,
-  elements: ElementInfo[],
+  containerRef: RefObject<HTMLElement | null>,
+    elements: Array<{ 
+    ref: RefObject<HTMLElement | null>
+    label: string 
+  }>,
   baseGridSize = 100
 ): ElementMapResult => {
   const [result, setResult] = useState<ElementMapResult>({

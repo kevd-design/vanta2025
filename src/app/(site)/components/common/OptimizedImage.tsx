@@ -1,4 +1,4 @@
-import { FC, useMemo, useEffect, useState } from 'react'
+import { FC, useMemo, useEffect, useState, useRef } from 'react'
 import Image from 'next/image'
 import { useOptimizedImage } from '../../hooks/useOptimizedImage'
 import { useDebug } from '../../context/DebugContext'
@@ -19,6 +19,9 @@ export const OptimizedImage: FC<OptimizedImageProps> = ({
 }) => {
   const { isDebugMode } = useDebug()
   const [imageUrl, setImageUrl] = useState<string | null>(null)
+  
+  // Add ref to track previous color map for comparison
+  const prevColorMapRef = useRef<string>('')
 
   // Calculate dimensions first
   const dimensions = useMemo(() => {
@@ -62,14 +65,31 @@ export const OptimizedImage: FC<OptimizedImageProps> = ({
     objectPosition: image?.hotspot 
       ? { x: image.hotspot.x, y: image.hotspot.y }
       : { x: 0.5, y: 0.5 },
-    hotspot: image?.hotspot ?? null
+    hotspot: image?.hotspot 
+      ? {
+          x: image.hotspot.x,
+          y: image.hotspot.y,
+          width: image.hotspot.width ?? 1,  // Default to 1 if not provided
+          height: image.hotspot.height ?? 1  // Default to 1 if not provided
+        }
+      : undefined
   }), [dimensions, objectFit, image?.hotspot])
 
   const colorMap = useImageColorMap(imageUrl, colorMapOptions)
-
-    useEffect(() => {
-    if (onColorMapChange && colorMap) {
-      onColorMapChange(colorMap)
+  
+  // Add equality check to prevent unnecessary updates
+  useEffect(() => {
+    if (onColorMapChange && colorMap && colorMap.length > 0) {
+      // Create a minimal representation of the color map for comparison
+      const mapSignature = JSON.stringify(
+        colorMap.map(row => row.map(cell => cell.luminance.toFixed(2)))
+      )
+      
+      // Only update if the map has meaningfully changed
+      if (mapSignature !== prevColorMapRef.current) {
+        prevColorMapRef.current = mapSignature
+        onColorMapChange(colorMap)
+      }
     }
   }, [colorMap, onColorMapChange])
 

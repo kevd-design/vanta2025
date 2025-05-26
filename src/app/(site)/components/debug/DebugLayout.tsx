@@ -31,6 +31,7 @@ export const DebugLayout: FC<PropsWithChildren> = ({ children }) => {
             )}
             {debugContent.imageDebug && (
               <ImageDebug 
+                displayName={debugContent.imageDebug.displayName || "Image Analysis"}  
                 imageUrl={debugContent.imageDebug.imageUrl}
                 renderInfo={debugContent.imageDebug.renderInfo}
                 screenDimensions={debugContent.imageDebug.screenDimensions}

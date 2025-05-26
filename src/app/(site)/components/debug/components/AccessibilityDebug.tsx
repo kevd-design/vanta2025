@@ -44,6 +44,11 @@ export const AccessibilityDebug: FC<AccessibilityDebugProps> = ({
   const columns = colorMap[0]?.length || 1
   const rows = colorMap.length || 1
 
+    // Ensure we have valid data before rendering
+  if (!columns || !rows || !accessibilityResults?.elementColors) {
+    return null
+  }
+
   // Calculate cell size based on BASE_SIZE
   const cellSize = (BASE_SIZE - PADDING * 2) / Math.max(columns, rows)
 

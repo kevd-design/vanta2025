@@ -10,6 +10,7 @@ import { DebugProvider } from './context/DebugContext'
 import { DebugLayoutProvider } from './context/DebugLayoutContext'
 import { DebugKeyboardProvider } from './components/providers/DebugKeyboardProvider'
 import { DebugLayout } from './components/debug'
+import { ColorMapProvider } from './context/ColorMapContext'
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -34,17 +35,19 @@ if (!logo || !navData) {
   return (
     <DebugProvider>
       <DebugLayoutProvider>
-        <DebugKeyboardProvider>
-          <DebugLayout>
-            <Navigation
-              logo={logo as LogoType}
-              navLabels={navData as NavLabelsType}
-              mobileBackgroundImage={navData.mobileBackgroundImage as SanityImageObject | undefined}
-            />
-              {children}
-              <SanityLive />
-            </DebugLayout>
-          </DebugKeyboardProvider>
+        <ColorMapProvider>
+          <DebugKeyboardProvider>
+            <DebugLayout>
+              <Navigation
+                logo={logo as LogoType}
+                navLabels={navData as NavLabelsType}
+                mobileBackgroundImage={navData.mobileBackgroundImage as SanityImageObject | undefined}
+              />
+                {children}
+                <SanityLive />
+              </DebugLayout>
+            </DebugKeyboardProvider>
+          </ColorMapProvider>
       </DebugLayoutProvider>
     </DebugProvider>
   );
