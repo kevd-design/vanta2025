@@ -15,10 +15,18 @@ body {
   background: var(--background);
 }
 
-.js .no-js-content {
-  display: none;
+/* JS Detection */
+/* Default styles (no JS) */
+.js-content { 
+  display: none; 
 }
 
-.no-js .js-content {
-  display: none;
+@media screen and (scripting: enabled) {
+  /* JS is available styles */
+  .js-content { 
+    display: block; 
+  }
+  .no-js-content { 
+    display: none; 
+  }
 }

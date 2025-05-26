@@ -22,10 +22,18 @@ export async function generateSiteMetadata({
   path = ''
 }: GenerateMetadataProps): Promise<Metadata> {
   // Fetch site-wide settings from Sanity
-  const { data } = await sanityFetch({ 
+  const response = await sanityFetch({ 
     query: QUERY_METADATA 
-  }) as { data: MetadataQueryResult };
+  });
   
+  // Log the response
+  console.log('Sanity response:', response);
+  
+  const data = response?.data as MetadataQueryResult;
+  
+  // Log the processed data
+  console.log('Processed data:', data);
+
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com'
   const fullUrl = `${siteUrl}${path}`
   
@@ -34,20 +42,20 @@ export async function generateSiteMetadata({
   const defaultDescription = 'Beyond standard construction'
   
   return {
-    title: title || data?.title || defaultTitle,
+    title: data?.Sitetitle || defaultTitle,
     description: description || data?.description || defaultDescription,
     metadataBase: new URL(siteUrl),
     openGraph: {
-      title: title || data?.title || defaultTitle,
+      title: title || data?.Sitetitle || defaultTitle,
       description: description || data?.description || defaultDescription,
       url: fullUrl,
-      siteName: data?.title || defaultTitle,
+      siteName: data?.Sitetitle || defaultTitle,
       images: [
         {
-          url: image?.url || data?.siteImage?.asset?.url || '/fallback-og.png',
-          width: image?.width || data?.siteImage?.asset?.metadata?.dimensions?.width || 1200,
-          height: image?.height || data?.siteImage?.asset?.metadata?.dimensions?.height || 630,
-          alt: image?.alt || data?.siteImage?.altText || 'Site preview'
+          url: image?.url || data?.heroImage?.asset?.url || '/fallback-og.png',
+          width: image?.width || data?.heroImage?.asset?.metadata?.dimensions?.width || 1200,
+          height: image?.height || data?.heroImage?.asset?.metadata?.dimensions?.height || 630,
+          alt: image?.alt || data?.heroImage?.altText || 'Site preview'
         }
       ],
       locale: 'en_US',
@@ -55,9 +63,9 @@ export async function generateSiteMetadata({
     },
     twitter: {
       card: 'summary_large_image',
-      title: title || data?.title || defaultTitle,
+      title: title || data?.Sitetitle || defaultTitle,
       description: description || data?.description || defaultDescription,
-      images: [image?.url || data?.siteImage?.asset?.url || '/fallback-og.png'],
+      images: [image?.url || data?.heroImage?.asset?.url || '/fallback-og.png'],
     },
     robots: {
       index: true,

@@ -1,6 +1,7 @@
 import "./globals.css"
 import { Open_Sans, Gilda_Display } from "next/font/google"
-import Script from "next/script"
+import { generateSiteMetadata } from './(site)/components/common/SiteMetadata'
+import type { Metadata } from 'next'
 
 const openSans = Open_Sans({
   subsets: ["latin"],
@@ -15,22 +16,20 @@ const gildaDisplay = Gilda_Display({
   variable: '--font-gilda-display',
 })
 
+export async function generateMetadata(): Promise<Metadata> {
+  return generateSiteMetadata({
+    path: '/'
+  })
+}
+
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`no-js ${openSans.variable} ${gildaDisplay.variable} antialiased`}>
-      <head>
-        <Script 
-          id="js-detection" 
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `(function(){document.documentElement.classList.remove('no-js');document.documentElement.classList.add('js');})();`
-          }}
-        />
-      </head>
+    <html lang="en" className={`${openSans.variable} ${gildaDisplay.variable} antialiased`}>
       <body>
         {children}
       </body>
