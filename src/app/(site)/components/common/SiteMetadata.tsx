@@ -26,14 +26,8 @@ export async function generateSiteMetadata({
     query: QUERY_METADATA 
   });
   
-  // Log the response
-  console.log('Sanity response:', response);
   
   const data = response?.data as MetadataQueryResult;
-  
-  // Log the processed data
-  console.log('Processed data:', data);
-
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com'
   const fullUrl = `${siteUrl}${path}`
   

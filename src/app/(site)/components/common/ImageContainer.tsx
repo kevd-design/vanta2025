@@ -29,6 +29,7 @@ interface ImageContainerProps {
     }>
     onColorMapChange: (map: ColorMap) => void
     isDebugMode?: boolean
+    setOptimizedImageUrl: (url: string) => void // Make this optional
   }) => React.ReactNode
   className?: string
   isDebugMode?: boolean
@@ -39,6 +40,7 @@ interface ImageContainerProps {
     label: string 
   }>
   image?: SanityImageObject | null
+  setOptimizedImageUrl?: (url: string) => void 
 }
 
 export const ImageContainer: FC<ImageContainerProps> = ({
@@ -48,12 +50,14 @@ export const ImageContainer: FC<ImageContainerProps> = ({
   imageId,
   displayName,
   elementRefs,
-  image
+  image,
+  setOptimizedImageUrl: externalSetOptimizedImageUrl
 }) => {
   // Window and container state
   const [isReady, setIsReady] = useState(false)
   const { width: screenWidth, height: screenHeight } = useWindowSize()
   const [containerWidth, setContainerWidth] = useState(screenWidth)
+  const [optimizedImageUrl, setOptimizedImageUrl] = useState<string | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
   // Use ColorMap context
@@ -76,15 +80,19 @@ export const ImageContainer: FC<ImageContainerProps> = ({
 
 
 
-  // Only register with debug observer when ready
+
   useDebugObserver({
     componentId: imageId,
     displayName: displayName || imageId, 
-    colorMap: isReady ? colorMap : [],
+      // Only pass color map if it's valid
+    colorMap: colorMap && colorMap.length > 0 && colorMap.every(row => Array.isArray(row) && row.length > 0) 
+      ? colorMap 
+      : undefined,
     elementMap: isReady ? elementMap : [],
     elementColors: isReady ? elementColors : {},
     image,
     enabled: isDebugMode && isReady,
+    optimizedImageUrl: optimizedImageUrl || undefined, 
     dimensions: isReady ? {
       width: dimensions.width,
       height: dimensions.height
@@ -161,12 +169,21 @@ const handleColorMapChange = useCallback((newColorMap: ColorMap) => {
   });
 }, [setColorMap]);
 
+    // Use external setter if provided, or fallback to local state setter
+  const handleSetOptimizedImageUrl = useCallback((url: string) => {
+    setOptimizedImageUrl(url);
+    if (externalSetOptimizedImageUrl) {
+      externalSetOptimizedImageUrl(url);
+    }
+  }, [externalSetOptimizedImageUrl]);
+
     // Only render children when ready
   const content = isReady ? children({
     containerRef,
     dimensions,
     colorMap,
     elementColors,
+    setOptimizedImageUrl: handleSetOptimizedImageUrl,  // Pass the handler function
     onColorMapChange: handleColorMapChange,
     isDebugMode
   }) : null

@@ -15,7 +15,8 @@ export const OptimizedImage: FC<OptimizedImageProps> = ({
   className = '',
   priority = false,
   objectFit = 'cover',
-  onColorMapChange
+  onColorMapChange,
+  onImageUrlGenerated
 }) => {
   const { isDebugMode } = useDebug()
   const [imageUrl, setImageUrl] = useState<string | null>(null)
@@ -117,7 +118,10 @@ export const OptimizedImage: FC<OptimizedImageProps> = ({
       }
       setImageUrl(url)
     }
-  }, [generateUrl, isDebugMode])
+    if (onImageUrlGenerated) {
+        onImageUrlGenerated(url)
+      }
+  }, [generateUrl, isDebugMode, onImageUrlGenerated])
 
   if (!imageUrl || !image?.asset) {
     if (isDebugMode) {

@@ -21,6 +21,8 @@ interface UseDebugUpdateProps {
     }
   }>
   image?: SanityImageObject
+  componentId: string
+  displayName: string
   setDebugContent: (content: DebugContent) => void
 }
 
@@ -31,6 +33,8 @@ export const useDebugUpdate = ({
   elementMap,
   elementColors,
   image,
+  componentId,
+  displayName,
   setDebugContent
 }: UseDebugUpdateProps) => {
   useEffect(() => {
@@ -42,8 +46,10 @@ export const useDebugUpdate = ({
           width: dimensions.width,
           height: dimensions.height
         },
+        displayName: displayName || componentId,
         accessibilityResults: { elementColors },
         imageDebug: {
+          displayName: displayName || componentId,
           imageUrl: image?.asset?.url ?? '',
           renderInfo: {
             containerWidth: dimensions.width,
@@ -66,6 +72,8 @@ export const useDebugUpdate = ({
     elementMap,
     elementColors,
     image,
-    setDebugContent
+    setDebugContent,
+    componentId,
+    displayName
   ])
 }

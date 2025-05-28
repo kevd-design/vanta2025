@@ -29,21 +29,35 @@ export const useAccessibilityMap = (
   });
 
   useEffect(() => {
-    if (!colorMap.length || !elementMap.length) return;
+    // Validate input data before processing
+    if (!colorMap?.length || !elementMap?.length) {
+      console.log('Skipping accessibility analysis - missing data', {
+        hasColorMap: !!colorMap?.length,
+        hasElementMap: !!elementMap?.length
+      });
+      return;
+    }
 
-    const elementVotes: { [key: string]: { black: number; white: number; total: number } } = {};
+    try {
+      const elementVotes: { [key: string]: { black: number; white: number; total: number } } = {};
 
-    // Analyze each cell in the element map
-    elementMap.forEach((row, y) => {
-      row.forEach((cell, x) => {
-        if (cell.isElement && cell.elementLabel) {
+      // Analyze each cell in the element map
+      elementMap.forEach((row, y) => {
+        row.forEach((cell, x) => {
+          // Skip if element is not valid
+          if (!cell?.isElement || !cell?.elementLabel) return;
+          
           // Initialize element tracking if needed
           if (!elementVotes[cell.elementLabel]) {
             elementVotes[cell.elementLabel] = { black: 0, white: 0, total: 0 };
           }
 
-          // Get corresponding color cell
-          const colorCell = colorMap[y][x];
+          // Get corresponding color cell - with safety checks
+          const colorCell = colorMap[y]?.[x];
+          
+          // Skip if color cell is missing or invalid
+          if (!colorCell || typeof colorCell.luminance !== 'number') return;
+          
           elementVotes[cell.elementLabel].total++;
 
           // Vote based on luminance
@@ -52,34 +66,40 @@ export const useAccessibilityMap = (
           } else {
             elementVotes[cell.elementLabel].white++;
           }
-        }
+        });
       });
-    });
 
-    // Calculate results for each element
-    const newResults: AccessibilityResult = {
-      elementColors: {}
-    };
-
-    Object.entries(elementVotes).forEach(([label, votes]) => {
-      const blackConsensus = votes.black / votes.total;
-      const whiteConsensus = votes.white / votes.total;
-      const bestConsensus = Math.max(blackConsensus, whiteConsensus);
-
-      newResults.elementColors[label] = {
-        color: bestConsensus >= options.consensusThreshold
-          ? (blackConsensus > whiteConsensus ? 'text-black' : 'text-white')
-          : 'background',
-        debugInfo: {
-          totalCells: votes.total,
-          blackVotes: votes.black,
-          whiteVotes: votes.white,
-          consensusPercentage: bestConsensus
-        }
+      // Calculate results for each element
+      const newResults: AccessibilityResult = {
+        elementColors: {}
       };
-    });
 
-    setResult(newResults);
+      Object.entries(elementVotes).forEach(([label, votes]) => {
+        // Skip if no votes were registered
+        if (votes.total === 0) return;
+        
+        const blackConsensus = votes.black / votes.total;
+        const whiteConsensus = votes.white / votes.total;
+        const bestConsensus = Math.max(blackConsensus, whiteConsensus);
+
+        newResults.elementColors[label] = {
+          color: bestConsensus >= options.consensusThreshold
+            ? (blackConsensus > whiteConsensus ? 'text-black' : 'text-white')
+            : 'background',
+          debugInfo: {
+            totalCells: votes.total,
+            blackVotes: votes.black,
+            whiteVotes: votes.white,
+            consensusPercentage: bestConsensus
+          }
+        };
+      });
+
+      setResult(newResults);
+    } catch (error) {
+      console.error('Error in useAccessibilityMap:', error);
+      // Maintain previous result on error
+    }
   }, [colorMap, elementMap, options.consensusThreshold, options.contrastThreshold]);
 
   return result;

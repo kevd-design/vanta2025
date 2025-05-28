@@ -1,11 +1,12 @@
 'use client'
 
-import { FC, useRef, useMemo } from 'react'
+import { FC, useRef, useMemo, useState } from 'react'
 import Image from 'next/image'
 import { useDebug } from '../context/DebugContext'
 import { HeroBackground } from './HeroBackground'
 import { HeroContent } from './HeroContent'
 import { ImageContainer } from './common/ImageContainer'
+import { useDebugObserver } from '../hooks/useDebugObserver'
 import type { HeroSection } from '../../types'
 
 export const Hero: FC<HeroSection> = ({
@@ -16,11 +17,21 @@ export const Hero: FC<HeroSection> = ({
   const { isDebugMode } = useDebug()
   const headlineRef = useRef<HTMLHeadingElement>(null)
   const ctaRef = useRef<HTMLDivElement>(null)
+  const [optimizedImageUrl, setOptimizedImageUrl] = useState<string | null>(null)
 
   const elementRefs = useMemo(() => [
     { ref: headlineRef, label: 'Headline' },
     { ref: ctaRef, label: 'CTA' }
   ], [])
+  
+  // Use the debug observer to send optimized image URL to debug panel
+  useDebugObserver({
+    componentId: "hero",
+    displayName: "Hero Section",
+    image,
+    optimizedImageUrl: optimizedImageUrl || undefined, // Pass the optimized URL to the debug observer
+    enabled: isDebugMode
+  });
 
   const fallbackContent = (
     <noscript>
@@ -57,7 +68,6 @@ export const Hero: FC<HeroSection> = ({
     </noscript>
   )
 
-
   return (
     <>
       <ImageContainer 
@@ -68,13 +78,18 @@ export const Hero: FC<HeroSection> = ({
         elementRefs={elementRefs}
         image={image}
       >
-        {({ dimensions, onColorMapChange, elementColors }) => (
+        {({ dimensions, onColorMapChange, elementColors, setOptimizedImageUrl: containerSetOptimizedImageUrl }) => (
           <>
             <HeroBackground 
               image={image}
               dimensions={dimensions}
               isDebugMode={isDebugMode}
               onColorMapChange={onColorMapChange}
+              setOptimizedImageUrl={(url: string) => {
+                // Update both the container state and our local state
+                containerSetOptimizedImageUrl(url);
+                setOptimizedImageUrl(url);
+              }}
             />
             <HeroContent
               headline={headline}

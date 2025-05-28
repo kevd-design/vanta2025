@@ -20,7 +20,7 @@ export const ImageDebug: FC<ImageDebugProps> = ({
 }) => {
   return (
     <div 
-      className="bg-gray-900/80 backdrop-blur-sm rounded-lg p-4 text-xs text-gray-100 min-w-[200px] sticky top-20  mt-20"
+      className="bg-gray-900/80 backdrop-blur-sm rounded-lg p-4 text-xs text-gray-100 min-w-[200px] sticky top-20"
       
       style={{
         zIndex: DEBUG_CONFIG.zIndex.debug

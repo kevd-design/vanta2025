@@ -280,6 +280,7 @@ export interface OptimizedImageProps {
   objectFit?: 'cover' | 'contain'
   showDebug?: boolean
   onColorMapChange?: (colorMap: ColorMap) => void
+  onImageUrlGenerated?: (url: string | null) => void 
 }
 
 export interface ElementMap {
@@ -353,6 +354,7 @@ export interface HeroBackgroundProps {
   isDebugMode?: boolean
   onColorMapChange?: (colorMap: ColorMap) => void
   onDimensionsChange?: (dimensions: { width: number; height: number }) => void
+  setOptimizedImageUrl?: (url: string) => void
 }
 
 export interface ElementMapResult {
@@ -391,3 +393,10 @@ export type DebouncedFunction<Args extends unknown[], Return> = {
   flush: () => void
 }
 
+export interface ViewportInfo {
+  scrollY: number
+  scrollX: number
+  width: number
+  height: number
+  zoomLevel: number
+}
