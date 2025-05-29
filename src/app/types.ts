@@ -2,7 +2,6 @@ import type {
   ImageAsset, 
   ImageHotspot,
   ImageCrop,
-  
 } from '@sanity/types'
 
 import type { 
@@ -13,7 +12,7 @@ import type {
 
 import type { RefObject } from 'react'
 
-import { ColorMap } from './types/colorMap'
+import type { ColorMap, ImageMetadata as ColorMapImageMetadata } from './types/colorMap';
 
 
 // Base image types
@@ -232,7 +231,7 @@ interface BaseImageOptions {
 export interface ImageRenderInfo {
   containerWidth: number
   containerHeight: number
-  objectFit: 'cover' | 'contain'
+  objectFit: 'cover' | 'contain' | 'fill'
   objectPosition: {
     x: number
     y: number
@@ -271,16 +270,16 @@ export interface ImageUrlOptions {
 }
 
 export interface OptimizedImageProps {
-  image: SanityImageObject
-  width: number
-  height: number | null
-  quality?: number
-  priority?: boolean
-  className?: string
-  objectFit?: 'cover' | 'contain'
-  showDebug?: boolean
-  onColorMapChange?: (colorMap: ColorMap) => void
-  onImageUrlGenerated?: (url: string | null) => void 
+  image: SanityImageObject;
+  width: number;
+  height?: number;
+  quality?: number;
+  className?: string;
+  priority?: boolean;
+  objectFit?: 'cover' | 'contain' | 'fill';
+  showDebug?: boolean;
+  onColorMapChange?: (colorMap: ColorMap, metadata?: ColorMapImageMetadata) => void;
+  onImageUrlGenerated?: (url: string | null) => void;
 }
 
 export interface ElementMap {
@@ -349,12 +348,14 @@ export interface CropRect {
 }
 
 export interface HeroBackgroundProps {
-  image: SanityImageObject | null
-  dimensions: Dimensions
-  isDebugMode?: boolean
-  onColorMapChange?: (colorMap: ColorMap) => void
-  onDimensionsChange?: (dimensions: { width: number; height: number }) => void
-  setOptimizedImageUrl?: (url: string) => void
+  image: SanityImageObject;
+  dimensions: {
+    width: number;
+    height: number;
+  };
+  isDebugMode?: boolean;
+  onColorMapChange?: (map: ColorMap, metadata?: ColorMapImageMetadata) => void;
+  setOptimizedImageUrl?: (url: string) => void;
 }
 
 export interface ElementMapResult {
@@ -399,4 +400,5 @@ export interface ViewportInfo {
   width: number
   height: number
   zoomLevel: number
+  dpr?: number
 }

@@ -1,31 +1,16 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 
-const MIN_DPR = 1
-const MAX_DPR = 3
-const DEFAULT_DPR = 2
-
-export function useBestDpr() {
-  const [dpr, setDpr] = useState(DEFAULT_DPR)
-
+export const useBestDpr = () => {
+  const [dpr, setDpr] = useState<number>(1);
+  
   useEffect(() => {
-    function calculateDpr() {
-      if (typeof window === 'undefined') return DEFAULT_DPR
-      
-      const devicePixelRatio = window.devicePixelRatio || MIN_DPR
-      return Math.min(Math.max(devicePixelRatio, MIN_DPR), MAX_DPR)
-    }
-
-    function handleResize() {
-      setDpr(calculateDpr())
-    }
-
-    // Initial calculation
-    setDpr(calculateDpr())
-
-    // Update on resize
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
-
-  return dpr
-}
+    // Get the device pixel ratio, but cap it at 2 to prevent performance issues
+    const deviceDpr = typeof window !== 'undefined' 
+      ? Math.min(window.devicePixelRatio || 1, 2) 
+      : 1;
+    
+    setDpr(deviceDpr);
+  }, []);
+  
+  return dpr;
+};

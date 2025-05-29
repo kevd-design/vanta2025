@@ -19,11 +19,16 @@ export type DebugContent = {
   accessibilityResults: {
     elementColors: Record<string, {
       color: 'text-black' | 'text-white' | 'background'
+      wcagCompliant?: boolean 
+      needsBackground?: boolean 
       debugInfo: {
         totalCells: number
         blackVotes: number
         whiteVotes: number
         consensusPercentage: number
+        contrastRatio?: number
+        varianceScore?: number
+        dpr?: number
       }
     }>
   }

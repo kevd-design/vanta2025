@@ -1,33 +1,55 @@
 'use client'
 
 import { createContext, useContext, useCallback, useState, FC, PropsWithChildren } from 'react'
-import type { ColorMap } from '../../types/colorMap'
+import type { ColorMap, ImageMetadata, ColorMapData } from '../../types/colorMap'
+
+// Remove duplicate interface definitions since we're importing them
 
 interface ColorMapContextValue {
-  colorMaps: Record<string, ColorMap>
+  colorMaps: Record<string, ColorMapData>;
   setColorMap: (
     id: string, 
-    map: ColorMap | ((prev: ColorMap) => ColorMap)
-  ) => void
-  getColorMap: (id: string) => ColorMap | undefined
-  clearColorMap: (id: string) => void
+    mapData: ColorMapData | ((prev: ColorMapData) => ColorMapData)
+  ) => void;
+  getColorMap: (id: string) => ColorMap | undefined;
+  getMetadata: (id: string) => ImageMetadata | undefined;
+  clearColorMap: (id: string) => void;
 }
 
 const ColorMapContext = createContext<ColorMapContextValue | null>(null)
 
 export const ColorMapProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [colorMaps, setColorMaps] = useState<Record<string, ColorMap>>({})
+  // Update to store both map and metadata
+  const [colorMaps, setColorMaps] = useState<Record<string, ColorMapData>>({})
 
-  const setColorMap = useCallback((id: string, map: ColorMap | ((prev: ColorMap) => ColorMap)) => {
-    setColorMaps(prev => ({
-      ...prev,
-      [id]: typeof map === 'function' ? map(prev[id] ?? []) : map
-    }))
-  }, [])
+  const setColorMap = useCallback((
+    id: string, 
+    mapData: ColorMapData | ((prev: ColorMapData) => ColorMapData)
+  ) => {
+    setColorMaps(prev => {
+      const prevData = prev[id] || { map: [] };
+      const newData = typeof mapData === 'function' ? 
+        mapData(prevData) : mapData;
+        
+      // Preserve metadata if only the map was provided
+      if (!newData.metadata && prevData.metadata) {
+        newData.metadata = prevData.metadata;
+      }
+      
+      return {
+        ...prev,
+        [id]: newData
+      };
+    });
+  }, []);
 
   const getColorMap = useCallback((id: string) => {
-    return colorMaps[id]
-  }, [colorMaps])
+    return colorMaps[id]?.map;
+  }, [colorMaps]);
+  
+  const getMetadata = useCallback((id: string) => {
+    return colorMaps[id]?.metadata;
+  }, [colorMaps]);
 
   const clearColorMap = useCallback((id: string) => {
     setColorMaps(prev => {
@@ -42,6 +64,7 @@ export const ColorMapProvider: FC<PropsWithChildren> = ({ children }) => {
       colorMaps,
       setColorMap,
       getColorMap,
+      getMetadata,
       clearColorMap
     }}>
       {children}
@@ -57,7 +80,13 @@ export const useColorMap = (id: string) => {
 
   return {
     colorMap: context.getColorMap(id) ?? [],
-    setColorMap: (map: ColorMap | ((prev: ColorMap) => ColorMap)) => context.setColorMap(id, map),
+    metadata: context.getMetadata(id),
+    setColorMap: (mapData: ColorMapData | ((prev: ColorMapData) => ColorMapData)) => 
+      context.setColorMap(id, mapData),
+    setColorMapWithMetadata: (
+      map: ColorMap, 
+      metadata: ImageMetadata
+    ) => context.setColorMap(id, { map, metadata }),
     clearColorMap: () => context.clearColorMap(id)
   }
 }

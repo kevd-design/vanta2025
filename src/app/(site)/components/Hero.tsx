@@ -33,6 +33,11 @@ export const Hero: FC<HeroSection> = ({
     enabled: isDebugMode
   });
 
+  if (!image?.asset) {
+    return null; // Or render a fallback/placeholder
+  }
+
+
   const fallbackContent = (
     <noscript>
       <div className="relative w-full h-[90vh] sm:h-[800px] md:h-[1200px] lg:h-[1582px] xl:h-[1800px] 2xl:h-[2000px]">
@@ -40,7 +45,7 @@ export const Hero: FC<HeroSection> = ({
           <>
             {/* Fallback image */}
             <Image
-              src={image.asset.url}
+              src={optimizedImageUrl || image.asset.url}
               alt={image.alt || ''}
               fill
               priority

@@ -50,16 +50,21 @@ export class DebugWindowManager {
   }
   
 
+  // Update sendViewportInfo function:
   private sendViewportInfo() {
   if (!this.debugWindow || this.debugWindow.closed) return;
+
+  // Get the SEPARATE values for DPR and zoom
+  const dpr = window.devicePixelRatio || 1;
+  const zoomLevel = window.visualViewport?.scale || 1;
   
   const viewportInfo = {
     scrollY: window.scrollY,
     scrollX: window.scrollX,
     width: window.innerWidth,
     height: window.innerHeight,
-    zoomLevel: window.devicePixelRatio || 
-              (window.visualViewport?.scale || 1)
+    zoomLevel, // Browser zoom level from visualViewport
+    dpr       // Device pixel ratio
   };
   
   try {
@@ -123,7 +128,8 @@ export class DebugWindowManager {
             scrollX: window.scrollX,
             width: window.innerWidth,
             height: window.innerHeight,
-            zoomLevel: window.devicePixelRatio || (window.visualViewport?.scale || 1)
+            zoomLevel: window.visualViewport?.scale || 1, // Separate from DPR
+            dpr: window.devicePixelRatio || 1 
           };
           
           // Send updated viewport info immediately after resize completes
@@ -260,6 +266,7 @@ private startWindowCheck() {
   private latestContentHash: string = ''
 
   sendDebugUpdate(content: DebugContent | null) {
+
     // Don't send updates while resizing
     if (this.resizeState === 'resizing') {
       // Just store the content for later
@@ -287,6 +294,8 @@ private startWindowCheck() {
     
     const isDebugModeActive = localStorage.getItem('debug-mode') === 'true';
     
+
+    
     // Only send if window exists and is open
     if (this.debugWindow && !this.debugWindow.closed && isDebugModeActive) {
       if (isDebugModeActive) {
@@ -295,7 +304,11 @@ private startWindowCheck() {
           displayName: content.displayName || 'unknown',
           hasColorMap: Array.isArray(content.colorMap) && content.colorMap.length > 0,
           hasElementMap: Array.isArray(content.elementMap) && content.elementMap.length > 0,
-          hasImageDebug: !!content.imageDebug
+          hasImageDebug: !!content.imageDebug,
+          hasAccessibilityData: !!content.accessibilityResults,
+          wcagCompliant: content.accessibilityResults ? 
+          Object.values(content.accessibilityResults.elementColors).some(el => el.wcagCompliant) : false,
+        dpr: content.viewportInfo?.dpr || window.devicePixelRatio || 1
         });
       }
       

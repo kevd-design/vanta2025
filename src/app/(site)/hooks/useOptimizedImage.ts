@@ -16,13 +16,14 @@ export const useOptimizedImage = ({
   const { generateCachedUrl } = useUrlCache()
   const dpr = useBestDpr()
   const [stateUrl, setStateUrl] = useState<string | null>(null)
+  const [hydrated, setHydrated] = useState(false)
 
-  // Generate URL synchronously using useMemo
-  const generatedUrl = useMemo(() => {
+  // Generate initial URL with DEFAULT_DPR=1 for consistent SSR
+  const initialUrl = useMemo(() => {
     if (!asset) return null
 
     const sourceAspectRatio = (asset.metadata?.dimensions?.width || width) / 
-                            (asset.metadata?.dimensions?.height || height)
+                             (asset.metadata?.dimensions?.height || height)
 
     const dimensions = calculateDimensions(
       width, 
@@ -30,9 +31,10 @@ export const useOptimizedImage = ({
       sourceAspectRatio
     )
 
+    // Important: Use DEFAULT_DPR=1 for initial render to match SSR
     return generateCachedUrl(asset, dimensions.width, dimensions.height, {
       quality,
-      dpr,
+      dpr: 1, // Use fixed DPR=1 for initial render
       hotspot: hotspot ? {
         _type: "sanity.imageHotspot",
         ...hotspot
@@ -42,18 +44,50 @@ export const useOptimizedImage = ({
         ...crop
       } : undefined
     })
-  }, [asset, width, height, quality, dpr, hotspot, crop, generateCachedUrl])
+  }, [asset, width, height, quality, hotspot, crop, generateCachedUrl])
 
-  // Keep state in sync with generated URL
+  // After hydration, generate URL with actual DPR
+  const hydratedUrl = useMemo(() => {
+    if (!asset || !hydrated) return null
+
+    const sourceAspectRatio = (asset.metadata?.dimensions?.width || width) / 
+                             (asset.metadata?.dimensions?.height || height)
+
+    const dimensions = calculateDimensions(
+      width, 
+      height || width / sourceAspectRatio, 
+      sourceAspectRatio
+    )
+
+    return generateCachedUrl(asset, dimensions.width, dimensions.height, {
+      quality,
+      dpr, // Use actual DPR after hydration
+      hotspot: hotspot ? {
+        _type: "sanity.imageHotspot",
+        ...hotspot
+      } : undefined,
+      crop: crop ? {
+        _type: "sanity.imageCrop",
+        ...crop
+      } : undefined
+    })
+  }, [asset, width, height, quality, dpr, hotspot, crop, generateCachedUrl, hydrated])
+
+  // Mark as hydrated after first render
   useEffect(() => {
-    if (generatedUrl !== stateUrl) {
-      setStateUrl(generatedUrl)
+    setHydrated(true)
+  }, [])
+
+  // Update URL after hydration
+  useEffect(() => {
+    if (hydrated) {
+      setStateUrl(hydratedUrl)
     }
-  }, [generatedUrl, stateUrl])
+  }, [hydratedUrl, hydrated])
 
   return {
-    url: stateUrl ?? generatedUrl,
+    url: stateUrl ?? initialUrl,
     setUrl: setStateUrl,
-    generateUrl: useCallback(() => generatedUrl, [generatedUrl])
+    generateUrl: useCallback(() => hydrated ? hydratedUrl : initialUrl, [hydrated, hydratedUrl, initialUrl])
   }
 }

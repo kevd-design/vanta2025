@@ -8,6 +8,10 @@ export type ElementInfo = {
 export type ElementMapCell = {
   isElement: boolean;
   elementLabel?: string;
+  rawPosition?: {
+    x: number;
+    y: number;
+  }
 };
 
 export type ElementMap = ElementMapCell[][];
@@ -21,5 +25,6 @@ export interface ElementMapResult {
       width: number;
       height: number;
     };
+    dpr: number;
   };
 }

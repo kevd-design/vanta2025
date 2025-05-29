@@ -14,11 +14,16 @@ interface DebugObserverProps {
   elementMap?: ElementMapCell[][]
   elementColors?: Record<string, {
     color: 'text-black' | 'text-white' | 'background'
+    wcagCompliant?: boolean
+    needsBackground?: boolean
     debugInfo: {
       totalCells: number
       blackVotes: number
       whiteVotes: number
       consensusPercentage: number
+      contrastRatio?: number
+      varianceScore?: number 
+      dpr?: number 
     }
   }>
   image?: SanityImageObject | null
@@ -52,7 +57,8 @@ export const useDebugObserver = ({
     scrollX: typeof window !== 'undefined' ? window.scrollX : 0,
     width: typeof window !== 'undefined' ? window.innerWidth : 0,
     height: typeof window !== 'undefined' ? window.innerHeight : 0,
-    zoomLevel: typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1
+    zoomLevel: typeof window !== 'undefined' ? (window.visualViewport?.scale || 1) : 1, // This is browser zoom
+    dpr: typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1 // This is device pixel ratio
   })
   
   // Check if debug is actually active
@@ -89,8 +95,8 @@ export const useDebugObserver = ({
         scrollX: window.scrollX,
         width: window.innerWidth,
         height: window.innerHeight,
-        zoomLevel: window.devicePixelRatio || 
-                  (window.visualViewport?.scale || 1)
+        zoomLevel:  window.visualViewport?.scale || 1,
+        dpr: window.devicePixelRatio || 1
       };
       
       // Update local state always
@@ -221,12 +227,25 @@ export const useDebugObserver = ({
      // Send initial viewport info
     updateViewportInfo();
     
-
+    // Current DPR reference
+    let currentDpr = window.devicePixelRatio || 1;
+    
+    // DPR change detection
+    const dprMediaQuery = window.matchMedia(`(resolution: ${currentDpr}dppx)`);
+    
+    const handleDprChange = () => {
+      const newDpr = window.devicePixelRatio || 1;
+      if (Math.abs(newDpr - currentDpr) > 0.01) {
+        currentDpr = newDpr;
+        updateViewportInfo();
+      }
+    };
     
     // Add event listeners
     window.addEventListener('scroll', throttledScroll, { passive: true });
     window.addEventListener('resize', updateViewportInfo);
     window.addEventListener('visibilitychange', updateViewportInfo);
+    dprMediaQuery.addEventListener('change', handleDprChange);
     
     // For browsers that support Visual Viewport API
     if (window.visualViewport) {
@@ -248,6 +267,7 @@ export const useDebugObserver = ({
       window.removeEventListener('resize', updateViewportInfo);
       window.removeEventListener('visibilitychange', updateViewportInfo);
       window.removeEventListener('message', handleMessage);
+      dprMediaQuery.removeEventListener('change', handleDprChange);
       
       if (window.visualViewport) {
         window.visualViewport.removeEventListener('scroll', throttledScroll);
@@ -258,6 +278,8 @@ export const useDebugObserver = ({
       if (scrollTimer) clearTimeout(scrollTimer);
     };
   }, [isActive, setViewportInfo, setDebugContent]);
+
+  
   
   // Only collect data when debug is active
   useEffect(() => {
@@ -275,7 +297,13 @@ export const useDebugObserver = ({
         dimensions,
         image: !!image,
         optimizedImageUrl: !!optimizedImageUrl,
-        viewportInfo
+        viewportInfo,
+        accessibility: elementColors ? {
+          elements: Object.keys(elementColors).length,
+          wcagCompliant: Object.values(elementColors).some(el => el.wcagCompliant),
+          needsBackground: Object.values(elementColors).some(el => el.needsBackground),
+          dpr: viewportInfo.dpr
+        } : null
       })
     }
 

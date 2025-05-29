@@ -2,27 +2,44 @@ import { useState, useEffect, RefObject, useCallback } from 'react';
 import { useDebounce } from './useDebounce';
 import type { ElementMap, ElementMapResult } from '../../types/elementMap';
 
-
-
 export const useElementMap = (
   containerRef: RefObject<HTMLElement | null>,
-    elements: Array<{ 
+  elements: Array<{ 
     ref: RefObject<HTMLElement | null>
     label: string 
   }>,
   baseGridSize = 100
 ): ElementMapResult => {
   const [result, setResult] = useState<ElementMapResult>({
-  elementMap: [],
-  debugInfo: {
-    totalElements: 0,
-    coveredCells: 0,
-    grid: {
-      width: 0,
-      height: 0
+    elementMap: [],
+    debugInfo: {
+      totalElements: 0,
+      coveredCells: 0,
+      grid: {
+        width: 0,
+        height: 0
+      },
+      dpr: 1
     }
-  }
   });
+
+  // Get current DPR
+  const [dpr, setDpr] = useState(() => typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1);
+
+  // Monitor DPR changes
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    const mediaQuery = window.matchMedia(`(resolution: ${dpr}dppx)`);
+    
+    const handleChange = () => {
+      const newDpr = window.devicePixelRatio || 1;
+      setDpr(newDpr);
+    };
+    
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, [dpr]);
 
   // Memoize the map update function
   const updateElementMap = useCallback(() => {
@@ -59,12 +76,33 @@ export const useElementMap = (
       const elementRect = ref.current.getBoundingClientRect();
       
       // Calculate element position relative to container
+      // DPR is already accounted for in getBoundingClientRect
       const relativeRect = {
         top: elementRect.top - containerRect.top,
         left: elementRect.left - containerRect.left,
         width: elementRect.width,
         height: elementRect.height
       };
+
+      // For debugging: record raw values
+      const rawValues = {
+        element: {
+          top: elementRect.top, 
+          left: elementRect.left, 
+          width: elementRect.width, 
+          height: elementRect.height
+        },
+        container: {
+          top: containerRect.top,
+          left: containerRect.left,
+          width: containerRect.width,
+          height: containerRect.height
+        },
+        relative: { ...relativeRect },
+        dpr
+      };
+
+      console.debug(`ElementMap: mapping ${label}`, rawValues);
 
       // Calculate grid cells covered by element using proportional grid
       const startCol = Math.floor((relativeRect.left / containerRect.width) * gridWidth);
@@ -78,7 +116,11 @@ export const useElementMap = (
           if (row >= 0 && col >= 0) {
             newMap[row][col] = {
               isElement: true,
-              elementLabel: label
+              elementLabel: label,
+              rawPosition: {
+                x: col / gridWidth,
+                y: row / gridHeight
+              }
             };
             coveredCells++;
           }
@@ -91,10 +133,11 @@ export const useElementMap = (
       debugInfo: {
         totalElements: elements.length,
         coveredCells,
-        grid: { width: gridWidth, height: gridHeight }
+        grid: { width: gridWidth, height: gridHeight },
+        dpr
       }
     });
-  }, [containerRef, elements, baseGridSize]);
+  }, [containerRef, elements, baseGridSize, dpr]); // Include dpr in dependencies
 
   // Debounce the update function
   const debouncedUpdate = useDebounce(updateElementMap, 100);

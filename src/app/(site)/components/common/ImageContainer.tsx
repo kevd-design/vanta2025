@@ -6,7 +6,7 @@ import { useColorMap } from '../../context/ColorMapContext'
 import { useElementMap } from '../../hooks/useElementMap'
 import { useAccessibilityMap } from '../../hooks/useAccessibilityMap'
 import { useDebugObserver } from '../../hooks/useDebugObserver'
-import type { ColorMap } from '../../../types/colorMap'
+import type { ColorMap, ImageMetadata } from '../../../types/colorMap'
 import type { SanityImageObject } from '../../../types'
 
 interface ImageContainerProps {
@@ -61,7 +61,11 @@ export const ImageContainer: FC<ImageContainerProps> = ({
   const containerRef = useRef<HTMLDivElement>(null)
 
   // Use ColorMap context
-  const { colorMap, setColorMap } = useColorMap(imageId)
+  const { 
+    colorMap, 
+    setColorMap,
+    setColorMapWithMetadata 
+  } = useColorMap(imageId)
 
   // Calculate dimensions only when we have real container width
   const dimensions = useImageDimensions(
@@ -159,15 +163,21 @@ export const ImageContainer: FC<ImageContainerProps> = ({
   }, [debouncedSetWidth])
 
   // Color map update handler
-const handleColorMapChange = useCallback((newColorMap: ColorMap) => {
-  setColorMap((prevMap: ColorMap) => {
-    if (prevMap.length === newColorMap.length && 
-        prevMap.every((row: ColorMap[number], i: number) => row.length === newColorMap[i].length)) {
-      return prevMap;
+  const handleColorMapChange = useCallback((
+    newColorMap: ColorMap, 
+    metadata?: ImageMetadata
+  ) => {
+    if (metadata) {
+      // If we have metadata, store both map and metadata
+      setColorMapWithMetadata(newColorMap, metadata);
+    } else {
+      // Otherwise just update the map
+      setColorMap(prevData => ({
+        ...prevData,
+        map: newColorMap
+      }));
     }
-    return newColorMap;
-  });
-}, [setColorMap]);
+  }, [setColorMap, setColorMapWithMetadata]);
 
     // Use external setter if provided, or fallback to local state setter
   const handleSetOptimizedImageUrl = useCallback((url: string) => {
