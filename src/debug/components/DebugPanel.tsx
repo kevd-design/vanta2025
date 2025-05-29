@@ -1,11 +1,11 @@
 'use client'
 
 import { FC, useEffect, useState, useRef } from 'react'
-import { AccessibilityDebug } from '../../(site)/components/debug/components/AccessibilityDebug'
-import { ImageDebug } from '../../(site)/components/debug/components/ImageDebug'
-import { useDebugLayout } from '../../(site)/context/DebugLayoutContext'
-import type { DebugContent } from '../../(site)/context/DebugLayoutContext'
-import type { ViewportInfo } from '../../types'
+import { AccessibilityDebug } from './AccessibilityDebug'
+import { ImageDebug } from './ImageDebug'
+import { useDebugLayout } from '@/debug'
+import type { DebugContent } from '@/debug'
+import type { ViewportInfo } from '../../app/types'
 
 // Add viewport state to the component
 interface DebugPanelProps {

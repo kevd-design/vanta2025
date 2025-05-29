@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useCallback, FC, PropsWithChildren, useEffect } from 'react'
-import { DebugWindowManager } from '../utils/debugWindowManager'
+import { DebugWindowManager } from '@/debug'
 
 interface DebugContextType {
   isDebugMode: boolean

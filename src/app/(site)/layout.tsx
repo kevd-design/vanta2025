@@ -5,10 +5,10 @@ import { QUERY_LOGO } from './queries/logoQuery';
 import { QUERY_NAV } from './queries/navQuery';
 import { Navigation } from './components/Navigation';
 import type { LogoType, NavLabelsType, SanityImageObject } from '../types'
-import { DebugProvider } from './context/DebugContext'
-import { DebugLayoutProvider } from './context/DebugLayoutContext'
-import { DebugKeyboardProvider } from './components/providers/DebugKeyboardProvider'
-import { DebugLayout } from './components/debug'
+import { DebugProvider } from '@/debug'
+import { DebugLayoutProvider } from '@/debug'
+import { DebugKeyboardProvider } from '@/debug'
+import { DebugLayout } from '@/debug'
 import { ColorMapProvider } from './context/ColorMapContext'
 
 export default async function RootLayout({

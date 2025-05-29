@@ -1,6 +1,8 @@
+'use client'
+
 import { FC, useState, useEffect, useRef } from 'react'
-import type { ColorMap } from '../../../../types/colorMap'
-import type { ElementMapCell, ViewportInfo } from '../../../../types'
+import type { ColorMap } from '../../app/types/colorMap'
+import type { ElementMapCell, ViewportInfo } from '../../app/types'
 
 // Enhanced props to include new accessibility metrics
 interface AccessibilityDebugProps {

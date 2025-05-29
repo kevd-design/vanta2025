@@ -1,11 +1,11 @@
 'use client'
 
 import { createContext, useContext, useState, PropsWithChildren, FC, useCallback, useEffect, useMemo } from 'react'
-import type { ElementMapCell, ImageRenderInfo, ViewportInfo } from '../../types'
-import type { ColorMap } from '../../types/colorMap'
-import { DebugWindowManager } from '../utils/debugWindowManager'
+import type { ElementMapCell, ImageRenderInfo, ViewportInfo } from '../../app/types'
+import type { ColorMap } from '../../app/types/colorMap'
+import { DebugWindowManager } from '@/debug'
 import { useDebug } from './DebugContext'
-import { DebugStorage } from '../utils/debugStorage'
+import { DebugStorage } from '@/debug'
 
 export type DebugContent = {
   colorMap: ColorMap

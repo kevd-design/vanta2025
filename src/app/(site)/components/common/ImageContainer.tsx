@@ -5,7 +5,7 @@ import { useDebounce } from '../../hooks/useDebounce'
 import { useColorMap } from '../../context/ColorMapContext'
 import { useElementMap } from '../../hooks/useElementMap'
 import { useAccessibilityMap } from '../../hooks/useAccessibilityMap'
-import { useDebugObserver } from '../../hooks/useDebugObserver'
+import { useDebugObserver } from '@/debug'
 import type { ColorMap, ImageMetadata } from '../../../types/colorMap'
 import type { SanityImageObject } from '../../../types'
 
@@ -40,8 +40,10 @@ interface ImageContainerProps {
     label: string 
   }>
   image?: SanityImageObject | null
-  setOptimizedImageUrl?: (url: string) => void 
+  setOptimizedImageUrl?: (url: string) => void
+  
 }
+
 
 export const ImageContainer: FC<ImageContainerProps> = ({
   children,

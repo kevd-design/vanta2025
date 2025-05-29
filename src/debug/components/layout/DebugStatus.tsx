@@ -1,7 +1,7 @@
 'use client'
 
 import { FC, useEffect, useState } from 'react'
-import { useDebug } from '../../context/DebugContext'
+import { useDebug } from '@/debug'
 import { DebugWindowManager } from '../../utils/debugWindowManager'
 
 export const DebugStatus: FC = () => {

@@ -1,7 +1,9 @@
+'use client'
+
 import { useCallback } from 'react'
 import type { DebugContent } from '../context/DebugLayoutContext'
-import type { ColorMap } from '../../types/colorMap'
-import type { ElementMapCell, SanityImageObject } from '../../types'
+import type { ColorMap } from '../../app/types/colorMap'
+import type { ElementMapCell, SanityImageObject } from '../../app/types'
 
 interface UseDebugDimensionsProps {
   isDebugMode: boolean

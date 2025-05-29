@@ -1,11 +1,13 @@
+'use client'
+
 import { useEffect, useRef, useState } from 'react'
 import { useDebug } from '../context/DebugContext'
 import { useDebugLayout } from '../context/DebugLayoutContext'
 import type { DebugContent } from '../context/DebugLayoutContext'
-import type { ColorMap } from '../../types/colorMap'
-import type { ElementMapCell, SanityImageObject, ViewportInfo } from '../../types'
+import type { ColorMap } from '../../app/types/colorMap'
+import type { ElementMapCell, SanityImageObject, ViewportInfo } from '../../app/types'
 import { DebugWindowManager } from '../utils/debugWindowManager'
-import { throttle } from '../utils/throttle'
+import { throttle } from '../../app/(site)/utils/throttle'
 
 interface DebugObserverProps {
   componentId: string

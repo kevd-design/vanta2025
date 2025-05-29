@@ -1,7 +1,7 @@
 import { FC, useMemo, useEffect, useState, useRef } from 'react'
 import Image from 'next/image'
 import { useOptimizedImage } from '../../hooks/useOptimizedImage'
-import { useDebug } from '../../context/DebugContext'
+import { useDebug } from '@/debug'
 import { useHydration } from '../../hooks/useHydration'
 import type { OptimizedImageProps, ImageRenderInfo } from '../../../types'
 // Import with an alias to avoid conflict with Sanity's ImageMetadata

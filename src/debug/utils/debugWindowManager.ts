@@ -2,7 +2,7 @@
 
 import type { DebugContent } from '../context/DebugLayoutContext'
 import { DebugStorage } from './debugStorage'
-import { throttle } from './throttle'
+import { throttle } from '../../app/(site)/utils/throttle'
 
 // Add ResizeState type to track resize status
 type ResizeState = 'idle' | 'resizing' | 'completed';

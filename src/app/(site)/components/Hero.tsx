@@ -2,11 +2,11 @@
 
 import { FC, useRef, useMemo, useState } from 'react'
 import Image from 'next/image'
-import { useDebug } from '../context/DebugContext'
+import { useDebug } from '@/debug'
 import { HeroBackground } from './HeroBackground'
 import { HeroContent } from './HeroContent'
 import { ImageContainer } from './common/ImageContainer'
-import { useDebugObserver } from '../hooks/useDebugObserver'
+import { useDebugObserver } from '../../../debug/hooks/useDebugObserver'
 import type { HeroSection } from '../../types'
 
 export const Hero: FC<HeroSection> = ({

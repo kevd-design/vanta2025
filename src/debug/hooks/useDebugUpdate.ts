@@ -1,6 +1,8 @@
+'use client'
+
 import { useEffect } from 'react'
-import type { ColorMap } from '../../types/colorMap'
-import type { ElementMapCell, SanityImageObject } from '../../types'
+import type { ColorMap } from '../../app/types/colorMap'
+import type { ElementMapCell, SanityImageObject } from '../../app/types'
 import type { DebugContent } from '../context/DebugLayoutContext'
 
 interface UseDebugUpdateProps {

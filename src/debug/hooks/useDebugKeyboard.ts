@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect } from 'react'
 import { useDebug } from '../context/DebugContext'
 import { useDebugLayout } from '../context/DebugLayoutContext'
