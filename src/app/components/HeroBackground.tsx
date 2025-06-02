@@ -1,6 +1,7 @@
 import { FC } from 'react'
+import Image from 'next/image' 
 import { IMAGE_OPTIONS } from '@/app/constants'
-import { OptimizedImage } from '@/app/components/common/OptimizedImage'
+import { useImageHandler } from '@/app/hooks/useImageHandler'
 import type { HeroBackgroundProps } from '@/app/lib/types/components/hero'
 
 export const HeroBackground: FC<HeroBackgroundProps> = ({
@@ -10,31 +11,40 @@ export const HeroBackground: FC<HeroBackgroundProps> = ({
   onColorMapChange,
   setOptimizedImageUrl
 }) => {
+
+
+  const { 
+    imageUrl, 
+    isReady,
+    alt
+  } = useImageHandler({
+    image,
+    width: dimensions.width,
+    height: dimensions.height,
+    quality: IMAGE_OPTIONS.quality.medium,
+    objectFit: 'cover',
+    onColorMapChange,
+    onImageUrlGenerated: (url) => {
+      if (setOptimizedImageUrl && url) {
+        setOptimizedImageUrl(url)
+      }
+    },
+    isDebugMode
+  })
+
   if (!image?.asset) return null
 
-  const handleImageUrlGenerated = (url: string | null) => {
-    if (setOptimizedImageUrl && url) {
-      setOptimizedImageUrl(url)
-    }
-  }
+  if (!isReady) return null
 
   return (
     <div className="absolute inset-0 w-full h-full">
-      <OptimizedImage
-        image={{
-          _type: 'imageWithMetadata',
-          asset: image.asset,
-          hotspot: image.hotspot ?? undefined,
-          crop: image.crop ?? undefined
-        }}
+      <Image
+        src={imageUrl || ''}
         width={dimensions.width}
         height={dimensions.height}
+        className="w-full h-full object-cover"
         priority
-        quality={IMAGE_OPTIONS.quality.medium}
-        className="w-full h-full"
-        showDebug={isDebugMode}
-        onColorMapChange={onColorMapChange}
-        onImageUrlGenerated={handleImageUrlGenerated}
+        alt={alt}
       />
     </div>
   )

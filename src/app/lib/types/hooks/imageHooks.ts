@@ -3,6 +3,8 @@ import type {
   SanityImageCrop, 
 } from '@sanity/image-url/lib/types/types'
 
+import type { ImageObject, ImageMetadata } from '../image';
+import type { ColorMap } from '../colorMap'
 import type { ImageHotspot } from '@sanity/types'
 
 export interface UseOptimizedImageProps {
@@ -41,4 +43,16 @@ export interface UseImageRenderInfoProps {
     y: number
   } | null
   objectFit?: 'cover' | 'contain'
+}
+
+export interface UseImageHandlerOptions {
+  image: ImageObject | null;
+  width: number;
+  height?: number;
+  quality?: number;
+  objectFit?: 'cover' | 'contain' | 'fill' | 'none';
+  priority?: boolean;
+  onColorMapChange?: (colorMap: ColorMap, metadata?: ImageMetadata) => void;
+  onImageUrlGenerated?: (url: string | null) => void;
+  isDebugMode?: boolean;
 }

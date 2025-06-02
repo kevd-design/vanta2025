@@ -21,7 +21,7 @@ export interface ImageObject extends SanityImage { // Changed from SanityImageOb
 export interface ImageRenderInfo {
   containerWidth: number;
   containerHeight: number;
-  objectFit: 'cover' | 'contain' | 'fill';
+  objectFit?: 'cover' | 'contain' | 'fill' | 'none';
   objectPosition: {
     x: number;
     y: number;
