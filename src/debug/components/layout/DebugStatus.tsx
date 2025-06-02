@@ -2,7 +2,7 @@
 
 import { FC, useEffect, useState } from 'react'
 import { useDebug } from '@/debug'
-import { DebugWindowManager } from '../../utils/debugWindowManager'
+import { DebugWindowManager } from '../../lib/utils/debugWindowManager'
 
 export const DebugStatus: FC = () => {
   // Use useState to handle client-side rendering properly

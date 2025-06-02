@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import type { ImageRenderInfo } from '../../app/types'
+import type { ImageRenderInfo } from '@/app/lib/types/image'
 import { DEBUG_CONFIG } from '../constants/debugConfig'
 
 interface ImageDebugProps {

@@ -5,13 +5,13 @@ import { AccessibilityDebug } from './AccessibilityDebug'
 import { ImageDebug } from './ImageDebug'
 import { useDebugLayout } from '@/debug'
 import type { DebugContent } from '@/debug'
-import type { ViewportInfo } from '../../app/types'
+import type { Viewport } from '@/app/lib/types/layout'
 
 // Add viewport state to the component
 interface DebugPanelProps {
   initialContent?: DebugContent | null;
   resizeState?: 'idle' | 'resizing' | 'completed';
-  latestViewport?: ViewportInfo; // Add this
+  latestViewport?: Viewport; // Add this
 }
 
 export const DebugPanel: FC<DebugPanelProps> = ({ 
@@ -25,7 +25,7 @@ export const DebugPanel: FC<DebugPanelProps> = ({
   const [showDebugVisuals, setShowDebugVisuals] = useState(true)
   const [resizeInfo, setResizeInfo] = useState<{ count?: number; timestamp?: number }>({})
   const [scrollState, setScrollState] = useState<'idle' | 'scrolling' | 'completed'>('idle');
-  const latestViewportRef = useRef<ViewportInfo | null>(null);
+  const latestViewportRef = useRef<Viewport | null>(null);
   const [viewportUpdateCount, setViewportUpdateCount] = useState(0)
   const viewportUpdateTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -147,7 +147,7 @@ export const DebugPanel: FC<DebugPanelProps> = ({
   }, [latestViewport]);
 
   // Track viewport updates with debouncing
-  const updateContentWithViewport = (viewport: ViewportInfo) => {
+  const updateContentWithViewport = (viewport: Viewport) => {
     setLocalContent(prev => {
       if (!prev) return prev
 

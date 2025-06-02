@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import type { Dimensions } from '../../app/types'
+import type { Dimensions } from '@/app/lib/types/layout'
 
 export const useImageDebug = (
     componentName: string,

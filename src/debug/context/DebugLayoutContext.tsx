@@ -1,8 +1,10 @@
 'use client'
 
 import { createContext, useContext, useState, PropsWithChildren, FC, useCallback, useEffect, useMemo } from 'react'
-import type { ElementMapCell, ImageRenderInfo, ViewportInfo } from '../../app/types'
-import type { ColorMap } from '../../app/types/colorMap'
+import type { Viewport } from '@/app/lib/types/layout'
+import type { ImageRenderInfo } from '@/app/lib/types/image'
+import type { ElementMapCell,  } from '@/app/lib/types/elementMap'
+import type { ColorMap } from '@/app/lib/types/colorMap'
 import { DebugWindowManager } from '@/debug'
 import { useDebug } from './DebugContext'
 import { DebugStorage } from '@/debug'
@@ -15,7 +17,7 @@ export type DebugContent = {
     height: number
   }
   displayName?: string
-  viewportInfo?: ViewportInfo
+  viewportInfo?: Viewport
   accessibilityResults: {
     elementColors: Record<string, {
       color: 'text-black' | 'text-white' | 'background'

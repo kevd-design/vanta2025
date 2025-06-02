@@ -1,6 +1,6 @@
 import "./globals.css"
 import { Open_Sans, Gilda_Display } from "next/font/google"
-import { generateSiteMetadata } from './(site)/components/common/SiteMetadata'
+import { generateSiteMetadata } from './components/common/SiteMetadata'
 import type { Metadata } from 'next'
 
 const openSans = Open_Sans({

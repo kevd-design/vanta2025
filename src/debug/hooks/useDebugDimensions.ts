@@ -2,8 +2,9 @@
 
 import { useCallback } from 'react'
 import type { DebugContent } from '../context/DebugLayoutContext'
-import type { ColorMap } from '../../app/types/colorMap'
-import type { ElementMapCell, SanityImageObject } from '../../app/types'
+import type { ColorMap } from '@/app/lib/types/colorMap'
+import type { ImageObject } from '@/app/lib/types/image'
+import type { ElementMapCell } from '@/app/lib/types/elementMap'
 
 interface UseDebugDimensionsProps {
   isDebugMode: boolean
@@ -18,7 +19,7 @@ interface UseDebugDimensionsProps {
       consensusPercentage: number
     }
   }>
-  image: SanityImageObject | null | undefined
+  image: ImageObject | null | undefined
   setDebugContent: (content: DebugContent) => void
 }
 

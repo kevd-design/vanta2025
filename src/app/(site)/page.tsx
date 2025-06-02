@@ -1,9 +1,9 @@
 
-import { sanityFetch } from "../../sanity/lib/live";
-import { Hero } from './components/Hero'
-import { QUERY_HOME } from './queries/homeQuery';
-import type { CTAType, SanityImageObject } from '../types'
-
+import { sanityFetch } from "@/sanity/lib/live";
+import { Hero } from '@/app/components/Hero'
+import { QUERY_HOME } from '@/app/queries/homeQuery';
+import type { CTAType } from '@/app/lib/types/content'
+import type { ImageObject } from '@/app/lib/types/image';
 
 
 export default async function Home() {
@@ -21,7 +21,7 @@ export default async function Home() {
 
     <main>
       <Hero
-        image={heroData.heroImage as SanityImageObject | null}
+        image={heroData.heroImage as ImageObject | null}
         headline={heroData.heroHeadline}
         cta={heroData.heroCTA as CTAType | null}
       />

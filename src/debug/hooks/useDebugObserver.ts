@@ -2,12 +2,14 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useDebug } from '../context/DebugContext'
+import { throttle } from '../../app/lib/utils/throttle'
 import { useDebugLayout } from '../context/DebugLayoutContext'
+import { DebugWindowManager } from '../lib/utils/debugWindowManager'
+import type { Viewport } from '@/app/lib/types/layout'
+import type { ImageObject } from '@/app/lib/types/image'
+import type { ColorMap } from '@/app/lib/types/colorMap'
+import type { ElementMapCell } from '@/app/lib/types/elementMap'
 import type { DebugContent } from '../context/DebugLayoutContext'
-import type { ColorMap } from '../../app/types/colorMap'
-import type { ElementMapCell, SanityImageObject, ViewportInfo } from '../../app/types'
-import { DebugWindowManager } from '../utils/debugWindowManager'
-import { throttle } from '../../app/(site)/utils/throttle'
 
 interface DebugObserverProps {
   componentId: string
@@ -28,7 +30,7 @@ interface DebugObserverProps {
       dpr?: number 
     }
   }>
-  image?: SanityImageObject | null
+  image?: ImageObject | null
   optimizedImageUrl?: string | null 
   dimensions?: {
     width: number
@@ -54,7 +56,7 @@ export const useDebugObserver = ({
   const { setDebugContent } = useDebugLayout()
   const dataRef = useRef<Partial<DebugContent> | null>(null)
   const windowRef = useRef<Window | null>(null)
-  const [viewportInfo, setViewportInfo] = useState<ViewportInfo>({
+  const [viewportInfo, setViewportInfo] = useState<Viewport>({
     scrollY: typeof window !== 'undefined' ? window.scrollY : 0,
     scrollX: typeof window !== 'undefined' ? window.scrollX : 0,
     width: typeof window !== 'undefined' ? window.innerWidth : 0,

@@ -1,12 +1,12 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { DebugPanel } from '../../debug/components/DebugPanel'
-import { DebugProvider } from '@/debug'
-import { DebugLayoutProvider } from '@/debug'
-import { LoadingSpinner } from '../(site)/elements/LoadingSpinner'
-import type { DebugContent } from '@/debug'
+import { LoadingSpinner } from '@/app/elements/LoadingSpinner'
 import './debug.css'
+import { DebugProvider } from '@/debug'
+import type { DebugContent } from '@/debug'
+import { DebugLayoutProvider } from '@/debug'
+import { DebugPanel } from '@/debug/components/DebugPanel'
 
 
 export default function DebugPage() {

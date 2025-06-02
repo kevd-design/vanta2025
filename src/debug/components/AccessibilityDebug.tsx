@@ -1,8 +1,9 @@
 'use client'
 
 import { FC, useState, useEffect, useRef } from 'react'
-import type { ColorMap } from '../../app/types/colorMap'
-import type { ElementMapCell, ViewportInfo } from '../../app/types'
+import type { ColorMap } from '@/app/lib/types/colorMap'
+import type { ElementMapCell } from '@/app/lib/types/elementMap'
+import type { Viewport } from '@/app/lib/types/layout'
 
 // Enhanced props to include new accessibility metrics
 interface AccessibilityDebugProps {
@@ -35,7 +36,7 @@ interface AccessibilityDebugProps {
     }
   }
   imageUrl?: string
-  viewportInfo?: ViewportInfo
+  viewportInfo?: Viewport
   scrollState?: 'idle' | 'scrolling' | 'completed'
 }
 
@@ -51,7 +52,7 @@ export const AccessibilityDebug: FC<AccessibilityDebugProps> = ({
 }) => {
   // Existing state setup
   const [hasValidData, setHasValidData] = useState(true)
-  const prevViewportInfoRef = useRef<ViewportInfo | undefined>(undefined)
+  const prevViewportInfoRef = useRef<Viewport | undefined>(undefined)
   const propsUpdatedRef = useRef(0)
   const viewportUpdatedRef = useRef(0)
   const [viewportUpdateCount, setViewportUpdateCount] = useState(0)
@@ -217,7 +218,7 @@ export const AccessibilityDebug: FC<AccessibilityDebugProps> = ({
   }, [colorMap, visWidth, visHeight, exactCellWidth, exactCellHeight, currentDpr, currentZoomLevel]);
 
     // Helper to detect meaningful viewport changes
-  const hasViewportChanged = (current?: ViewportInfo, previous?: ViewportInfo): boolean => {
+  const hasViewportChanged = (current?: Viewport, previous?: Viewport): boolean => {
     if (!current || !previous) return true
     
     const scrollYDiff = Math.abs((current.scrollY || 0) - (previous.scrollY || 0))

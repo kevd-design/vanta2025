@@ -1,8 +1,9 @@
 'use client'
 
 import { useEffect } from 'react'
-import type { ColorMap } from '../../app/types/colorMap'
-import type { ElementMapCell, SanityImageObject } from '../../app/types'
+import type { ColorMap } from '@/app/lib/types/colorMap'
+import type { ImageObject } from '@/app/lib/types/image'
+import type { ElementMapCell } from '@/app/lib/types/elementMap'
 import type { DebugContent } from '../context/DebugLayoutContext'
 
 interface UseDebugUpdateProps {
@@ -22,7 +23,7 @@ interface UseDebugUpdateProps {
       consensusPercentage: number
     }
   }>
-  image?: SanityImageObject
+  image?: ImageObject
   componentId: string
   displayName: string
   setDebugContent: (content: DebugContent) => void

@@ -557,7 +557,7 @@ export type Slug = {
 
 export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | CTA | SiteSettingsSingleton | Project | Neighbourhood | PageNamesSingleton | CompanySettingsSingleton | ImageWithMetadata | MediaTag | Slug;
 export declare const internalGroqTypeReferenceTo: unique symbol;
-// Source: ./src/app/(site)/queries/homeQuery.ts
+// Source: ./src/app/queries/homeQuery.ts
 // Variable: QUERY_HOME
 // Query: *[_type == "siteSettingsSingleton"][0]{  heroCTA,  heroHeadline,  heroImage {  ...,  asset->{    ...,    metadata  }},}
 export type QUERY_HOMEResult = {
@@ -606,7 +606,7 @@ export type QUERY_HOMEResult = {
   } | null;
 } | null;
 
-// Source: ./src/app/(site)/queries/logoQuery.ts
+// Source: ./src/app/queries/logoQuery.ts
 // Variable: QUERY_LOGO
 // Query: *[_type == "companySettingsSingleton"][0]{  logoForLightBG {  ...,  asset->{    ...,    metadata  }},  logoForDarkBG {  ...,  asset->{    ...,    metadata  }}}
 export type QUERY_LOGOResult = {
@@ -672,7 +672,7 @@ export type QUERY_LOGOResult = {
   } | null;
 } | null;
 
-// Source: ./src/app/(site)/queries/navQuery.ts
+// Source: ./src/app/queries/navQuery.ts
 // Variable: QUERY_NAV
 // Query: *[_type == "siteSettingsSingleton"][0]{  homePageNavLabel,  projectsPageNavLabel,  aboutPageNavLabel,  reviewsPageNavLabel,  contactPageNavLabel,  mobileBackgroundImage {  ...,  asset->{    ...,    metadata  }}}
 export type QUERY_NAVResult = {
