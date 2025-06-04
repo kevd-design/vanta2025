@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { ColorMap } from '@/app/lib/types/colorMap';
 import type { ElementMap } from '@/app/lib/types/elementMap';
+import type { ElementDebugInfo } from '@/debug/lib/types/debug.types'; // Import from debug types
 
 // Enhanced options type with additional parameters
 interface AccessibilityOptions {
@@ -16,15 +17,7 @@ type AccessibilityResult = {
       color: 'text-black' | 'text-white' | 'background';
       wcagCompliant?: boolean; // Whether chosen color meets WCAG standards
       needsBackground?: boolean; // Whether a background is recommended
-      debugInfo: {
-        totalCells: number;
-        blackVotes: number;
-        whiteVotes: number;
-        consensusPercentage: number;
-        contrastRatio?: number; // Average contrast ratio
-        varianceScore?: number; // How varied the background is
-        dpr?: number;          // Device pixel ratio used for calculation
-      };
+      debugInfo: ElementDebugInfo; // Use the imported debug type
     };
   };
 };

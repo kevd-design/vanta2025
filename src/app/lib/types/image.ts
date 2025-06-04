@@ -1,18 +1,30 @@
 import type { SanityImage } from './sanity';
 import type { Dimensions } from '@/app/lib/types/layout';
 
-export interface ImageMetadata { // Changed from SanityImageMetadata to ImageMetadata for clarity
-  dimensions?: Dimensions | null;
-  lqip?: string | null;
+export interface ImageMetadata {
+  sourceUrl: string;
+  transformedUrl: string;
+  sourceWidth: number;
+  sourceHeight: number;
+  renderedWidth: number;
+  renderedHeight: number;
+  cropRect?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+  dpr: number;
 }
 
-export interface ImageObject extends SanityImage { // Changed from SanityImageObject to ImageObject for clarity
+export interface ImageObject extends SanityImage { 
   _type: 'image' | 'imageWithMetadata';
   asset: SanityImage['asset'] & {
     altText?: string | null;
     metadata?: {
       dimensions?: Dimensions | null;
       lqip?: string | null;
+      palette?: ImagePalette; 
     };
     url?: string;
   };
@@ -43,21 +55,6 @@ export interface ImageRenderInfo {
   };
 }
 
-export interface ImageMetadata {
-  sourceUrl: string;
-  transformedUrl: string;
-  sourceWidth: number;
-  sourceHeight: number;
-  renderedWidth: number;
-  renderedHeight: number;
-  cropRect?: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  };
-  dpr: number;
-}
 
 export interface ImagePaletteSwatch {
   background: string;

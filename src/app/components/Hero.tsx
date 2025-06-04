@@ -12,16 +12,16 @@ import type { HeroSection } from '@/app/lib/types/components/hero'
 export const Hero: FC<HeroSection> = ({
   image,
   headline,
-  cta
+  cta,
+  usePalette = true
 }) => {
+  console.log('Rendering Hero component with image:', image)
   const { isDebugMode } = useDebug()
-  const headlineRef = useRef<HTMLHeadingElement>(null)
-  const ctaRef = useRef<HTMLDivElement>(null)
+  const heroContentRef = useRef<HTMLDivElement>(null)
   const [optimizedImageUrl, setOptimizedImageUrl] = useState<string | null>(null)
 
   const elementRefs = useMemo(() => [
-    { ref: headlineRef, label: 'Headline' },
-    { ref: ctaRef, label: 'CTA' }
+    { ref: heroContentRef, label: 'HeroContent' }, // Single reference for both elements
   ], [])
   
   // Use the debug observer to send optimized image URL to debug panel
@@ -91,7 +91,6 @@ export const Hero: FC<HeroSection> = ({
               isDebugMode={isDebugMode}
               onColorMapChange={onColorMapChange}
               setOptimizedImageUrl={(url: string) => {
-                // Update both the container state and our local state
                 containerSetOptimizedImageUrl(url);
                 setOptimizedImageUrl(url);
               }}
@@ -99,12 +98,14 @@ export const Hero: FC<HeroSection> = ({
             <HeroContent
               headline={headline}
               cta={cta}
-              headlineRef={headlineRef}
-              ctaRef={ctaRef}
+              headlineRef={heroContentRef}
+              image={image}
+              usePalette={usePalette}
+              elementColors={elementColors} // Pass element colors from ImageContainer
               getTextColorClass={(label) => {
                 const colorResult = elementColors[label]?.color
                 return colorResult === 'background' 
-                  ? 'bg-black/50 px-4 py-2 text-white'
+                  ? 'bg-black/50 md:px-12 md:py-8 text-white'
                   : colorResult || 'text-white'
               }}
             />
