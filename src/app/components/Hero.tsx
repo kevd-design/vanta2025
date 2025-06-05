@@ -102,12 +102,6 @@ export const Hero: FC<HeroSection> = ({
               image={image}
               usePalette={usePalette}
               elementColors={elementColors} // Pass element colors from ImageContainer
-              getTextColorClass={(label) => {
-                const colorResult = elementColors[label]?.color
-                return colorResult === 'background' 
-                  ? 'bg-black/50 md:px-12 md:py-8 text-white'
-                  : colorResult || 'text-white'
-              }}
             />
           </>
         )}

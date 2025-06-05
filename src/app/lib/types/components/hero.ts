@@ -27,7 +27,6 @@ export interface HeroContentProps {
   headline: string | null;
   cta: CTAType | null;
   headlineRef: RefObject<HTMLHeadingElement | null>;
-  getTextColorClass: (elementLabel: string) => string;
   image?: ImageObject | null;
   usePalette?: boolean;
   elementColors?: Record<string, {
