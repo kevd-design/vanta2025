@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "sanity-deploy": "sanity deploy",
+    "build": "next build && sanity deploy",
     "start": "next start",
     "lint": "next lint",
     "predev": "npm run typegen",
