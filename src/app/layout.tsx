@@ -2,6 +2,8 @@ import "./globals.css"
 import { Open_Sans, Gilda_Display } from "next/font/google"
 import { generateSiteMetadata } from './components/common/SiteMetadata'
 import type { Metadata } from 'next'
+import {preloadModule} from 'react-dom'
+
 
 const openSans = Open_Sans({
   subsets: ["latin"],
@@ -16,6 +18,8 @@ const gildaDisplay = Gilda_Display({
   variable: '--font-gilda-display',
 })
 
+const bridgeScript = 'https://core.sanity-cdn.com/bridge.js'
+
 export async function generateMetadata(): Promise<Metadata> {
   return generateSiteMetadata({
     path: '/'
@@ -28,8 +32,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  preloadModule(bridgeScript, {as: 'script'})
   return (
     <html lang="en" className={`${openSans.variable} ${gildaDisplay.variable} antialiased`}>
+    <script src={bridgeScript} async type="module" />
       <body>
         {children}
       </body>

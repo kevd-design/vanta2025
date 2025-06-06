@@ -1,0 +1,2303 @@
+[
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "custom"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "name": "name",
+        "type": "slug"
+      }
+    ],
+    "name": "media.tag",
+    "type": "document"
+  },
+  {
+    "fields": [
+      {
+        "options": {
+          "hotspot": false,
+          "metadata": [
+            "blurhash",
+            "lqip",
+            "palette"
+          ],
+          "requiredFields": [
+            "title",
+            "altText"
+          ]
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error",
+            "message": "A logo for light backgrounds is required"
+          }
+        ],
+        "description": "Please add the metadata you want to use in the frontend.",
+        "name": "logoForLightBG",
+        "type": "imageWithMetadata",
+        "title": "Logo for Light Background",
+        "fieldset": "logos"
+      },
+      {
+        "options": {
+          "hotspot": false,
+          "metadata": [
+            "blurhash",
+            "lqip",
+            "palette"
+          ],
+          "requiredFields": [
+            "title",
+            "altText"
+          ]
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error",
+            "message": "A logo for dark backgrounds is required"
+          }
+        ],
+        "description": "Please add the metadata you want to use in the frontend.",
+        "name": "logoForDarkBG",
+        "type": "imageWithMetadata",
+        "title": "Logo for Dark Background",
+        "fieldset": "logos"
+      },
+      {
+        "description": "The company slogan that appears under the logo",
+        "name": "slogan",
+        "type": "string",
+        "title": "Company Slogan",
+        "fieldset": "about"
+      },
+      {
+        "description": "A short history of the company.",
+        "name": "aboutHistory",
+        "type": "text",
+        "title": "History of the Company",
+        "fieldset": "about"
+      },
+      {
+        "description": "A short description of the company mission.",
+        "name": "aboutMission",
+        "type": "text",
+        "title": "Company Mission",
+        "fieldset": "about"
+      },
+      {
+        "description": "A short description of the founder.",
+        "name": "aboutFounder",
+        "type": "text",
+        "title": "About the Founder",
+        "fieldset": "about"
+      },
+      {
+        "options": {
+          "hotspot": true,
+          "metadata": [
+            "blurhash",
+            "lqip",
+            "palette"
+          ],
+          "requiredFields": [
+            "title",
+            "altText"
+          ]
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "custom"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "description": "An image of the founder.",
+        "name": "founderImage",
+        "type": "imageWithMetadata",
+        "fieldset": "about"
+      },
+      {
+        "description": "A short description of the team.",
+        "name": "aboutTeam",
+        "type": "text",
+        "title": "About the Team",
+        "fieldset": "about"
+      },
+      {
+        "options": {
+          "hotspot": true,
+          "metadata": [
+            "blurhash",
+            "lqip",
+            "palette"
+          ],
+          "requiredFields": [
+            "title",
+            "altText"
+          ]
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "custom"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "description": "An image of the team.",
+        "name": "teamImage",
+        "type": "imageWithMetadata",
+        "fieldset": "about"
+      }
+    ],
+    "fieldsets": [
+      {
+        "name": "logos",
+        "options": {
+          "collapsible": true,
+          "collapsed": true
+        }
+      },
+      {
+        "name": "about",
+        "options": {
+          "collapsible": true,
+          "collapsed": false
+        }
+      }
+    ],
+    "name": "companySettingsSingleton",
+    "type": "document",
+    "title": "Company Settings"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "description": "Name for the page used as a header, in navigation and in the URL unless overidden by the below settings.",
+        "name": "rootPgName",
+        "type": "string",
+        "title": "Home Page Name",
+        "fieldset": "rootPgSet"
+      },
+      {
+        "description": "Optionally, provide a shorter name for the navigation title for this page.",
+        "name": "rootPgNameShort",
+        "type": "string",
+        "title": "Shortened Home Page Name",
+        "fieldset": "rootPgSet"
+      },
+      {
+        "description": "Optionally, provide custom text for the URL (Also known as the slug for this page), this will be used instead of the title.",
+        "name": "rootPgNameSlug",
+        "type": "string",
+        "title": "URL Name for Home Page",
+        "fieldset": "rootPgSet"
+      },
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "description": "Name for the page used as a header, in navigation and in the URL unless overidden by the below settings.",
+        "name": "projectsPgName",
+        "type": "string",
+        "title": "Project Page Name",
+        "fieldset": "projectsPgSet"
+      },
+      {
+        "description": "Optionally, provide a shorter name for the navigation title for this page.",
+        "name": "projectsPgNameShort",
+        "type": "string",
+        "title": "Shortened Project Page Name",
+        "fieldset": "projectsPgSet"
+      },
+      {
+        "description": "Optionally, provide custom text for the URL (Also known as the slug for this page), this will be used instead of the title.",
+        "name": "projectsPgNameSlug",
+        "type": "string",
+        "title": "URL Name for Project Page",
+        "fieldset": "projectsPgSet"
+      },
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "description": "Name for the page used as a header, in navigation and in the URL unless overidden by the below settings.",
+        "name": "aboutPgName",
+        "type": "string",
+        "title": "About Page Name",
+        "fieldset": "aboutPgSet"
+      },
+      {
+        "description": "Optionally, provide a shorter name for the navigation title for this page.",
+        "name": "aboutPgNameShort",
+        "type": "string",
+        "title": "Shortened About Page Name",
+        "fieldset": "aboutPgSet"
+      },
+      {
+        "description": "Optionally, provide custom text for the URL (Also known as the slug for this page), this will be used instead of the title.",
+        "name": "aboutPgNameSlug",
+        "type": "string",
+        "title": "URL Name for About Page",
+        "fieldset": "aboutPgSet"
+      },
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "description": "Name for the page used as a header, in navigation and in the URL unless overidden by the below settings.",
+        "name": "reviewPgName",
+        "type": "string",
+        "title": "Review Page Name",
+        "fieldset": "reviewPgSet"
+      },
+      {
+        "description": "Optionally, provide a shorter name for the navigation title for this page.",
+        "name": "reviewPgShort",
+        "type": "string",
+        "title": "Shortened Review Page Name",
+        "fieldset": "reviewPgSet"
+      },
+      {
+        "description": "Optionally, provide custom text for the URL (Also known as the slug for this page), this will be used instead of the title.",
+        "name": "reviewPgSlug",
+        "type": "string",
+        "title": "URL Name for Review Page",
+        "fieldset": "reviewPgSet"
+      },
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "description": "Name for the page used as a header, in navigation and in the URL unless overidden by the below settings.",
+        "name": "contactPgName",
+        "type": "string",
+        "title": "Contact Page Name",
+        "fieldset": "contactPgSet"
+      },
+      {
+        "description": "Optionally, provide a shorter name for the navigation title for this page.",
+        "name": "contactPgNameShort",
+        "type": "string",
+        "title": "Shortened Contact Page Name",
+        "fieldset": "contactPgSet"
+      },
+      {
+        "description": "Optionally, provide custom text for the URL (Also known as the slug for this page), this will be used instead of the title.",
+        "name": "contactPgNameSlug",
+        "type": "string",
+        "title": "URL Name for Contact Page",
+        "fieldset": "contactPgSet"
+      }
+    ],
+    "fieldsets": [
+      {
+        "name": "rootPgSet",
+        "title": "Home Page Settings",
+        "options": {
+          "collapsible": false,
+          "collapsed": true
+        }
+      },
+      {
+        "name": "projectsPgSet",
+        "title": "Project Page Settings",
+        "options": {
+          "collapsible": true,
+          "collapsed": true
+        }
+      },
+      {
+        "name": "aboutPgSet",
+        "title": "About Page Settings",
+        "options": {
+          "collapsible": true,
+          "collapsed": true
+        }
+      },
+      {
+        "name": "reviewPgSet",
+        "title": "Review Page Settings",
+        "options": {
+          "collapsible": true,
+          "collapsed": true
+        }
+      },
+      {
+        "name": "contactPgSet",
+        "title": "Contact Page Settings",
+        "options": {
+          "collapsible": true,
+          "collapsed": true
+        }
+      }
+    ],
+    "name": "pageNamesSingleton",
+    "type": "document",
+    "title": "Pages"
+  },
+  {
+    "fields": [
+      {
+        "name": "projectName",
+        "type": "string"
+      },
+      {
+        "options": {
+          "source": "projectName",
+          "maxLength": 96
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "custom"
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error",
+            "message": "Please enter a slug."
+          }
+        ],
+        "description": "A slug is a URL-friendly version of the project name. It will be used in the URL for this project. It should be unique and not contain spaces or special characters.",
+        "name": "projectSlug",
+        "type": "slug"
+      },
+      {
+        "description": "A short description of the project.",
+        "name": "projectDescription",
+        "type": "text"
+      },
+      {
+        "options": {
+          "hotspot": true,
+          "metadata": [
+            "blurhash",
+            "lqip",
+            "palette"
+          ],
+          "requiredFields": [
+            "title",
+            "altText"
+          ]
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "custom"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "description": "High-quality image that represents the project.",
+        "name": "projectImage",
+        "type": "imageWithMetadata"
+      },
+      {
+        "of": [
+          {
+            "options": {
+              "hotspot": true,
+              "metadata": [
+                "blurhash",
+                "lqip",
+                "palette"
+              ],
+              "requiredFields": [
+                "title",
+                "altText"
+              ]
+            },
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "custom"
+                  }
+                ],
+                "level": "error"
+              }
+            ],
+            "description": "Please add the metadata you want to use in the frontend.",
+            "type": "imageWithMetadata",
+            "title": "Image"
+          }
+        ],
+        "name": "projectGallery",
+        "type": "array"
+      },
+      {
+        "to": [
+          {
+            "type": "neighbourhood"
+          }
+        ],
+        "name": "projectNeighbourhood",
+        "type": "reference"
+      }
+    ],
+    "name": "project",
+    "type": "document",
+    "title": "Projects"
+  },
+  {
+    "fields": [
+      {
+        "name": "homePageNavLabel",
+        "type": "string",
+        "title": "Home Page Navigation Label",
+        "fieldset": "navigation"
+      },
+      {
+        "name": "projectsPageNavLabel",
+        "type": "string",
+        "title": "Projects Page Navigation Label",
+        "fieldset": "navigation"
+      },
+      {
+        "name": "aboutPageNavLabel",
+        "type": "string",
+        "title": "About Page Navigation Label",
+        "fieldset": "navigation"
+      },
+      {
+        "name": "reviewsPageNavLabel",
+        "type": "string",
+        "title": "Reviews Page Navigation Label",
+        "fieldset": "navigation"
+      },
+      {
+        "name": "contactPageNavLabel",
+        "type": "string",
+        "title": "Contact Page Navigation Label",
+        "fieldset": "navigation"
+      },
+      {
+        "options": {
+          "hotspot": true,
+          "metadata": [
+            "blurhash",
+            "lqip",
+            "palette"
+          ],
+          "requiredFields": [
+            "title",
+            "altText"
+          ]
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "custom"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "description": "Please add the metadata you want to use in the frontend.",
+        "name": "mobileBackgroundImage",
+        "type": "imageWithMetadata",
+        "fieldset": "navigation"
+      },
+      {
+        "description": "Decides whether to show the copyright in the footer or not.",
+        "name": "displayCopyright",
+        "type": "boolean",
+        "fieldset": "footer"
+      },
+      {
+        "description": "Text before the copyright in the footer.",
+        "name": "textBeforeCopyright",
+        "type": "string",
+        "fieldset": "footer"
+      },
+      {
+        "description": "The text denoting this is a copyrighted site. Appears before the year.",
+        "name": "copyrightText",
+        "type": "string",
+        "fieldset": "footer"
+      },
+      {
+        "description": "Decides whether to show the copyright year or not.",
+        "name": "copyrightYear",
+        "type": "boolean",
+        "title": "Toggle Copyright Year",
+        "fieldset": "footer"
+      },
+      {
+        "description": "Text after the copyright in the footer.",
+        "name": "textAfterCopyright",
+        "type": "string",
+        "fieldset": "footer"
+      },
+      {
+        "description": "The title of the site (Shows in the web browser tab when the website is open).",
+        "name": "Sitetitle",
+        "type": "string",
+        "title": "Site Title",
+        "fieldset": "siteMetaData"
+      },
+      {
+        "description": "The description of the site (shows on Google).",
+        "name": "description",
+        "type": "text",
+        "title": "Site Description",
+        "fieldset": "siteMetaData"
+      },
+      {
+        "description": "The headline that appears in the hero section of the home page. This is the main text that grabs the user's attention and conveys the primary message of the website.",
+        "name": "heroHeadline",
+        "type": "string",
+        "fieldset": "heroSection"
+      },
+      {
+        "options": {
+          "hotspot": true,
+          "metadata": [
+            "blurhash",
+            "lqip",
+            "palette"
+          ],
+          "requiredFields": [
+            "title",
+            "altText"
+          ]
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "custom"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "description": "The background image.",
+        "name": "heroImage",
+        "type": "imageWithMetadata",
+        "title": "Hero Image (Home Page)",
+        "fieldset": "heroSection"
+      },
+      {
+        "fields": [
+          {
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "presence",
+                    "constraint": "required"
+                  }
+                ],
+                "level": "error",
+                "message": "Please enter a label for the link."
+              }
+            ],
+            "description": "The text that appears on the call to action button. This is the text that encourages users to take action.",
+            "name": "linkLabel",
+            "type": "string"
+          },
+          {
+            "options": {
+              "list": [
+                {
+                  "title": "Reference to Project",
+                  "value": "toProject"
+                },
+                {
+                  "title": "Reference to Page",
+                  "value": "toPage"
+                },
+                {
+                  "title": "External Link",
+                  "value": "externalLink"
+                }
+              ],
+              "layout": "radio",
+              "direction": "horizontal"
+            },
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "valid",
+                    "constraint": [
+                      "toProject",
+                      "toPage",
+                      "externalLink"
+                    ]
+                  },
+                  {
+                    "flag": "presence",
+                    "constraint": "required"
+                  }
+                ],
+                "level": "error",
+                "message": "Please select a link type."
+              }
+            ],
+            "name": "linkType",
+            "type": "string"
+          },
+          {
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "custom"
+                  }
+                ],
+                "level": "error"
+              }
+            ],
+            "to": [
+              {
+                "type": "project"
+              }
+            ],
+            "hidden": "conditional",
+            "name": "toProject",
+            "type": "reference",
+            "title": "Reference to Project"
+          },
+          {
+            "options": {
+              "list": [
+                {
+                  "title": "Home",
+                  "value": "home"
+                },
+                {
+                  "title": "Projects",
+                  "value": "projects"
+                },
+                {
+                  "title": "About",
+                  "value": "about"
+                },
+                {
+                  "title": "Reviews",
+                  "value": "reviews"
+                },
+                {
+                  "title": "Contact",
+                  "value": "contact"
+                }
+              ],
+              "layout": "radio",
+              "direction": "horizontal"
+            },
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "valid",
+                    "constraint": [
+                      "home",
+                      "projects",
+                      "about",
+                      "reviews",
+                      "contact"
+                    ]
+                  },
+                  {
+                    "flag": "custom"
+                  }
+                ],
+                "level": "error"
+              }
+            ],
+            "hidden": "conditional",
+            "name": "toPage",
+            "type": "string",
+            "title": "Reference to Page"
+          },
+          {
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "uri",
+                    "constraint": {
+                      "options": {
+                        "scheme": [
+                          "/^http$/",
+                          "/^https$/"
+                        ],
+                        "allowRelative": false,
+                        "relativeOnly": false,
+                        "allowCredentials": false
+                      }
+                    }
+                  },
+                  {
+                    "flag": "custom"
+                  }
+                ],
+                "level": "error"
+              }
+            ],
+            "hidden": "conditional",
+            "name": "externalLink",
+            "type": "url"
+          }
+        ],
+        "name": "heroCTA",
+        "type": "object",
+        "title": "Hero Call to Action",
+        "fieldset": "heroSection"
+      },
+      {
+        "fields": [
+          {
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "presence",
+                    "constraint": "required"
+                  }
+                ],
+                "level": "error",
+                "message": "Please enter a label for the link."
+              }
+            ],
+            "description": "The text that appears on the call to action button. This is the text that encourages users to take action.",
+            "name": "linkLabel",
+            "type": "string"
+          },
+          {
+            "options": {
+              "list": [
+                {
+                  "title": "Reference to Project",
+                  "value": "toProject"
+                },
+                {
+                  "title": "Reference to Page",
+                  "value": "toPage"
+                },
+                {
+                  "title": "External Link",
+                  "value": "externalLink"
+                }
+              ],
+              "layout": "radio",
+              "direction": "horizontal"
+            },
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "valid",
+                    "constraint": [
+                      "toProject",
+                      "toPage",
+                      "externalLink"
+                    ]
+                  },
+                  {
+                    "flag": "presence",
+                    "constraint": "required"
+                  }
+                ],
+                "level": "error",
+                "message": "Please select a link type."
+              }
+            ],
+            "name": "linkType",
+            "type": "string"
+          },
+          {
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "custom"
+                  }
+                ],
+                "level": "error"
+              }
+            ],
+            "to": [
+              {
+                "type": "project"
+              }
+            ],
+            "hidden": "conditional",
+            "name": "toProject",
+            "type": "reference",
+            "title": "Reference to Project"
+          },
+          {
+            "options": {
+              "list": [
+                {
+                  "title": "Home",
+                  "value": "home"
+                },
+                {
+                  "title": "Projects",
+                  "value": "projects"
+                },
+                {
+                  "title": "About",
+                  "value": "about"
+                },
+                {
+                  "title": "Reviews",
+                  "value": "reviews"
+                },
+                {
+                  "title": "Contact",
+                  "value": "contact"
+                }
+              ],
+              "layout": "radio",
+              "direction": "horizontal"
+            },
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "valid",
+                    "constraint": [
+                      "home",
+                      "projects",
+                      "about",
+                      "reviews",
+                      "contact"
+                    ]
+                  },
+                  {
+                    "flag": "custom"
+                  }
+                ],
+                "level": "error"
+              }
+            ],
+            "hidden": "conditional",
+            "name": "toPage",
+            "type": "string",
+            "title": "Reference to Page"
+          },
+          {
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "uri",
+                    "constraint": {
+                      "options": {
+                        "scheme": [
+                          "/^http$/",
+                          "/^https$/"
+                        ],
+                        "allowRelative": false,
+                        "relativeOnly": false,
+                        "allowCredentials": false
+                      }
+                    }
+                  },
+                  {
+                    "flag": "custom"
+                  }
+                ],
+                "level": "error"
+              }
+            ],
+            "hidden": "conditional",
+            "name": "externalLink",
+            "type": "url"
+          }
+        ],
+        "name": "projectCTA",
+        "type": "object",
+        "title": "Project Section Call to Action",
+        "fieldset": "projectSection"
+      },
+      {
+        "description": "The title that appears in the services section of the home page.",
+        "name": "servicesTitle",
+        "type": "string",
+        "fieldset": "servicesSection"
+      },
+      {
+        "description": "A short description of the services offered by the company.",
+        "name": "servicesDescription",
+        "type": "text",
+        "fieldset": "servicesSection"
+      },
+      {
+        "options": {
+          "hotspot": true,
+          "metadata": [
+            "blurhash",
+            "lqip",
+            "palette"
+          ],
+          "requiredFields": [
+            "title",
+            "altText"
+          ]
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "custom"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "description": "The background image for the services section.",
+        "name": "backgroundImageServices",
+        "type": "imageWithMetadata",
+        "title": "Services Background Image",
+        "fieldset": "servicesSection"
+      },
+      {
+        "fields": [
+          {
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "presence",
+                    "constraint": "required"
+                  }
+                ],
+                "level": "error",
+                "message": "Please enter a label for the link."
+              }
+            ],
+            "description": "The text that appears on the call to action button. This is the text that encourages users to take action.",
+            "name": "linkLabel",
+            "type": "string"
+          },
+          {
+            "options": {
+              "list": [
+                {
+                  "title": "Reference to Project",
+                  "value": "toProject"
+                },
+                {
+                  "title": "Reference to Page",
+                  "value": "toPage"
+                },
+                {
+                  "title": "External Link",
+                  "value": "externalLink"
+                }
+              ],
+              "layout": "radio",
+              "direction": "horizontal"
+            },
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "valid",
+                    "constraint": [
+                      "toProject",
+                      "toPage",
+                      "externalLink"
+                    ]
+                  },
+                  {
+                    "flag": "presence",
+                    "constraint": "required"
+                  }
+                ],
+                "level": "error",
+                "message": "Please select a link type."
+              }
+            ],
+            "name": "linkType",
+            "type": "string"
+          },
+          {
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "custom"
+                  }
+                ],
+                "level": "error"
+              }
+            ],
+            "to": [
+              {
+                "type": "project"
+              }
+            ],
+            "hidden": "conditional",
+            "name": "toProject",
+            "type": "reference",
+            "title": "Reference to Project"
+          },
+          {
+            "options": {
+              "list": [
+                {
+                  "title": "Home",
+                  "value": "home"
+                },
+                {
+                  "title": "Projects",
+                  "value": "projects"
+                },
+                {
+                  "title": "About",
+                  "value": "about"
+                },
+                {
+                  "title": "Reviews",
+                  "value": "reviews"
+                },
+                {
+                  "title": "Contact",
+                  "value": "contact"
+                }
+              ],
+              "layout": "radio",
+              "direction": "horizontal"
+            },
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "valid",
+                    "constraint": [
+                      "home",
+                      "projects",
+                      "about",
+                      "reviews",
+                      "contact"
+                    ]
+                  },
+                  {
+                    "flag": "custom"
+                  }
+                ],
+                "level": "error"
+              }
+            ],
+            "hidden": "conditional",
+            "name": "toPage",
+            "type": "string",
+            "title": "Reference to Page"
+          },
+          {
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "uri",
+                    "constraint": {
+                      "options": {
+                        "scheme": [
+                          "/^http$/",
+                          "/^https$/"
+                        ],
+                        "allowRelative": false,
+                        "relativeOnly": false,
+                        "allowCredentials": false
+                      }
+                    }
+                  },
+                  {
+                    "flag": "custom"
+                  }
+                ],
+                "level": "error"
+              }
+            ],
+            "hidden": "conditional",
+            "name": "externalLink",
+            "type": "url"
+          }
+        ],
+        "name": "servicesCTA",
+        "type": "object",
+        "title": "Services Call to Action",
+        "fieldset": "servicesSection"
+      },
+      {
+        "description": "The name of the person who wrote the review.",
+        "name": "reviewerName",
+        "type": "string",
+        "fieldset": "reviewSection"
+      },
+      {
+        "description": "The text of the review.",
+        "name": "reviewText",
+        "type": "text",
+        "fieldset": "reviewSection"
+      },
+      {
+        "fields": [
+          {
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "presence",
+                    "constraint": "required"
+                  }
+                ],
+                "level": "error",
+                "message": "Please enter a label for the link."
+              }
+            ],
+            "description": "The text that appears on the call to action button. This is the text that encourages users to take action.",
+            "name": "linkLabel",
+            "type": "string"
+          },
+          {
+            "options": {
+              "list": [
+                {
+                  "title": "Reference to Project",
+                  "value": "toProject"
+                },
+                {
+                  "title": "Reference to Page",
+                  "value": "toPage"
+                },
+                {
+                  "title": "External Link",
+                  "value": "externalLink"
+                }
+              ],
+              "layout": "radio",
+              "direction": "horizontal"
+            },
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "valid",
+                    "constraint": [
+                      "toProject",
+                      "toPage",
+                      "externalLink"
+                    ]
+                  },
+                  {
+                    "flag": "presence",
+                    "constraint": "required"
+                  }
+                ],
+                "level": "error",
+                "message": "Please select a link type."
+              }
+            ],
+            "name": "linkType",
+            "type": "string"
+          },
+          {
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "custom"
+                  }
+                ],
+                "level": "error"
+              }
+            ],
+            "to": [
+              {
+                "type": "project"
+              }
+            ],
+            "hidden": "conditional",
+            "name": "toProject",
+            "type": "reference",
+            "title": "Reference to Project"
+          },
+          {
+            "options": {
+              "list": [
+                {
+                  "title": "Home",
+                  "value": "home"
+                },
+                {
+                  "title": "Projects",
+                  "value": "projects"
+                },
+                {
+                  "title": "About",
+                  "value": "about"
+                },
+                {
+                  "title": "Reviews",
+                  "value": "reviews"
+                },
+                {
+                  "title": "Contact",
+                  "value": "contact"
+                }
+              ],
+              "layout": "radio",
+              "direction": "horizontal"
+            },
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "valid",
+                    "constraint": [
+                      "home",
+                      "projects",
+                      "about",
+                      "reviews",
+                      "contact"
+                    ]
+                  },
+                  {
+                    "flag": "custom"
+                  }
+                ],
+                "level": "error"
+              }
+            ],
+            "hidden": "conditional",
+            "name": "toPage",
+            "type": "string",
+            "title": "Reference to Page"
+          },
+          {
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "uri",
+                    "constraint": {
+                      "options": {
+                        "scheme": [
+                          "/^http$/",
+                          "/^https$/"
+                        ],
+                        "allowRelative": false,
+                        "relativeOnly": false,
+                        "allowCredentials": false
+                      }
+                    }
+                  },
+                  {
+                    "flag": "custom"
+                  }
+                ],
+                "level": "error"
+              }
+            ],
+            "hidden": "conditional",
+            "name": "externalLink",
+            "type": "url"
+          }
+        ],
+        "name": "reviewCTA",
+        "type": "object",
+        "title": "Review Call to Action",
+        "fieldset": "reviewSection"
+      },
+      {
+        "description": "The title that appears above the project index section of the project index page.",
+        "name": "projectIndexPageTitle",
+        "type": "string"
+      },
+      {
+        "description": "A short description of the project index page.",
+        "name": "projectIndexPageDescription",
+        "type": "text"
+      },
+      {
+        "description": "The title that appears above the project gallery section of the specific project page.",
+        "name": "gallaryTitle",
+        "type": "string",
+        "title": "Gallery Title"
+      },
+      {
+        "description": "The title that appears above the about section of the about page.",
+        "name": "aboutPageTitle",
+        "type": "string"
+      },
+      {
+        "options": {
+          "hotspot": true,
+          "metadata": [
+            "blurhash",
+            "lqip",
+            "palette"
+          ],
+          "requiredFields": [
+            "title",
+            "altText"
+          ]
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "custom"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "description": "Please add the metadata you want to use in the frontend.",
+        "name": "aboutPageHeroImage",
+        "type": "imageWithMetadata"
+      },
+      {
+        "description": "The title that appears above the review section of the review page.",
+        "name": "reviewPageTitle",
+        "type": "string"
+      },
+      {
+        "options": {
+          "hotspot": true,
+          "metadata": [
+            "blurhash",
+            "lqip",
+            "palette"
+          ],
+          "requiredFields": [
+            "title",
+            "altText"
+          ]
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "custom"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "description": "The background image for the review page.",
+        "name": "reviewPageBackgroundImage",
+        "type": "imageWithMetadata"
+      },
+      {
+        "options": {
+          "hotspot": true,
+          "metadata": [
+            "blurhash",
+            "lqip",
+            "palette"
+          ],
+          "requiredFields": [
+            "title",
+            "altText"
+          ]
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "custom"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "description": "The image that appears in the  review section of the review page. This image should be relevant to the review and help to convey where the reviews are located.",
+        "name": "reviewPageDescriptiveImage",
+        "type": "imageWithMetadata"
+      },
+      {
+        "description": "A short description of where the reviews are currently locarted.",
+        "name": "reviewPageSummary",
+        "type": "text",
+        "title": "Location of Reviews Summary"
+      },
+      {
+        "fields": [
+          {
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "presence",
+                    "constraint": "required"
+                  }
+                ],
+                "level": "error",
+                "message": "Please enter a label for the link."
+              }
+            ],
+            "description": "The text that appears on the call to action button. This is the text that encourages users to take action.",
+            "name": "linkLabel",
+            "type": "string"
+          },
+          {
+            "options": {
+              "list": [
+                {
+                  "title": "Reference to Project",
+                  "value": "toProject"
+                },
+                {
+                  "title": "Reference to Page",
+                  "value": "toPage"
+                },
+                {
+                  "title": "External Link",
+                  "value": "externalLink"
+                }
+              ],
+              "layout": "radio",
+              "direction": "horizontal"
+            },
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "valid",
+                    "constraint": [
+                      "toProject",
+                      "toPage",
+                      "externalLink"
+                    ]
+                  },
+                  {
+                    "flag": "presence",
+                    "constraint": "required"
+                  }
+                ],
+                "level": "error",
+                "message": "Please select a link type."
+              }
+            ],
+            "name": "linkType",
+            "type": "string"
+          },
+          {
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "custom"
+                  }
+                ],
+                "level": "error"
+              }
+            ],
+            "to": [
+              {
+                "type": "project"
+              }
+            ],
+            "hidden": "conditional",
+            "name": "toProject",
+            "type": "reference",
+            "title": "Reference to Project"
+          },
+          {
+            "options": {
+              "list": [
+                {
+                  "title": "Home",
+                  "value": "home"
+                },
+                {
+                  "title": "Projects",
+                  "value": "projects"
+                },
+                {
+                  "title": "About",
+                  "value": "about"
+                },
+                {
+                  "title": "Reviews",
+                  "value": "reviews"
+                },
+                {
+                  "title": "Contact",
+                  "value": "contact"
+                }
+              ],
+              "layout": "radio",
+              "direction": "horizontal"
+            },
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "valid",
+                    "constraint": [
+                      "home",
+                      "projects",
+                      "about",
+                      "reviews",
+                      "contact"
+                    ]
+                  },
+                  {
+                    "flag": "custom"
+                  }
+                ],
+                "level": "error"
+              }
+            ],
+            "hidden": "conditional",
+            "name": "toPage",
+            "type": "string",
+            "title": "Reference to Page"
+          },
+          {
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "uri",
+                    "constraint": {
+                      "options": {
+                        "scheme": [
+                          "/^http$/",
+                          "/^https$/"
+                        ],
+                        "allowRelative": false,
+                        "relativeOnly": false,
+                        "allowCredentials": false
+                      }
+                    }
+                  },
+                  {
+                    "flag": "custom"
+                  }
+                ],
+                "level": "error"
+              }
+            ],
+            "hidden": "conditional",
+            "name": "externalLink",
+            "type": "url"
+          }
+        ],
+        "name": "viewReviewsCTA",
+        "type": "object",
+        "title": "View Reviews Call to Action"
+      },
+      {
+        "description": "The title that appears above the submit review section of the review page.",
+        "name": "submitReviewTitle",
+        "type": "string"
+      },
+      {
+        "description": "A short invitation to submit a review.",
+        "name": "submitReviewInvitation",
+        "type": "text"
+      },
+      {
+        "fields": [
+          {
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "presence",
+                    "constraint": "required"
+                  }
+                ],
+                "level": "error",
+                "message": "Please enter a label for the link."
+              }
+            ],
+            "description": "The text that appears on the call to action button. This is the text that encourages users to take action.",
+            "name": "linkLabel",
+            "type": "string"
+          },
+          {
+            "options": {
+              "list": [
+                {
+                  "title": "Reference to Project",
+                  "value": "toProject"
+                },
+                {
+                  "title": "Reference to Page",
+                  "value": "toPage"
+                },
+                {
+                  "title": "External Link",
+                  "value": "externalLink"
+                }
+              ],
+              "layout": "radio",
+              "direction": "horizontal"
+            },
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "valid",
+                    "constraint": [
+                      "toProject",
+                      "toPage",
+                      "externalLink"
+                    ]
+                  },
+                  {
+                    "flag": "presence",
+                    "constraint": "required"
+                  }
+                ],
+                "level": "error",
+                "message": "Please select a link type."
+              }
+            ],
+            "name": "linkType",
+            "type": "string"
+          },
+          {
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "custom"
+                  }
+                ],
+                "level": "error"
+              }
+            ],
+            "to": [
+              {
+                "type": "project"
+              }
+            ],
+            "hidden": "conditional",
+            "name": "toProject",
+            "type": "reference",
+            "title": "Reference to Project"
+          },
+          {
+            "options": {
+              "list": [
+                {
+                  "title": "Home",
+                  "value": "home"
+                },
+                {
+                  "title": "Projects",
+                  "value": "projects"
+                },
+                {
+                  "title": "About",
+                  "value": "about"
+                },
+                {
+                  "title": "Reviews",
+                  "value": "reviews"
+                },
+                {
+                  "title": "Contact",
+                  "value": "contact"
+                }
+              ],
+              "layout": "radio",
+              "direction": "horizontal"
+            },
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "valid",
+                    "constraint": [
+                      "home",
+                      "projects",
+                      "about",
+                      "reviews",
+                      "contact"
+                    ]
+                  },
+                  {
+                    "flag": "custom"
+                  }
+                ],
+                "level": "error"
+              }
+            ],
+            "hidden": "conditional",
+            "name": "toPage",
+            "type": "string",
+            "title": "Reference to Page"
+          },
+          {
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "uri",
+                    "constraint": {
+                      "options": {
+                        "scheme": [
+                          "/^http$/",
+                          "/^https$/"
+                        ],
+                        "allowRelative": false,
+                        "relativeOnly": false,
+                        "allowCredentials": false
+                      }
+                    }
+                  },
+                  {
+                    "flag": "custom"
+                  }
+                ],
+                "level": "error"
+              }
+            ],
+            "hidden": "conditional",
+            "name": "externalLink",
+            "type": "url"
+          }
+        ],
+        "name": "submitReviewCTA",
+        "type": "object",
+        "title": "Submit Review Call to Action"
+      },
+      {
+        "description": "The title that appears above the contact section of the contact page.",
+        "name": "contactPageTitle",
+        "type": "string"
+      },
+      {
+        "options": {
+          "hotspot": true,
+          "metadata": [
+            "blurhash",
+            "lqip",
+            "palette"
+          ],
+          "requiredFields": [
+            "title",
+            "altText"
+          ]
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "custom"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "description": "Please add the metadata you want to use in the frontend.",
+        "name": "contactsPagebackgroundImage",
+        "type": "imageWithMetadata",
+        "title": "Contact Page Background Image"
+      },
+      {
+        "name": "PhoneLabel",
+        "type": "string"
+      },
+      {
+        "description": "The phone number of the company. This is the number that users can call to get in touch with the company.",
+        "name": "PhoneNumber",
+        "type": "string"
+      },
+      {
+        "name": "emailLabel",
+        "type": "string"
+      },
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error",
+            "message": "Please enter a valid email address."
+          }
+        ],
+        "name": "emailAddress",
+        "type": "email"
+      },
+      {
+        "name": "socialMediaLabel",
+        "type": "string"
+      },
+      {
+        "options": {
+          "hotspot": true,
+          "metadata": [
+            "blurhash",
+            "lqip",
+            "palette"
+          ],
+          "requiredFields": [
+            "title",
+            "altText"
+          ]
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "custom"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "description": "Please add the metadata you want to use in the frontend.",
+        "name": "instagramIcon",
+        "type": "imageWithMetadata"
+      },
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "uri",
+                "constraint": {
+                  "options": {
+                    "scheme": [
+                      "/^http$/",
+                      "/^https$/"
+                    ],
+                    "allowRelative": false,
+                    "relativeOnly": false,
+                    "allowCredentials": false
+                  }
+                }
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "name": "instagramLink",
+        "type": "url"
+      },
+      {
+        "options": {
+          "hotspot": true,
+          "metadata": [
+            "blurhash",
+            "lqip",
+            "palette"
+          ],
+          "requiredFields": [
+            "title",
+            "altText"
+          ]
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "custom"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "description": "Please add the metadata you want to use in the frontend.",
+        "name": "facebookIcon",
+        "type": "imageWithMetadata"
+      },
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "uri",
+                "constraint": {
+                  "options": {
+                    "scheme": [
+                      "/^http$/",
+                      "/^https$/"
+                    ],
+                    "allowRelative": false,
+                    "relativeOnly": false,
+                    "allowCredentials": false
+                  }
+                }
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "name": "facebookLink",
+        "type": "url"
+      }
+    ],
+    "fieldsets": [
+      {
+        "name": "navigation",
+        "description": "The navigation labels are the text that appears in the navigation bar of the website. These labels are used to identify the different sections of the website and help users navigate through the site. ",
+        "options": {
+          "collapsible": true,
+          "collapsed": true
+        }
+      },
+      {
+        "name": "footer",
+        "description": "The footer is the bottom section of a webpage, typically containing copyright information, links to privacy policies, terms of service, and other important site-wide information. ",
+        "options": {
+          "collapsible": true,
+          "collapsed": true
+        }
+      },
+      {
+        "name": "siteMetaData",
+        "title": "Site MetaData",
+        "description": "Metadata for the site. This is used for SEO and social media sharing.",
+        "options": {
+          "collapsible": true,
+          "collapsed": true
+        }
+      },
+      {
+        "name": "heroSection",
+        "description": "A website hero section is the prominent, eye-catching area at the top of a webpage, designed to grab the user's attention and make a strong first impression, often featuring a hero image, headline, and a call to action. ",
+        "options": {
+          "collapsible": true,
+          "collapsed": true
+        }
+      },
+      {
+        "name": "projectSection",
+        "description": "The project section is a part of the website that showcases a project done by the company.",
+        "options": {
+          "collapsible": true,
+          "collapsed": true
+        }
+      },
+      {
+        "name": "servicesSection",
+        "description": "The services section briefly describes the services offered.",
+        "options": {
+          "collapsible": true,
+          "collapsed": true
+        }
+      },
+      {
+        "name": "reviewSection",
+        "description": "The review section shocases a client's review of the company. This is a great way to build trust and credibility with potential customers.",
+        "options": {
+          "collapsible": true,
+          "collapsed": true
+        }
+      }
+    ],
+    "name": "siteSettingsSingleton",
+    "type": "document",
+    "title": "Site Page Settings"
+  },
+  {
+    "fields": [
+      {
+        "name": "name",
+        "type": "string"
+      }
+    ],
+    "name": "neighbourhood",
+    "type": "document",
+    "title": "Neighbourhoods"
+  },
+  {
+    "description": "You can point users to a specific project or page on your site, or an external link. This is the button that encourages users to take action.",
+    "fields": [
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error",
+            "message": "Please enter a label for the link."
+          }
+        ],
+        "description": "The text that appears on the call to action button. This is the text that encourages users to take action.",
+        "name": "linkLabel",
+        "type": "string"
+      },
+      {
+        "options": {
+          "list": [
+            {
+              "title": "Reference to Project",
+              "value": "toProject"
+            },
+            {
+              "title": "Reference to Page",
+              "value": "toPage"
+            },
+            {
+              "title": "External Link",
+              "value": "externalLink"
+            }
+          ],
+          "layout": "radio",
+          "direction": "horizontal"
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "valid",
+                "constraint": [
+                  "toProject",
+                  "toPage",
+                  "externalLink"
+                ]
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error",
+            "message": "Please select a link type."
+          }
+        ],
+        "name": "linkType",
+        "type": "string"
+      },
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "custom"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "to": [
+          {
+            "type": "project"
+          }
+        ],
+        "hidden": "conditional",
+        "name": "toProject",
+        "type": "reference",
+        "title": "Reference to Project"
+      },
+      {
+        "options": {
+          "list": [
+            {
+              "title": "Home",
+              "value": "home"
+            },
+            {
+              "title": "Projects",
+              "value": "projects"
+            },
+            {
+              "title": "About",
+              "value": "about"
+            },
+            {
+              "title": "Reviews",
+              "value": "reviews"
+            },
+            {
+              "title": "Contact",
+              "value": "contact"
+            }
+          ],
+          "layout": "radio",
+          "direction": "horizontal"
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "valid",
+                "constraint": [
+                  "home",
+                  "projects",
+                  "about",
+                  "reviews",
+                  "contact"
+                ]
+              },
+              {
+                "flag": "custom"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "hidden": "conditional",
+        "name": "toPage",
+        "type": "string",
+        "title": "Reference to Page"
+      },
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "uri",
+                "constraint": {
+                  "options": {
+                    "scheme": [
+                      "/^http$/",
+                      "/^https$/"
+                    ],
+                    "allowRelative": false,
+                    "relativeOnly": false,
+                    "allowCredentials": false
+                  }
+                }
+              },
+              {
+                "flag": "custom"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "hidden": "conditional",
+        "name": "externalLink",
+        "type": "url"
+      }
+    ],
+    "name": "CTA",
+    "type": "object",
+    "title": "Call to Action"
+  },
+  {
+    "options": {
+      "hotspot": true,
+      "metadata": [
+        "blurhash",
+        "lqip",
+        "palette"
+      ],
+      "requiredFields": [
+        "title",
+        "altText"
+      ]
+    },
+    "validation": [
+      {
+        "rules": [
+          {
+            "flag": "custom"
+          }
+        ],
+        "level": "error"
+      }
+    ],
+    "description": "Please add the metadata you want to use in the frontend.",
+    "fields": [
+      {
+        "options": {
+          "layout": "checkbox"
+        },
+        "initialValue": false,
+        "description": "A decorative image is purely visual and does not convey content-critical information. Marking it as decorative helps screen readers skip non-essential elements.",
+        "name": "decorative",
+        "type": "boolean",
+        "title": "Set image as decorative"
+      },
+      {
+        "hidden": true,
+        "name": "changed",
+        "type": "boolean"
+      }
+    ],
+    "name": "imageWithMetadata",
+    "type": "image",
+    "title": "Image"
+  }
+]
