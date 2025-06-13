@@ -713,17 +713,17 @@ export type QUERY_NAVResult = {
   } | null;
 } | null;
 
-// Source: ./src/sanity/lib/queries.ts
-// Variable: PROJECTS_QUERY
+// Source: ./src/app/queries/projectQuery.ts
+// Variable: QUERY_PROJECTS
 // Query: *[  _type == "project" && defined(projectSlug.current)][0...12]{    _id, projectName, projectSlug  }
-export type PROJECTS_QUERYResult = Array<{
+export type QUERY_PROJECTSResult = Array<{
   _id: string;
   projectName: string | null;
   projectSlug: Slug | null;
 }>;
-// Variable: PROJECT_QUERY
+// Variable: QUERY_PROJECT
 // Query: *[  _type == "project" && projectSlug.current == $slug][0]{    _id, projectName, projectSlug, projectDescription  }
-export type PROJECT_QUERYResult = {
+export type QUERY_PROJECTResult = {
   _id: string;
   projectName: string | null;
   projectSlug: Slug | null;
@@ -737,7 +737,7 @@ declare module "@sanity/client" {
     "*[_type == \"siteSettingsSingleton\"][0]{\n\n  heroCTA,\n  heroHeadline,\n  heroImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n\n}": QUERY_HOMEResult;
     "*[_type == \"companySettingsSingleton\"][0]{\n  logoForLightBG {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n  logoForDarkBG {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n}\n}": QUERY_LOGOResult;
     "*[_type == \"siteSettingsSingleton\"][0]{\n  homePageNavLabel,\n  projectsPageNavLabel,\n  aboutPageNavLabel,\n  reviewsPageNavLabel,\n  contactPageNavLabel,\n  mobileBackgroundImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n}\n}": QUERY_NAVResult;
-    "*[\n  _type == \"project\" && defined(projectSlug.current)][0...12]{\n    _id, projectName, projectSlug\n  }\n": PROJECTS_QUERYResult;
-    "*[\n  _type == \"project\" && projectSlug.current == $slug][0]{\n    _id, projectName, projectSlug, projectDescription\n  }\n": PROJECT_QUERYResult;
+    "*[\n  _type == \"project\" && defined(projectSlug.current)][0...12]{\n    _id, projectName, projectSlug\n  }\n": QUERY_PROJECTSResult;
+    "*[\n  _type == \"project\" && projectSlug.current == $slug][0]{\n    _id, projectName, projectSlug, projectDescription\n  }\n": QUERY_PROJECTResult;
   }
 }

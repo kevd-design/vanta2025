@@ -84,7 +84,6 @@ export const Navigation: FC<NavigationProps> = ({
           navigationItems={navigationItems}
           backgroundImage={mobileBackgroundImage}
           lqip={mobileBackgroundImage?.asset?.metadata?.lqip ?? undefined}
-          debugInfo={null}
         />
       )}
     </nav>

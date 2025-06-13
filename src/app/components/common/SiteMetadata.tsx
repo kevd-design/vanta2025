@@ -37,7 +37,7 @@ export async function generateSiteMetadata({
           url: image?.url || data?.heroImage?.asset?.url || '/fallback-og.png',
           width: image?.width || data?.heroImage?.asset?.metadata?.dimensions?.width || 1200,
           height: image?.height || data?.heroImage?.asset?.metadata?.dimensions?.height || 630,
-          alt: image?.alt || data?.heroImage?.altText || 'Site preview'
+          alt: image?.alt || data?.heroImage?.alt || 'Site preview'
         }
       ],
       locale: 'en_US',
