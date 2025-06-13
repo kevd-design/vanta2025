@@ -1,49 +1,53 @@
 'use client'
 
-import { FC, useRef, useMemo, useState } from 'react'
+import { FC, useState } from 'react'
 import Image from 'next/image'
-import { useDebug } from '@/debug'
 import { HeroBackground } from '@/app/components/HeroBackground'
 import { HeroContent } from '@/app/components/HeroContent'
 import { ImageContainer } from '@/app/components/common/ImageContainer'
-import { useDebugObserver } from '@/debug/hooks/useDebugObserver'
 import type { HeroSection } from '@/app/lib/types/components/hero'
 
 export const Hero: FC<HeroSection> = ({
   image,
   headline,
-  cta,
-  usePalette = true
+  cta
 }) => {
-  console.log('Rendering Hero component with image:', image)
-  const { isDebugMode } = useDebug()
-  const heroContentRef = useRef<HTMLDivElement>(null)
   const [optimizedImageUrl, setOptimizedImageUrl] = useState<string | null>(null)
 
-  const elementRefs = useMemo(() => [
-    { ref: heroContentRef, label: 'HeroContent' }, // Single reference for both elements
-  ], [])
-  
-  // Use the debug observer to send optimized image URL to debug panel
-  useDebugObserver({
-    componentId: "hero",
-    displayName: "Hero Section",
-    image,
-    optimizedImageUrl: optimizedImageUrl || undefined, // Pass the optimized URL to the debug observer
-    enabled: isDebugMode
-  });
-
   if (!image?.asset) {
-    return null; // Or render a fallback/placeholder
+    return null;
   }
 
-
-  const fallbackContent = (
-    <noscript>
-      <div className="relative w-full h-[90vh] sm:h-[800px] md:h-[1200px] lg:h-[1582px] xl:h-[1800px] 2xl:h-[2000px]">
-        {image?.asset?.url && (
+  return (
+    <>
+      <ImageContainer 
+        className="relative w-full h-[90vh] sm:h-[800px] md:h-[1200px] lg:h-[1582px] xl:h-[1800px] 2xl:h-[2000px] rounded-b-[32px] overflow-hidden"
+        setOptimizedImageUrl={setOptimizedImageUrl}
+      >
+        {({ dimensions, setOptimizedImageUrl: containerSetOptimizedImageUrl }) => (
           <>
-            {/* Fallback image */}
+            <HeroBackground 
+              image={image}
+              dimensions={dimensions}
+              setOptimizedImageUrl={(url: string) => {
+                containerSetOptimizedImageUrl(url);
+                setOptimizedImageUrl(url);
+              }}
+            />
+            
+            {/* Use simplified HeroContent component */}
+            <HeroContent
+              headline={headline}
+              cta={cta}
+            />
+          </>
+        )}
+      </ImageContainer>
+      
+      {/* No-JS fallback content */}
+      <noscript>
+        <div className="relative w-full h-[90vh] sm:h-[800px] md:h-[1200px] lg:h-[1582px] xl:h-[1800px] 2xl:h-[2000px] rounded-b-[32px] overflow-hidden">
+          {image?.asset?.url && (
             <Image
               src={optimizedImageUrl || image.asset.url}
               alt={image.alt || ''}
@@ -52,64 +56,21 @@ export const Hero: FC<HeroSection> = ({
               className="object-cover"
               sizes="100vw"
             />
-            {/* Gradient overlay for text visibility */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent" />
-          </>
-        )}
-        {/* Basic content with safe contrasting colors */}
-        <div className="relative z-10 container mx-auto px-4 pt-32">
-          {headline && (
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-8">
-              {headline}
-            </h1>
           )}
-          {cta && (
-            <div className="inline-block bg-white text-black px-6 py-3 rounded-lg">
-              {cta.linkLabel}
-            </div>
-          )}
+          <div className="relative z-10 container mx-auto px-4 pt-32">
+            {headline && (
+              <h1 className="text-4xl md:text-6xl font-bold text-black mb-8">
+                {headline}
+              </h1>
+            )}
+            {cta && (
+              <div className="inline-block bg-black text-white px-6 py-3 rounded-lg">
+                {cta.linkLabel}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </noscript>
-  )
-
-  return (
-    <>
-      <ImageContainer 
-        className="relative w-full h-[90vh] sm:h-[800px] md:h-[1200px] lg:h-[1582px] xl:h-[1800px] 2xl:h-[2000px]"
-        isDebugMode={isDebugMode}
-        imageId="hero"
-        displayName="Hero Background"
-        elementRefs={elementRefs}
-        image={image}
-      >
-        {({ dimensions, onColorMapChange, elementColors, setOptimizedImageUrl: containerSetOptimizedImageUrl }) => (
-          <>
-            <HeroBackground 
-              image={image}
-              dimensions={dimensions}
-              isDebugMode={isDebugMode}
-              onColorMapChange={onColorMapChange}
-              setOptimizedImageUrl={(url: string) => {
-                containerSetOptimizedImageUrl(url);
-                setOptimizedImageUrl(url);
-              }}
-            />
-            <HeroContent
-              headline={headline}
-              cta={cta}
-              headlineRef={heroContentRef}
-              image={image}
-              usePalette={usePalette}
-              elementColors={elementColors} // Pass element colors from ImageContainer
-            />
-          </>
-        )}
-      </ImageContainer>
-      {/* No-JS version */}
-      <div className="no-js-content">
-        {fallbackContent}
-      </div>
+      </noscript>
     </>
   )
 }

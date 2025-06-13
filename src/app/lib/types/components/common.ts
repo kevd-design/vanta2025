@@ -2,6 +2,7 @@ import type { ImageObject, ImageMetadata, ImagePaletteSwatch  } from '../image';
 import type { SanityImage } from '../sanity';
 import type { ColorMap } from '../colorMap';
 import type { RefObject } from 'react';
+import type { CTAType } from '@/app/lib/types/content';
 
 export interface CTAProps {
   linkLabel?: string;
@@ -34,31 +35,17 @@ export interface ImageContainerProps {
       height: number
       aspectRatio: number
     }
-    colorMap: ColorMap
-    elementColors: Record<string, {
-      color: 'text-black' | 'text-white' | 'background'
-      debugInfo: {
-        totalCells: number
-        blackVotes: number
-        whiteVotes: number
-        consensusPercentage: number
-      }
-    }>
-    onColorMapChange: (map: ColorMap) => void
-    isDebugMode?: boolean
     setOptimizedImageUrl: (url: string) => void 
   }) => React.ReactNode
   className?: string
-  isDebugMode?: boolean
-  imageId: string
+  imageId?: string
   displayName?: string
-  elementRefs: Array<{ 
+  elementRefs?: Array<{ 
     ref: RefObject<HTMLElement | null>
     label: string 
   }>
   image?: ImageObject | null
   setOptimizedImageUrl?: (url: string) => void
-  
 }
 
 export interface TextBackgroundProps {
@@ -70,4 +57,11 @@ export interface TextBackgroundProps {
   blur?: number;
   padding?: string;
   rounded?: boolean;
+}
+
+export interface FeaturedProjectProps {
+  title: string | null;
+  slug: string | null;
+  featuredImage: ImageObject | null;
+  cta: CTAType | null;
 }

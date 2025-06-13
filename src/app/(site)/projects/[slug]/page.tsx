@@ -1,5 +1,5 @@
 import { sanityFetch } from "@/sanity/lib/live";
-import { PROJECT_QUERY } from "@/sanity/lib/queries";
+import { QUERY_PROJECT } from "@/app/queries/projectQuery";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 
@@ -10,14 +10,13 @@ export default async function Page({
   
 }) {
   const { data: project } = await sanityFetch({
-    query: PROJECT_QUERY,
+    query: QUERY_PROJECT,
     params: await params,
   });
   
   if (!project) {
     notFound();
   }
-
 
   return (
     <div>
@@ -26,7 +25,6 @@ export default async function Page({
       <Link href="/projects">
       &larr; Return to Projects
       </Link>
-      
     </div>
   );
 }

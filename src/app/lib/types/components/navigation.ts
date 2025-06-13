@@ -1,6 +1,5 @@
-import type { ImageObject } from '../image'
+import type { ImageObject } from '../image';
 import type { SanityImage } from '../sanity';
-import type { DebugInfo } from '@/debug'
 
 export interface NavigationItem {
   label: string;
@@ -22,12 +21,21 @@ export interface NavigationProps {
 }
 
 export interface MobileNavigationProps {
-  isOpen: boolean
-  onClose: () => void
-  backgroundImage: ImageObject | SanityImage
-  navigationItems: NavigationItem[]
-  debugInfo: DebugInfo | null
-  lqip?: string
+  isOpen: boolean;
+  onClose: () => void;
+  navigationItems: NavigationItem[];
+  backgroundImage: ImageObject;
+  lqip?: string;
+}
+
+export interface MobileNavigationBackgroundProps {
+  backgroundImage: ImageObject;
+  dimensions: {
+    width: number;
+    height: number;
+  };
+  lqip?: string;
+  setOptimizedImageUrl?: (url: string) => void;
 }
 
 export interface LogoType {
@@ -45,5 +53,5 @@ export interface NavLinkProps {
   label: string
   variant: 'desktop' | 'mobile'
   onClick?: () => void
-  className?: string // Add className prop
+  className?: string
 }

@@ -10,8 +10,6 @@ import { NavLink } from '@/app/components/common/NavLink'
 import { MobileNavigation } from '@/app/components/MobileNavigation'
 import type { NavigationProps } from '@/app/lib/types/components/navigation'
 
-
-
 export const Navigation: FC<NavigationProps> = ({ 
   logo, 
   navLabels, 
@@ -84,7 +82,6 @@ export const Navigation: FC<NavigationProps> = ({
           navigationItems={navigationItems}
           backgroundImage={mobileBackgroundImage}
           lqip={mobileBackgroundImage?.asset?.metadata?.lqip ?? undefined}
-          debugInfo={null}
         />
       )}
     </nav>

@@ -1,12 +1,9 @@
-
-import { PROJECTS_QUERY } from '@/sanity/lib/queries';
+import { QUERY_PROJECTS } from '@/app/queries/projectQuery';
 import { sanityFetch } from "@/sanity/lib/live";
 import Link from "next/link"
 
-
-
 export default async function Projects() {
-  const { data: projects } = await sanityFetch({query: PROJECTS_QUERY})
+  const { data: projects } = await sanityFetch({query: QUERY_PROJECTS})
   return (
     <div>
         Projects
@@ -24,8 +21,6 @@ export default async function Projects() {
             </li>
           ))}
         </ul>      
-
-        
     </div>
   );
 }

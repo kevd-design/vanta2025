@@ -1,12 +1,10 @@
 'use client'
 
-import { FC, useState, useEffect, useMemo, useRef } from 'react'
-import Image from 'next/image'
+import { FC, useState, useEffect } from 'react'
 import XButton from '@/app/elements/XButton'
-import { DIMENSIONS } from '@/app/constants'
-import { useWindowSize } from '@/app/hooks/useWindowSize'
 import { NavLink } from '@/app/components/common/NavLink'
-import { useOptimizedImage } from '@/app/hooks/useOptimizedImage'
+import { ImageContainer } from '@/app/components/common/ImageContainer'
+import { MobileNavigationBackground } from '@/app/components/MobileNavigationBackground'
 import type { MobileNavigationProps } from '@/app/lib/types/components/navigation'
 
 export const MobileNavigation: FC<MobileNavigationProps> = ({
@@ -16,41 +14,11 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
   backgroundImage,
   lqip
 }) => {
-
   // Animation state
   const [isAnimatingOut, setIsAnimatingOut] = useState(false)
   const [hasEntered, setHasEntered] = useState(false)
-
-  // Refs for element mapping
-  const containerRef = useRef<HTMLDivElement>(null)
-
-  // Dimensions and screen size
-  const { width: screenWidth } = useWindowSize()
-  const screenHeight = typeof window !== 'undefined' ? window.innerHeight : null
   
-  const dimensions = useMemo(() => ({
-    width: Math.round(screenWidth || DIMENSIONS.screen.defaultWidth),
-    height: Math.round(screenHeight || DIMENSIONS.screen.defaultHeight)
-  }), [screenWidth, screenHeight])
-
-  // Image and render info
-  const { url: imageUrl, generateUrl, setUrl } = useOptimizedImage({
-    asset: backgroundImage.asset ?? null,
-    hotspot: backgroundImage.hotspot ?? null,
-    crop: backgroundImage.crop ?? null,
-    width: screenWidth,
-    height: screenHeight ?? DIMENSIONS.screen.defaultHeight,
-    quality: 70
-  })
-
-
-
   // Effects
-  useEffect(() => {
-    const url = generateUrl()
-    if (url) setUrl(url)
-  }, [dimensions.width, dimensions.height, generateUrl, setUrl])
-  
   useEffect(() => {
     if (isOpen) {
       requestAnimationFrame(() => {
@@ -72,19 +40,16 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
     }, 300)
   }
 
-
-  if (!imageUrl || (!isOpen && !isAnimatingOut)) return null
+  if (!isOpen && !isAnimatingOut) return null
 
   return (
     <div 
-      ref={containerRef}
       className={`
         fixed inset-0 z-50
         transition-opacity duration-300 ease-menu
         ${hasEntered ? 'opacity-100' : 'opacity-0'}
       `}
     >
-      
       {/* Overlay */}
       <div
         className={`
@@ -96,7 +61,6 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
         aria-label="Close menu overlay"
       />
       
-      
       {/* Menu container */}
       <div 
         className={`
@@ -105,28 +69,21 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
           ${hasEntered ? 'translate-y-0' : '-translate-y-full'}
         `}
       >
-        
         <div className="relative w-full max-h-[90vh] rounded-b-[32px] shadow-xl">
           {/* Background layer */}
           <div className="fixed inset-x-0 top-0 w-full h-full rounded-b-[32px] overflow-hidden">
-            
-            {imageUrl && backgroundImage?.asset && (
-              <>
-                <Image
-                  src={imageUrl}
-                  alt=""
-                  priority
-                  className="absolute inset-0 object-cover"
-                  sizes="100vw"
-                  placeholder={lqip ? "blur" : undefined}
-                  blurDataURL={lqip}
-                  fill
+            <ImageContainer 
+              className="w-full h-full"
+            >
+              {({ dimensions, setOptimizedImageUrl }) => (
+                <MobileNavigationBackground
+                  backgroundImage={backgroundImage}
+                  dimensions={dimensions}
+                  lqip={lqip}
+                  setOptimizedImageUrl={setOptimizedImageUrl}
                 />
-                
-              </>
-            )}
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 w-full h-full rounded-b-[32px] bg-gradient-to-r from-emerald-800/90 via-emerald-800/80 to-transparent" />
+              )}
+            </ImageContainer>
           </div>
           
           {/* Scrollable content */}
@@ -159,9 +116,7 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
             </div>
           </div>
         </div>
-        
       </div>
-      
     </div>
   )
 }
