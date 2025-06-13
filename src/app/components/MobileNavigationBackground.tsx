@@ -2,11 +2,12 @@ import { FC } from 'react'
 import Image from 'next/image' 
 import { IMAGE_OPTIONS } from '@/app/constants'
 import { useImageHandler } from '@/app/hooks/useImageHandler'
-import type { HeroBackgroundProps } from '@/app/lib/types/components/hero'
+import type { MobileNavigationBackgroundProps } from '@/app/lib/types/components/navigation'
 
-export const HeroBackground: FC<HeroBackgroundProps> = ({
-  image,
+export const MobileNavigationBackground: FC<MobileNavigationBackgroundProps> = ({
+  backgroundImage,
   dimensions,
+  lqip,
   setOptimizedImageUrl
 }) => {
   const { 
@@ -14,7 +15,7 @@ export const HeroBackground: FC<HeroBackgroundProps> = ({
     isReady,
     alt
   } = useImageHandler({
-    image,
+    image: backgroundImage,
     width: dimensions.width,
     height: dimensions.height,
     quality: IMAGE_OPTIONS.quality.medium,
@@ -26,8 +27,7 @@ export const HeroBackground: FC<HeroBackgroundProps> = ({
     }
   })
 
-  if (!image?.asset) return null
-
+  if (!backgroundImage?.asset) return null
   if (!isReady) return null
 
   return (
@@ -38,8 +38,13 @@ export const HeroBackground: FC<HeroBackgroundProps> = ({
         height={dimensions.height}
         className="w-full h-full object-cover"
         priority
-        alt={alt}
+        alt={alt || ''}
+        sizes="100vw"
+        placeholder={lqip ? "blur" : undefined}
+        blurDataURL={lqip}
       />
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 w-full h-full rounded-b-[32px] bg-gradient-to-r from-emerald-800/90 via-emerald-800/80 to-transparent" />
     </div>
   )
 }

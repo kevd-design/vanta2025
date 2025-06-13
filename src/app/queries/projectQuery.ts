@@ -1,14 +1,13 @@
-import { defineQuery } from "next-sanity";
+import { defineQuery } from "next-sanity"
 
-export const PROJECTS_QUERY = defineQuery(`*[
+export const QUERY_PROJECTS = defineQuery(`*[
   _type == "project" && defined(projectSlug.current)][0...12]{
     _id, projectName, projectSlug
   }
 `);
 
-export const PROJECT_QUERY = defineQuery(`*[
+export const QUERY_PROJECT = defineQuery(`*[
   _type == "project" && projectSlug.current == $slug][0]{
     _id, projectName, projectSlug, projectDescription
   }
 `);
-    

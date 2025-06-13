@@ -34,31 +34,17 @@ export interface ImageContainerProps {
       height: number
       aspectRatio: number
     }
-    colorMap: ColorMap
-    elementColors: Record<string, {
-      color: 'text-black' | 'text-white' | 'background'
-      debugInfo: {
-        totalCells: number
-        blackVotes: number
-        whiteVotes: number
-        consensusPercentage: number
-      }
-    }>
-    onColorMapChange: (map: ColorMap) => void
-    isDebugMode?: boolean
     setOptimizedImageUrl: (url: string) => void 
   }) => React.ReactNode
   className?: string
-  isDebugMode?: boolean
-  imageId: string
+  imageId?: string
   displayName?: string
-  elementRefs: Array<{ 
+  elementRefs?: Array<{ 
     ref: RefObject<HTMLElement | null>
     label: string 
   }>
   image?: ImageObject | null
   setOptimizedImageUrl?: (url: string) => void
-  
 }
 
 export interface TextBackgroundProps {
