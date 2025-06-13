@@ -10,8 +10,6 @@ import { NavLink } from '@/app/components/common/NavLink'
 import { MobileNavigation } from '@/app/components/MobileNavigation'
 import type { NavigationProps } from '@/app/lib/types/components/navigation'
 
-
-
 export const Navigation: FC<NavigationProps> = ({ 
   logo, 
   navLabels, 

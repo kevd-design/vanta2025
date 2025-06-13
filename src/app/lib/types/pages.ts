@@ -28,4 +28,17 @@ export interface HomeData {
   services: ServicesSection;
 //   review: ReviewType;
 //   meta: MetaSection;
+  heroCTA: CTAType | null;
+  heroHeadline: string | null;
+  heroImage: ImageObject | null;
+  
+  // Updated field with proper typing
+  projectCTA: CTAType & {
+    project?: {
+      _id: string | null;
+      projectName: string | null;
+      projectSlug: { current: string | null } | null;
+      projectImage: ImageObject | null; // Using your existing ImageObject type
+    } | null;
+  } | null;
 }

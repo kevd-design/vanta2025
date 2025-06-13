@@ -2,6 +2,7 @@ import type { ImageObject, ImageMetadata, ImagePaletteSwatch  } from '../image';
 import type { SanityImage } from '../sanity';
 import type { ColorMap } from '../colorMap';
 import type { RefObject } from 'react';
+import type { CTAType } from '@/app/lib/types/content';
 
 export interface CTAProps {
   linkLabel?: string;
@@ -56,4 +57,11 @@ export interface TextBackgroundProps {
   blur?: number;
   padding?: string;
   rounded?: boolean;
+}
+
+export interface FeaturedProjectProps {
+  title: string | null;
+  slug: string | null;
+  featuredImage: ImageObject | null;
+  cta: CTAType | null;
 }
