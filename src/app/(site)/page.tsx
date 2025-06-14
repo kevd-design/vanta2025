@@ -1,6 +1,7 @@
 import { sanityFetch } from "@/sanity/lib/live";
 import { Hero } from '@/app/components/Hero'
 import { FeaturedProject } from '@/app/components/FeaturedProject'
+import { Services } from '@/app/components/Services'
 import { QUERY_HOME } from '@/app/queries/homeQuery';
 import type { CTAType } from '@/app/lib/types/content'
 import type { ImageObject } from '@/app/lib/types/image';
@@ -49,7 +50,13 @@ export default async function Home() {
         />
       )}
       
-      <p>Additional content</p>
+      <Services
+        title={data.servicesTitle}
+        description={data.servicesDescription}
+        backgroundImage={data.backgroundImageServices as ImageObject | null}
+        cta={data.servicesCTA as CTAType | null}
+      />
+      content
     </main>
   );
 }

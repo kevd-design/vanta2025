@@ -16,5 +16,11 @@ export const QUERY_HOME = defineQuery(`*[_type == "siteSettingsSingleton"][0]{
       projectSlug,
       projectImage {${IMAGE_WITH_METADATA}}
     }
-  }
+  },
+  
+  // Services section
+  servicesTitle,
+  servicesDescription,
+  backgroundImageServices {${IMAGE_WITH_METADATA}},
+  servicesCTA
 }`);

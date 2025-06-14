@@ -65,3 +65,10 @@ export interface FeaturedProjectProps {
   featuredImage: ImageObject | null;
   cta: CTAType | null;
 }
+
+export interface ServicesProps {
+  title: string | null;
+  description: string | null;
+  backgroundImage: ImageObject | null;
+  cta: CTAType | null;
+}
