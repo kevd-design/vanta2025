@@ -21,13 +21,19 @@ export interface ServicesSection {
   cta: CTAType;
 }
 
+// Review Section
+export interface ReviewSection {
+  reviewerName: string | null;
+  reviewText: string | null;
+  cta: CTAType | null;
+}
+
 // Home page data structure
 export interface HomeData {
   hero: HeroSection;
   projects: ProjectsSection;
   services: ServicesSection;
-//   review: ReviewType;
-//   meta: MetaSection;
+  review: ReviewSection;
   heroCTA: CTAType | null;
   heroHeadline: string | null;
   heroImage: ImageObject | null;
@@ -38,7 +44,7 @@ export interface HomeData {
       _id: string | null;
       projectName: string | null;
       projectSlug: { current: string | null } | null;
-      projectImage: ImageObject | null; // Using your existing ImageObject type
+      projectImage: ImageObject | null;
     } | null;
   } | null;
 }

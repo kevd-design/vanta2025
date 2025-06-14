@@ -559,7 +559,7 @@ export type AllSanitySchemaTypes = CTA | SiteSettingsSingleton | Project | Neigh
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./src/app/queries/homeQuery.ts
 // Variable: QUERY_HOME
-// Query: *[_type == "siteSettingsSingleton"][0]{  // Hero section  heroCTA,  heroHeadline,  heroImage {  ...,  asset->{    ...,    metadata  }},    // Project section  projectCTA {    ...,    "project": toProject-> {      _id,      projectName,      projectSlug,      projectImage {  ...,  asset->{    ...,    metadata  }}    }  },    // Services section  servicesTitle,  servicesDescription,  backgroundImageServices {  ...,  asset->{    ...,    metadata  }},  servicesCTA}
+// Query: *[_type == "siteSettingsSingleton"][0]{  // Hero section  heroCTA,  heroHeadline,  heroImage {  ...,  asset->{    ...,    metadata  }},    // Project section  projectCTA {    ...,    "project": toProject-> {      _id,      projectName,      projectSlug,      projectImage {  ...,  asset->{    ...,    metadata  }}    }  },    // Services section  servicesTitle,  servicesDescription,  backgroundImageServices {  ...,  asset->{    ...,    metadata  }},  servicesCTA,    // Review section  reviewerName,  reviewText,  reviewCTA}
 export type QUERY_HOMEResult = {
   heroCTA: {
     linkLabel?: string;
@@ -695,6 +695,20 @@ export type QUERY_HOMEResult = {
     toPage?: "about" | "contact" | "home" | "projects" | "reviews";
     externalLink?: string;
   } | null;
+  reviewerName: string | null;
+  reviewText: string | null;
+  reviewCTA: {
+    linkLabel?: string;
+    linkType?: "externalLink" | "toPage" | "toProject";
+    toProject?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "project";
+    };
+    toPage?: "about" | "contact" | "home" | "projects" | "reviews";
+    externalLink?: string;
+  } | null;
 } | null;
 
 // Source: ./src/app/queries/logoQuery.ts
@@ -765,7 +779,7 @@ export type QUERY_LOGOResult = {
 
 // Source: ./src/app/queries/navQuery.ts
 // Variable: QUERY_NAV
-// Query: *[_type == "siteSettingsSingleton"][0]{  homePageNavLabel,  projectsPageNavLabel,  aboutPageNavLabel,  reviewsPageNavLabel,  contactPageNavLabel,  mobileBackgroundImage {  ...,  asset->{    ...,    metadata  }}}
+// Query: *[_type == "siteSettingsSingleton"][0]{  homePageNavLabel,  projectsPageNavLabel,  aboutPageNavLabel,  reviewsPageNavLabel,  contactPageNavLabel,  mobileBackgroundImage {  ...,  asset->{    ...,    metadata  }},    // Footer data  displayCopyright,  textBeforeCopyright,  copyrightText,  copyrightYear,  textAfterCopyright}
 export type QUERY_NAVResult = {
   homePageNavLabel: string | null;
   projectsPageNavLabel: string | null;
@@ -802,6 +816,11 @@ export type QUERY_NAVResult = {
     changed?: boolean;
     _type: "imageWithMetadata";
   } | null;
+  displayCopyright: boolean | null;
+  textBeforeCopyright: string | null;
+  copyrightText: string | null;
+  copyrightYear: boolean | null;
+  textAfterCopyright: string | null;
 } | null;
 
 // Source: ./src/app/queries/projectQuery.ts
@@ -842,9 +861,9 @@ export type PROJECT_QUERYResult = {
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    "*[_type == \"siteSettingsSingleton\"][0]{\n  // Hero section\n  heroCTA,\n  heroHeadline,\n  heroImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n  \n  // Project section\n  projectCTA {\n    ...,\n    \"project\": toProject-> {\n      _id,\n      projectName,\n      projectSlug,\n      projectImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n}\n    }\n  },\n  \n  // Services section\n  servicesTitle,\n  servicesDescription,\n  backgroundImageServices {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n  servicesCTA\n}": QUERY_HOMEResult;
+    "*[_type == \"siteSettingsSingleton\"][0]{\n  // Hero section\n  heroCTA,\n  heroHeadline,\n  heroImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n  \n  // Project section\n  projectCTA {\n    ...,\n    \"project\": toProject-> {\n      _id,\n      projectName,\n      projectSlug,\n      projectImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n}\n    }\n  },\n  \n  // Services section\n  servicesTitle,\n  servicesDescription,\n  backgroundImageServices {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n  servicesCTA,\n  \n  // Review section\n  reviewerName,\n  reviewText,\n  reviewCTA\n}": QUERY_HOMEResult;
     "*[_type == \"companySettingsSingleton\"][0]{\n  logoForLightBG {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n  logoForDarkBG {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n}\n}": QUERY_LOGOResult;
-    "*[_type == \"siteSettingsSingleton\"][0]{\n  homePageNavLabel,\n  projectsPageNavLabel,\n  aboutPageNavLabel,\n  reviewsPageNavLabel,\n  contactPageNavLabel,\n  mobileBackgroundImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n}\n}": QUERY_NAVResult;
+    "*[_type == \"siteSettingsSingleton\"][0]{\n  homePageNavLabel,\n  projectsPageNavLabel,\n  aboutPageNavLabel,\n  reviewsPageNavLabel,\n  contactPageNavLabel,\n  mobileBackgroundImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n  \n  // Footer data\n  displayCopyright,\n  textBeforeCopyright,\n  copyrightText,\n  copyrightYear,\n  textAfterCopyright\n}": QUERY_NAVResult;
     "*[\n  _type == \"project\" && defined(projectSlug.current)][0...12]{\n    _id, projectName, projectSlug\n  }\n": QUERY_PROJECTSResult | PROJECTS_QUERYResult;
     "*[\n  _type == \"project\" && projectSlug.current == $slug][0]{\n    _id, projectName, projectSlug, projectDescription\n  }\n": QUERY_PROJECTResult | PROJECT_QUERYResult;
   }

@@ -12,6 +12,14 @@ export interface NavLabelsType {
   aboutPageNavLabel: string;
   reviewsPageNavLabel: string;
   contactPageNavLabel: string;
+  mobileBackgroundImage?: ImageObject;
+
+  // Footer properties
+  displayCopyright: boolean;
+  textBeforeCopyright?: string | null;
+  copyrightText?: string | null;
+  copyrightYear: boolean;
+  textAfterCopyright?: string | null;
 }
 
 export interface NavigationProps {

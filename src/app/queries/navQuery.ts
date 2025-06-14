@@ -7,5 +7,12 @@ export const QUERY_NAV = defineQuery(`*[_type == "siteSettingsSingleton"][0]{
   aboutPageNavLabel,
   reviewsPageNavLabel,
   contactPageNavLabel,
-  mobileBackgroundImage {${IMAGE_WITH_METADATA}}
+  mobileBackgroundImage {${IMAGE_WITH_METADATA}},
+  
+  // Footer data
+  displayCopyright,
+  textBeforeCopyright,
+  copyrightText,
+  copyrightYear,
+  textAfterCopyright
 }`);

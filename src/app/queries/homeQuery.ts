@@ -22,5 +22,10 @@ export const QUERY_HOME = defineQuery(`*[_type == "siteSettingsSingleton"][0]{
   servicesTitle,
   servicesDescription,
   backgroundImageServices {${IMAGE_WITH_METADATA}},
-  servicesCTA
+  servicesCTA,
+  
+  // Review section
+  reviewerName,
+  reviewText,
+  reviewCTA
 }`);

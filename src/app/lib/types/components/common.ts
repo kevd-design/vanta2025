@@ -13,6 +13,13 @@ export interface CTAProps {
   className?: string;
 }
 
+// Add ReviewProps type definition
+export interface ReviewProps {
+  reviewerName: string | null;
+  reviewText: string | null;
+  cta: CTAType | null;
+}
+
 export interface OptimizedImageProps {
   image: ImageObject | SanityImage;
   width: number;
@@ -71,4 +78,12 @@ export interface ServicesProps {
   description: string | null;
   backgroundImage: ImageObject | null;
   cta: CTAType | null;
+}
+
+export interface FooterProps {
+  displayCopyright: boolean;
+  textBeforeCopyright?: string | null;
+  copyrightText?: string | null;
+  copyrightYear: boolean;
+  textAfterCopyright?: string | null;
 }

@@ -1,9 +1,9 @@
-
 import { SanityLive } from "@/sanity/lib/live";
 import { sanityFetch } from "@/sanity/lib/live";
 import { QUERY_LOGO } from '@/app/queries/logoQuery';
 import { QUERY_NAV } from '@/app/queries/navQuery';
 import { Navigation } from '@/app/components/Navigation';
+import { Footer } from '@/app/components/Footer';
 import { DebugProvider } from '@/debug'
 import { DebugLayoutProvider } from '@/debug'
 import { DebugKeyboardProvider } from '@/debug'
@@ -33,16 +33,27 @@ if (!logo || !navData) {
         <ColorMapProvider>
           <DebugKeyboardProvider>
             <DebugLayout>
-              <Navigation
-                logo={logo as LogoType}
-                navLabels={navData as NavLabelsType}
-                mobileBackgroundImage={navData.mobileBackgroundImage as ImageObject | undefined}
-              />
-                {children}
+              <div className="flex flex-col min-h-screen">
+                <Navigation
+                  logo={logo as LogoType}
+                  navLabels={navData as NavLabelsType}
+                  mobileBackgroundImage={navData.mobileBackgroundImage as ImageObject | undefined}
+                />
+                <main className="flex-grow">
+                  {children}
+                </main>
+                <Footer 
+                  displayCopyright={navData.displayCopyright || false}
+                  textBeforeCopyright={navData.textBeforeCopyright}
+                  copyrightText={navData.copyrightText}
+                  copyrightYear={navData.copyrightYear || false}
+                  textAfterCopyright={navData.textAfterCopyright}
+                />
                 <SanityLive />
-              </DebugLayout>
-            </DebugKeyboardProvider>
-          </ColorMapProvider>
+              </div>
+            </DebugLayout>
+          </DebugKeyboardProvider>
+        </ColorMapProvider>
       </DebugLayoutProvider>
     </DebugProvider>
   );
