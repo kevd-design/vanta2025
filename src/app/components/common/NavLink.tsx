@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { forwardRef } from 'react'
 import { useActivePage } from '@/app/hooks/useActivePage'
+import { usePathname } from 'next/navigation'
 import type { NavLinkProps } from '@/app/lib/types/components/navigation'
 
 export const NavLink = forwardRef<HTMLAnchorElement, NavLinkProps>(({
@@ -12,15 +13,35 @@ export const NavLink = forwardRef<HTMLAnchorElement, NavLinkProps>(({
 }, ref) => {
   const { isActivePage } = useActivePage()
   const active = isActivePage(href)
+  const pathname = usePathname()
+  
+  // Determine text and underline color based on current page
+  const getTextColors = () => {
+    if (pathname === '/') {
+      // Home page - black text
+      return 'text-black hover:text-black' 
+    } else if (pathname === '/projects') {
+      // Projects page - white text
+      return 'text-white hover:text-white'
+    } else if (pathname === '/about') {
+      // About page - emerald text
+      return 'text-emerald-800 hover:text-emerald-900'
+    } else {
+      // Default - white text
+      return 'text-white hover:text-white'
+    }
+  }
 
   if (variant === 'desktop') {
+    const textColors = getTextColors()
+    
     return (
       <Link
         ref={ref}
         href={href}
         className={`
-          relative text-base font-medium text-gray-700 
-          hover:text-gray-900 transition-colors pb-2
+          relative text-base font-medium 
+          ${textColors} transition-colors pb-2
           ${className}
         `}
         onClick={onClick}
@@ -28,7 +49,10 @@ export const NavLink = forwardRef<HTMLAnchorElement, NavLinkProps>(({
         {label}
         {active && (
           <span 
-            className="absolute bottom-0 left-0 w-full h-0.5 bg-black"
+            className={`absolute bottom-0 left-0 w-full h-0.5 ${
+              pathname === '/' ? 'bg-emerald-800' : 
+              pathname === '/about' ? 'bg-emerald-800' : 'bg-white'
+            }`}
             aria-hidden="true"
           />
         )}
@@ -36,6 +60,7 @@ export const NavLink = forwardRef<HTMLAnchorElement, NavLinkProps>(({
     )
   }
 
+  // Mobile variant - unchanged
   return (
     <Link
       ref={ref}

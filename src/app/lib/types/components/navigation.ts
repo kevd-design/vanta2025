@@ -1,5 +1,4 @@
 import type { ImageObject } from '../image';
-import type { SanityImage } from '../sanity';
 
 export interface NavigationItem {
   label: string;
@@ -23,9 +22,10 @@ export interface NavLabelsType {
 }
 
 export interface NavigationProps {
-  logo: LogoType;
+  logo: LogoType | null;
   navLabels: NavLabelsType;
-  mobileBackgroundImage?: ImageObject | SanityImage;
+  mobileBackgroundImage?: ImageObject;
+  variant?: 'transparent' | 'green' | 'white' | 'auto';
 }
 
 export interface MobileNavigationProps {
@@ -52,14 +52,15 @@ export interface LogoType {
 }
 
 export interface LogoProps {
-  logo: LogoType;
+  logo: LogoType | null;
   debug?: boolean;
+  variant?: 'light' | 'dark';
 }
 
 export interface NavLinkProps {
-  href: string
-  label: string
-  variant: 'desktop' | 'mobile'
-  onClick?: () => void
-  className?: string
+  href: string;
+  label: string;
+  variant?: 'desktop' | 'mobile';
+  className?: string;
+  onClick?: React.MouseEventHandler<HTMLAnchorElement>;
 }

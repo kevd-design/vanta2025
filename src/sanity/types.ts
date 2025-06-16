@@ -825,11 +825,41 @@ export type QUERY_NAVResult = {
 
 // Source: ./src/app/queries/projectQuery.ts
 // Variable: QUERY_PROJECTS
-// Query: *[  _type == "project" && defined(projectSlug.current)][0...12]{    _id, projectName, projectSlug  }
+// Query: *[  _type == "project" && defined(projectSlug.current)][0...12]{    _id,     projectName,     projectSlug,    projectImage {  ...,  asset->{    ...,    metadata  }}  }
 export type QUERY_PROJECTSResult = Array<{
   _id: string;
   projectName: string | null;
   projectSlug: Slug | null;
+  projectImage: {
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata: SanityImageMetadata | null;
+      source?: SanityAssetSourceData;
+    } | null;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    decorative?: boolean;
+    changed?: boolean;
+    _type: "imageWithMetadata";
+  } | null;
 }>;
 // Variable: QUERY_PROJECT
 // Query: *[  _type == "project" && projectSlug.current == $slug][0]{    _id, projectName, projectSlug, projectDescription  }
@@ -838,6 +868,12 @@ export type QUERY_PROJECTResult = {
   projectName: string | null;
   projectSlug: Slug | null;
   projectDescription: string | null;
+} | null;
+// Variable: QUERY_PROJECT_INDEX_METADATA
+// Query: *[_type == "siteSettingsSingleton"][0]{  projectIndexPageTitle,  projectIndexPageDescription}
+export type QUERY_PROJECT_INDEX_METADATAResult = {
+  projectIndexPageTitle: string | null;
+  projectIndexPageDescription: string | null;
 } | null;
 
 // Source: ./src/sanity/lib/queries.ts
@@ -864,7 +900,9 @@ declare module "@sanity/client" {
     "*[_type == \"siteSettingsSingleton\"][0]{\n  // Hero section\n  heroCTA,\n  heroHeadline,\n  heroImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n  \n  // Project section\n  projectCTA {\n    ...,\n    \"project\": toProject-> {\n      _id,\n      projectName,\n      projectSlug,\n      projectImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n}\n    }\n  },\n  \n  // Services section\n  servicesTitle,\n  servicesDescription,\n  backgroundImageServices {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n  servicesCTA,\n  \n  // Review section\n  reviewerName,\n  reviewText,\n  reviewCTA\n}": QUERY_HOMEResult;
     "*[_type == \"companySettingsSingleton\"][0]{\n  logoForLightBG {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n  logoForDarkBG {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n}\n}": QUERY_LOGOResult;
     "*[_type == \"siteSettingsSingleton\"][0]{\n  homePageNavLabel,\n  projectsPageNavLabel,\n  aboutPageNavLabel,\n  reviewsPageNavLabel,\n  contactPageNavLabel,\n  mobileBackgroundImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n  \n  // Footer data\n  displayCopyright,\n  textBeforeCopyright,\n  copyrightText,\n  copyrightYear,\n  textAfterCopyright\n}": QUERY_NAVResult;
-    "*[\n  _type == \"project\" && defined(projectSlug.current)][0...12]{\n    _id, projectName, projectSlug\n  }\n": QUERY_PROJECTSResult | PROJECTS_QUERYResult;
+    "*[\n  _type == \"project\" && defined(projectSlug.current)][0...12]{\n    _id, \n    projectName, \n    projectSlug,\n    projectImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n}\n  }\n": QUERY_PROJECTSResult;
     "*[\n  _type == \"project\" && projectSlug.current == $slug][0]{\n    _id, projectName, projectSlug, projectDescription\n  }\n": QUERY_PROJECTResult | PROJECT_QUERYResult;
+    "*[_type == \"siteSettingsSingleton\"][0]{\n  projectIndexPageTitle,\n  projectIndexPageDescription\n}": QUERY_PROJECT_INDEX_METADATAResult;
+    "*[\n  _type == \"project\" && defined(projectSlug.current)][0...12]{\n    _id, projectName, projectSlug\n  }\n": PROJECTS_QUERYResult;
   }
 }

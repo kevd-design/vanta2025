@@ -1,6 +1,6 @@
 import { sanityFetch } from "@/sanity/lib/live";
 import { Hero } from '@/app/components/Hero'
-import { FeaturedProject } from '@/app/components/FeaturedProject'
+import { Project } from '@/app/components/Project' // Updated import
 import { Services } from '@/app/components/Services'
 import { Review } from '@/app/components/Review'
 import { QUERY_HOME } from '@/app/queries/homeQuery';
@@ -9,8 +9,7 @@ import type { ImageObject } from '@/app/lib/types/image';
 
 
 export default async function Home() {
-
-    // Fetch the data from Sanity
+  // Fetch the data from Sanity
   const res = await sanityFetch({ query: QUERY_HOME });
   const data = res.data;
   
@@ -26,10 +25,9 @@ export default async function Home() {
   
   // Create a proper CTA object that includes toProjectSlug
   const projectCTA = data.projectCTA ? {
-    linkLabel: data.projectCTA.linkLabel || "Explore this project", // Fallback text
-    linkType: data.projectCTA.linkType || "toProject", // Default to project link type 
-    toProjectSlug: projectSlug, // Use the current project's slug
-    // Include these other properties in case they're needed
+    linkLabel: data.projectCTA.linkLabel || "Explore this project",
+    linkType: data.projectCTA.linkType || "toProject",
+    toProjectSlug: projectSlug,
     toPage: data.projectCTA.toPage,
     externalLink: data.projectCTA.externalLink
   } : null;
@@ -43,10 +41,10 @@ export default async function Home() {
       />
       
       {featuredProject && (
-        <FeaturedProject
+        <Project // Using the renamed component
           title={projectName}
           slug={projectSlug}
-          featuredImage={projectImage as ImageObject}
+          image={projectImage as ImageObject} // Updated prop name from featuredImage to image
           cta={projectCTA}
         />
       )}

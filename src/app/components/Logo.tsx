@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-
+import Link from 'next/link'
 import Image from 'next/image'
 import { useBestDpr } from '@/app/hooks/useBestDpr'
 import { useUrlCache } from '@/app/hooks/useUrlCache'
@@ -9,7 +9,11 @@ import { useWindowSize } from '@/app/hooks/useWindowSize'
 import { DIMENSIONS, IMAGE_OPTIONS } from '@/app/constants'
 import type { LogoProps } from '@/app/lib/types/components/navigation'
 
-export const Logo = ({ logo, debug = false }: LogoProps) => {
+export const Logo = ({ 
+  logo, 
+  debug = false,
+  variant = 'light' // Light for dark backgrounds, dark for light backgrounds
+}: LogoProps) => {
 
   // Hooks
   const { width: screenWidth } = useWindowSize()
@@ -19,17 +23,30 @@ export const Logo = ({ logo, debug = false }: LogoProps) => {
   // State
   const [isLoading, setIsLoading] = useState(true)
 
-  // Get exact dimensions from the asset first
+  // Select the appropriate logo asset based on variant
   const asset = useMemo(() => {
-    if (!logo?.logoForLightBG?.asset) {
-      throw new Error('Logo asset is required')
+    // Use logoForLightBG when variant is 'dark' (for light backgrounds)
+    // Use logoForDarkBG when variant is 'light' (for dark backgrounds)
+    const logoAsset = variant === 'light' 
+      ? logo?.logoForDarkBG?.asset 
+      : logo?.logoForLightBG?.asset
+    
+    if (!logoAsset) {
+      console.warn('Logo asset is missing for variant:', variant)
+      return logo?.logoForLightBG?.asset || logo?.logoForDarkBG?.asset // Fallback to any available logo
     }
-    return logo.logoForLightBG.asset
-  }, [logo])
+    return logoAsset
+  }, [logo, variant])
 
+  // Get dimensions from the selected asset
   const dimensions = useMemo(() => {
-    if (!asset.metadata?.dimensions) {
-      throw new Error('Logo dimensions are required')
+    if (!asset?.metadata?.dimensions) {
+      console.warn('Logo dimensions are missing')
+      return { 
+        width: DIMENSIONS.logo.desktop,
+        height: DIMENSIONS.logo.desktop / 3, // Approximate aspect ratio
+        aspectRatio: 3
+      }
     }
     return asset.metadata.dimensions
   }, [asset])
@@ -49,12 +66,12 @@ export const Logo = ({ logo, debug = false }: LogoProps) => {
     }
   }, [screenWidth, dimensions.aspectRatio])
 
-  // Generate URL immediately without debounce
+  // Generate URL based on the selected asset
   const imageUrl = useMemo(() => {
-    if (!logo?.logoForLightBG?.asset) return ''
+    if (!asset) return ''
     
     return generateCachedUrl(
-      logo.logoForLightBG.asset,
+      asset,
       displayWidth,
       displayHeight,
       {
@@ -63,21 +80,19 @@ export const Logo = ({ logo, debug = false }: LogoProps) => {
         skipRounding: true,
       }
     )
-  }, [logo, displayWidth, displayHeight, dpr, generateCachedUrl])
-
-
+  }, [asset, displayWidth, displayHeight, dpr, generateCachedUrl])
 
   if (!imageUrl) return null
 
-   return (
-    <div>
+  return (
+    <Link href="/" className="block">
       <Image
         src={imageUrl}
-        alt={asset.altText ?? "Logo"}
+        alt={asset?.altText ?? "Vanta"}
         width={displayWidth}
         height={displayHeight}
         placeholder="blur"
-        blurDataURL={asset.metadata?.lqip ?? undefined}
+        blurDataURL={asset?.metadata?.lqip ?? undefined}
         priority
         className={`object-contain transition-opacity duration-300 ${
           isLoading ? 'opacity-0' : 'opacity-100'
@@ -91,17 +106,16 @@ export const Logo = ({ logo, debug = false }: LogoProps) => {
       />
       {debug && (
         <div className="mt-2 p-2 bg-black/70 text-white text-xs font-mono break-all">
-
-            {JSON.stringify({
-              original: `${dimensions.width}x${dimensions.height}`,
-              aspectRatio: dimensions.aspectRatio,
-              display: `${displayWidth}x${displayHeight}`,
-              dpr,
-              imageUrl
-            }, null, 2)}
-
+          {JSON.stringify({
+            variant,
+            original: `${dimensions.width}x${dimensions.height}`,
+            aspectRatio: dimensions.aspectRatio,
+            display: `${displayWidth}x${displayHeight}`,
+            dpr,
+            imageUrl
+          }, null, 2)}
         </div>
       )}
-    </div>
+    </Link>
   )
 }

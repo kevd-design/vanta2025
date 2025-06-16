@@ -4,12 +4,21 @@ import type { ColorMap } from '../colorMap';
 import type { RefObject } from 'react';
 import type { CTAType } from '@/app/lib/types/content';
 
+// Add the missing ServicesProps interface
+export interface ServicesProps {
+  title: string | null;
+  description: string | null;
+  backgroundImage: ImageObject | null;
+  cta: CTAType | null;
+}
+
 export interface CTAProps {
   linkLabel?: string;
   linkType?: "toPage" | "externalLink" | "toProject";
   toPage?: string;
   externalLink?: string;
-  toProjectSlug?: string;
+  toProject?: string; // Add this line to match the CTAType interface
+  toProjectSlug?: string; // Keep this for backward compatibility
   className?: string;
 }
 
@@ -66,24 +75,12 @@ export interface TextBackgroundProps {
   rounded?: boolean;
 }
 
-export interface FeaturedProjectProps {
+export interface ProjectProps {
   title: string | null;
   slug: string | null;
-  featuredImage: ImageObject | null;
-  cta: CTAType | null;
+  image: ImageObject | null;
+  description?: string | null;
+  cta?: CTAType | null;
+  isAlternate?: boolean;
 }
 
-export interface ServicesProps {
-  title: string | null;
-  description: string | null;
-  backgroundImage: ImageObject | null;
-  cta: CTAType | null;
-}
-
-export interface FooterProps {
-  displayCopyright: boolean;
-  textBeforeCopyright?: string | null;
-  copyrightText?: string | null;
-  copyrightYear: boolean;
-  textAfterCopyright?: string | null;
-}

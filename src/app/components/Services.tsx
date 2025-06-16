@@ -27,7 +27,7 @@ export const Services: FC<ServicesProps> = ({
   })
 
   return (
-    <section className="bg-transparent py-0 md:py-24">
+    <section className="bg-transparent py-0 md:py-16">
       <div className="container mx-auto">
         {/* Keep rounded corners across all devices */}
         <div className="relative overflow-hidden rounded-[32px]">

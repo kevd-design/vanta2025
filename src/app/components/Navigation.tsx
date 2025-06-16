@@ -8,17 +8,55 @@ import { useIsMobile } from '@/app/hooks/useIsMobile'
 import { useWindowSize } from '@/app/hooks/useWindowSize'
 import { NavLink } from '@/app/components/common/NavLink'
 import { MobileNavigation } from '@/app/components/MobileNavigation'
+import { usePathname } from 'next/navigation'
 import type { NavigationProps } from '@/app/lib/types/components/navigation'
 
 export const Navigation: FC<NavigationProps> = ({ 
   logo, 
   navLabels, 
-  mobileBackgroundImage 
+  mobileBackgroundImage,
 }) => {
   // Core hooks
   const isMobile = useIsMobile()
   const { width: screenWidth } = useWindowSize()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const pathname = usePathname()
+  
+  // Determine background style and logo variant based on path
+  const getNavStyle = () => {
+    if (pathname === '/') {
+      return { 
+        bgClass: 'bg-transparent', 
+        logoVariant: 'dark' as const, // Black logo on homepage
+        hamburgerColor: 'dark' as const, // Black hamburger on homepage (for contrast with background)
+        hasRadius: false  // No border radius on transparent nav
+      }
+    } else if (pathname === '/projects') {
+      return { 
+        bgClass: 'bg-emerald-800', 
+        logoVariant: 'light' as const,
+        hamburgerColor: 'light' as const,
+        hasRadius: true  // Add border radius
+      }
+    } else if (pathname === '/about') {
+      return { 
+        bgClass: 'bg-white', 
+        logoVariant: 'dark' as const,
+        hamburgerColor: 'dark' as const,
+        hasRadius: true  // Add border radius
+      }
+    } else {
+      return { 
+        bgClass: 'bg-emerald-800', 
+        logoVariant: 'light' as const,
+        hamburgerColor: 'light' as const,
+        hasRadius: true  // Add border radius
+      }
+    }
+  }
+
+  // Removed extraHeight from the return value
+  const { bgClass, logoVariant, hamburgerColor, hasRadius } = getNavStyle()
 
   // Derived values
   const isDesktopScreen = useMemo(() => 
@@ -42,12 +80,13 @@ export const Navigation: FC<NavigationProps> = ({
   }, [isDesktopScreen])
 
   return (
-    <nav className='absolute top-0 left-0 w-full z-50'>
-      {/* Desktop Navigation Bar */}
-      <div className="flex items-center justify-between px-4 h-20">
+    <nav className={`absolute top-0 left-0 w-full z-50 ${bgClass} ${hasRadius ? 'rounded-b-[32px]' : ''}`}>
+      {/* Desktop Navigation Bar with consistent height across all pages */}
+      <div className="flex items-center justify-between px-4 h-24 md:h-28">
         <Logo 
           logo={logo} 
           debug={false}
+          variant={logoVariant}
         />
         
         {/* Desktop Navigation Links */}
@@ -69,7 +108,7 @@ export const Navigation: FC<NavigationProps> = ({
             className="block md:hidden cursor-pointer"
             aria-label="Open navigation menu"
           >
-            <Hamburger />
+            <Hamburger color={hamburgerColor} />
           </button>
         )}
       </div>

@@ -45,7 +45,7 @@ export default function Cta({
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <div className="text-lg relative">
+        <div className="text-lg relative project-cta-text">
           {linkLabel}
           {underlineElement}
         </div> 
@@ -65,7 +65,7 @@ export default function Cta({
          onMouseEnter={handleMouseEnter}
          onMouseLeave={handleMouseLeave}
       >
-        <div className="text-lg relative">
+        <div className="text-lg relative project-cta-text">
           {linkLabel}
           {underlineElement}
         </div> 
@@ -84,7 +84,7 @@ export default function Cta({
          onMouseEnter={handleMouseEnter}
          onMouseLeave={handleMouseLeave}
       >
-        <div className="text-lg relative">
+        <div className="text-lg relative project-cta-text">
           {linkLabel}
           {underlineElement}
         </div> 

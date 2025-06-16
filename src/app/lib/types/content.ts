@@ -1,11 +1,11 @@
-import type { SanityReference } from './sanity';
+
 import type { ImageObject } from './image';
 
 // CTA belongs here - it's related to content structure, not Sanity implementation
 export interface CTAType {
   linkLabel: string;
   linkType: "toPage" | "externalLink" | "toProject";
-  toProject?: SanityReference;
+  toProject?: string;
   toPage?: "about" | "contact" | "home" | "projects" | "reviews";
   externalLink?: string;
 }

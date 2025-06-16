@@ -30,3 +30,28 @@ body {
     display: none; 
   }
 }
+
+/* Add this at the end of your global CSS file */
+
+/* Target the arrow inside a project CTA when its parent group is hovered */
+.group:hover .project-cta-container svg {
+  transform: translateX(5px); /* Move the arrow right on hover */
+  transition: transform 0.3s ease;
+}
+
+/* Ensure the arrow has a transition effect even when not being hovered */
+.project-cta-container svg {
+  transition: transform 0.3s ease;
+}
+
+/* Add these styles to your global CSS file */
+
+/* Apply underline to project CTA text on group hover */
+.group:hover .project-cta-container {
+  text-decoration: underline;
+}
+
+/* Remove any existing hover animations from the CTA */
+.project-cta-container svg {
+  transition: none;
+}
