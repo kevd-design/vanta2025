@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import { forwardRef } from 'react'
 import { useActivePage } from '@/app/hooks/useActivePage'
@@ -15,11 +17,17 @@ export const NavLink = forwardRef<HTMLAnchorElement, NavLinkProps>(({
   const active = isActivePage(href)
   const pathname = usePathname()
   
+  // Check if we're on a project detail page
+  const isProjectDetailPage = pathname.startsWith('/projects/') && pathname !== '/projects'
+  
   // Determine text and underline color based on current page
   const getTextColors = () => {
     if (pathname === '/') {
-      // Home page - black text
-      return 'text-black hover:text-black' 
+      // Home page - white text
+      return 'text-black hover:text-black'
+    } else if (isProjectDetailPage) {
+    // Projects page - white text
+    return 'text-white hover:text-white'
     } else if (pathname === '/projects') {
       // Projects page - white text
       return 'text-white hover:text-white'
@@ -49,9 +57,8 @@ export const NavLink = forwardRef<HTMLAnchorElement, NavLinkProps>(({
         {label}
         {active && (
           <span 
-            className={`absolute bottom-0 left-0 w-full h-0.5 ${
-              pathname === '/' ? 'bg-emerald-800' : 
-              pathname === '/about' ? 'bg-emerald-800' : 'bg-white'
+            className={`absolute bottom-0 left-0 w-full h-1 rounded-full ${
+              pathname === '/' ? 'bg-emerald-800' :  'bg-white'
             }`}
             aria-hidden="true"
           />
@@ -60,7 +67,7 @@ export const NavLink = forwardRef<HTMLAnchorElement, NavLinkProps>(({
     )
   }
 
-  // Mobile variant - unchanged
+  // Mobile variant styling unchanged
   return (
     <Link
       ref={ref}

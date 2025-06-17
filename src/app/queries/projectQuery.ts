@@ -12,11 +12,19 @@ export const QUERY_PROJECTS = defineQuery(`*[
 
 export const QUERY_PROJECT = defineQuery(`*[
   _type == "project" && projectSlug.current == $slug][0]{
-    _id, projectName, projectSlug, projectDescription
+    _id, 
+    projectName, 
+    projectSlug, 
+    projectDescription,
+    projectImage {${IMAGE_WITH_METADATA}},
+    projectNeighbourhood->{
+      name
+    },
+    projectGallery[] {${IMAGE_WITH_METADATA}}
   }
 `);
 
-// New query to fetch the project index page metadata
+// Query to fetch the project index page metadata
 export const QUERY_PROJECT_INDEX_METADATA = defineQuery(`*[_type == "siteSettingsSingleton"][0]{
   projectIndexPageTitle,
   projectIndexPageDescription

@@ -26,3 +26,10 @@ export interface HeroContentProps {
   cta?: CTAType | null;
   image?: ImageObject | null;
 }
+
+// Update the ProjectHeroProps interface
+export interface ProjectHeroProps {
+  image: ImageObject | null;  // Make image nullable
+  headline: string | null;
+  neighbourhoodName?: string | null;
+}

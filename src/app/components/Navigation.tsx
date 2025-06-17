@@ -22,14 +22,25 @@ export const Navigation: FC<NavigationProps> = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const pathname = usePathname()
   
+  // Check if we're on a project detail page
+  const isProjectDetailPage = pathname.startsWith('/projects/') && pathname !== '/projects'
+  
   // Determine background style and logo variant based on path
   const getNavStyle = () => {
     if (pathname === '/') {
+      // Home page and project detail pages have transparent bg with light logo
       return { 
         bgClass: 'bg-transparent', 
-        logoVariant: 'dark' as const, // Black logo on homepage
-        hamburgerColor: 'dark' as const, // Black hamburger on homepage (for contrast with background)
+        logoVariant: 'dark' as const,  // White logo on these pages
+        hamburgerColor: 'dark' as const, // White hamburger on these pages
         hasRadius: false  // No border radius on transparent nav
+      }
+    } else if (isProjectDetailPage) {
+      return { 
+        bgClass: 'bg-transparent', 
+        logoVariant: 'light' as const,
+        hamburgerColor: 'light' as const,
+        hasRadius: true  // Add border radius
       }
     } else if (pathname === '/projects') {
       return { 
@@ -55,7 +66,6 @@ export const Navigation: FC<NavigationProps> = ({
     }
   }
 
-  // Removed extraHeight from the return value
   const { bgClass, logoVariant, hamburgerColor, hasRadius } = getNavStyle()
 
   // Derived values
@@ -80,7 +90,7 @@ export const Navigation: FC<NavigationProps> = ({
   }, [isDesktopScreen])
 
   return (
-    <nav className={`absolute top-0 left-0 w-full z-50 ${bgClass} ${hasRadius ? 'rounded-b-[32px]' : ''}`}>
+    <nav className={`absolute top-0 left-0 w-full z-50  ${bgClass} ${hasRadius ? 'rounded-b-[32px]' : ''}`}>
       {/* Desktop Navigation Bar with consistent height across all pages */}
       <div className="flex items-center justify-between px-4 h-24 md:h-28">
         <Logo 
@@ -90,7 +100,7 @@ export const Navigation: FC<NavigationProps> = ({
         />
         
         {/* Desktop Navigation Links */}
-        <div className="hidden md:flex items-end justify-between flex-1 px-8">
+        <div className="hidden md:flex items-end justify-between flex-1 px-8 max-w-[700px] ml-auto">
           {navigationItems.map((item) => (
             <NavLink
               key={item.href}

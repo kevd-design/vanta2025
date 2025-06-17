@@ -862,12 +862,76 @@ export type QUERY_PROJECTSResult = Array<{
   } | null;
 }>;
 // Variable: QUERY_PROJECT
-// Query: *[  _type == "project" && projectSlug.current == $slug][0]{    _id, projectName, projectSlug, projectDescription  }
+// Query: *[  _type == "project" && projectSlug.current == $slug][0]{    _id,     projectName,     projectSlug,     projectDescription,    projectImage {  ...,  asset->{    ...,    metadata  }},    projectNeighbourhood->{      name    },    projectGallery[] {  ...,  asset->{    ...,    metadata  }}  }
 export type QUERY_PROJECTResult = {
   _id: string;
   projectName: string | null;
   projectSlug: Slug | null;
   projectDescription: string | null;
+  projectImage: {
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata: SanityImageMetadata | null;
+      source?: SanityAssetSourceData;
+    } | null;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    decorative?: boolean;
+    changed?: boolean;
+    _type: "imageWithMetadata";
+  } | null;
+  projectNeighbourhood: {
+    name: string | null;
+  } | null;
+  projectGallery: Array<{
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata: SanityImageMetadata | null;
+      source?: SanityAssetSourceData;
+    } | null;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    decorative?: boolean;
+    changed?: boolean;
+    _type: "imageWithMetadata";
+    _key: string;
+  }> | null;
 } | null;
 // Variable: QUERY_PROJECT_INDEX_METADATA
 // Query: *[_type == "siteSettingsSingleton"][0]{  projectIndexPageTitle,  projectIndexPageDescription}
@@ -901,8 +965,9 @@ declare module "@sanity/client" {
     "*[_type == \"companySettingsSingleton\"][0]{\n  logoForLightBG {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n  logoForDarkBG {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n}\n}": QUERY_LOGOResult;
     "*[_type == \"siteSettingsSingleton\"][0]{\n  homePageNavLabel,\n  projectsPageNavLabel,\n  aboutPageNavLabel,\n  reviewsPageNavLabel,\n  contactPageNavLabel,\n  mobileBackgroundImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n  \n  // Footer data\n  displayCopyright,\n  textBeforeCopyright,\n  copyrightText,\n  copyrightYear,\n  textAfterCopyright\n}": QUERY_NAVResult;
     "*[\n  _type == \"project\" && defined(projectSlug.current)][0...12]{\n    _id, \n    projectName, \n    projectSlug,\n    projectImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n}\n  }\n": QUERY_PROJECTSResult;
-    "*[\n  _type == \"project\" && projectSlug.current == $slug][0]{\n    _id, projectName, projectSlug, projectDescription\n  }\n": QUERY_PROJECTResult | PROJECT_QUERYResult;
+    "*[\n  _type == \"project\" && projectSlug.current == $slug][0]{\n    _id, \n    projectName, \n    projectSlug, \n    projectDescription,\n    projectImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n    projectNeighbourhood->{\n      name\n    },\n    projectGallery[] {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n}\n  }\n": QUERY_PROJECTResult;
     "*[_type == \"siteSettingsSingleton\"][0]{\n  projectIndexPageTitle,\n  projectIndexPageDescription\n}": QUERY_PROJECT_INDEX_METADATAResult;
     "*[\n  _type == \"project\" && defined(projectSlug.current)][0...12]{\n    _id, projectName, projectSlug\n  }\n": PROJECTS_QUERYResult;
+    "*[\n  _type == \"project\" && projectSlug.current == $slug][0]{\n    _id, projectName, projectSlug, projectDescription\n  }\n": PROJECT_QUERYResult;
   }
 }
