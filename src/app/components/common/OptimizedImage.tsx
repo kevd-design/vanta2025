@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { useImageHandler } from '@/app/hooks/useImageHandler'
 import type { OptimizedImageProps } from '@/app/lib/types/components/common'
 
@@ -15,7 +15,9 @@ export const OptimizedImage: FC<OptimizedImageProps> = ({
   onColorMapChange,
   onImageUrlGenerated
 }) => {
-  // Replace all the existing hooks and state management with useImageHandler
+  const [isLoaded, setIsLoaded] = useState(false)
+  
+  // Use imageHandler for consistent rendering
   const { 
     imageUrl, 
     isReady,
@@ -27,12 +29,11 @@ export const OptimizedImage: FC<OptimizedImageProps> = ({
     height,
     quality,
     objectFit,
-    onColorMapChange, // Will receive empty array if color map support is removed
+    onColorMapChange,
     onImageUrlGenerated,
     isDebugMode: showDebug
   })
 
-  // Return null when not ready
   if (!isReady || !image?.asset) {
     if (showDebug) {
       console.warn('OptimizedImage not ready:', { isReady, hasAsset: !!image?.asset })
@@ -40,16 +41,16 @@ export const OptimizedImage: FC<OptimizedImageProps> = ({
     return null
   }
 
-  // Simplified rendering logic
   return (
     <div className={`relative ${showDebug ? 'outline outline-2 outline-red-500' : ''}`}>
       <Image
-        src={imageUrl} // Type is now string, not string | null
+        src={imageUrl}
         width={dimensions.width}
         height={dimensions.height}
-        className={`${className} object-${objectFit}`}
+        className={`${className} object-${objectFit} ${isLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
         loading={priority ? 'eager' : 'lazy'}
         alt={alt}
+        onLoad={() => setIsLoaded(true)}
       />
     </div>
   )

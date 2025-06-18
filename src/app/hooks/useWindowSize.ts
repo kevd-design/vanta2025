@@ -6,30 +6,42 @@ import { useDebounce } from '@/app/hooks/useDebounce';
 import type { WindowSize } from '@/app/lib/types/layout';
 
 export const useWindowSize = () => {
+  // Initialize with undefined to prevent hydration mismatch
   const [windowSize, setWindowSize] = useState<WindowSize>({
-    width: DIMENSIONS.screen.defaultWidth,
-    height: DIMENSIONS.screen.defaultHeight
+    width: typeof window !== 'undefined' ? window.innerWidth : DIMENSIONS.screen.defaultWidth,
+    height: typeof window !== 'undefined' ? window.innerHeight : DIMENSIONS.screen.defaultHeight
   });
-
-const handleResize = useCallback(() => {
-  const newWidth = Math.round(window.innerWidth);
-  const newHeight = Math.round(window.innerHeight);
   
-  // Only update if dimensions actually changed
-  setWindowSize(prev => {
-    if (prev.width === newWidth && prev.height === newHeight) {
-      return prev;
-    }
-    return { width: newWidth, height: newHeight };
-  });
-}, []);
+  const [hasMounted, setHasMounted] = useState(false);
 
-  const debouncedResize = useDebounce(handleResize, 150); // Match Navigation's timing
+  const handleResize = useCallback(() => {
+    // Only run in browser environment
+    if (typeof window === 'undefined') return;
 
+    const newWidth = Math.round(window.innerWidth);
+    const newHeight = Math.round(window.innerHeight);
+    
+    setWindowSize(prev => {
+      if (prev.width === newWidth && prev.height === newHeight) {
+        return prev;
+      }
+      return { width: newWidth, height: newHeight };
+    });
+  }, []);
+
+  const debouncedResize = useDebounce(handleResize, 150);
+
+  // Set hasMounted flag
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  // Handle resize events
   useEffect(() => {
     if (typeof window === 'undefined') return;
     
-    handleResize(); // Initial size
+    // Get initial size after component mounts to avoid SSR mismatch
+    handleResize();
     window.addEventListener('resize', debouncedResize);
     
     return () => {
@@ -38,5 +50,9 @@ const handleResize = useCallback(() => {
     };
   }, [handleResize, debouncedResize]);
 
-  return windowSize;
+  // Return default dimensions until client-side code runs
+  return hasMounted ? windowSize : {
+    width: DIMENSIONS.screen.defaultWidth,
+    height: DIMENSIONS.screen.defaultHeight
+  };
 };

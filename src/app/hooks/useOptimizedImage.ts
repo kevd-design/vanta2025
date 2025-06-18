@@ -11,19 +11,21 @@ export const useOptimizedImage = ({
   crop,
   width,
   height,
-  quality = IMAGE_OPTIONS.quality.medium
+  quality = IMAGE_OPTIONS.quality.medium,
+  fit,
+  format
 }: UseOptimizedImageProps) => {
   const { generateCachedUrl } = useUrlCache()
   const dpr = useBestDpr()
   const [stateUrl, setStateUrl] = useState<string | null>(null)
   const [hydrated, setHydrated] = useState(false)
 
-  // Generate initial URL with DEFAULT_DPR=1 for consistent SSR
+  // Generate initial URL with fixed DPR=1 for consistent SSR
   const initialUrl = useMemo(() => {
-    if (!asset) return null
+    if (!asset) return ''
 
     const sourceAspectRatio = (asset.metadata?.dimensions?.width || width) / 
-                             (asset.metadata?.dimensions?.height || height)
+                             (asset.metadata?.dimensions?.height || height || 1)
 
     const dimensions = calculateDimensions(
       width, 
@@ -31,10 +33,10 @@ export const useOptimizedImage = ({
       sourceAspectRatio
     )
 
-    // Important: Use DEFAULT_DPR=1 for initial render to match SSR
+    // Important: Use fixed DPR=1 for initial render to match SSR
     return generateCachedUrl(asset, dimensions.width, dimensions.height, {
       quality,
-      dpr: 1, // Use fixed DPR=1 for initial render
+      dpr: 1, // Always use DPR=1 for initial render
       hotspot: hotspot ? {
         _type: "sanity.imageHotspot",
         ...hotspot
@@ -42,16 +44,19 @@ export const useOptimizedImage = ({
       crop: crop ? {
         _type: "sanity.imageCrop",
         ...crop
-      } : undefined
-    })
-  }, [asset, width, height, quality, hotspot, crop, generateCachedUrl])
+      } : undefined,
+      fit,
+      format
+    }) || ''
+  }, [asset, width, height, quality, hotspot, crop, generateCachedUrl, fit, format])
 
   // After hydration, generate URL with actual DPR
   const hydratedUrl = useMemo(() => {
-    if (!asset || !hydrated) return null
+    if (!asset || !hydrated) return ''
 
+    // Use the same exact dimensions calculation for consistency
     const sourceAspectRatio = (asset.metadata?.dimensions?.width || width) / 
-                             (asset.metadata?.dimensions?.height || height)
+                             (asset.metadata?.dimensions?.height || height || 1)
 
     const dimensions = calculateDimensions(
       width, 
@@ -69,12 +74,15 @@ export const useOptimizedImage = ({
       crop: crop ? {
         _type: "sanity.imageCrop",
         ...crop
-      } : undefined
-    })
-  }, [asset, width, height, quality, dpr, hotspot, crop, generateCachedUrl, hydrated])
+      } : undefined,
+      fit,
+      format
+    }) || ''
+  }, [asset, width, height, quality, dpr, hotspot, crop, generateCachedUrl, hydrated, fit, format])
 
-  // Mark as hydrated after first render
+  // Only set hydrated in client-side code to avoid hydration mismatch
   useEffect(() => {
+    // This effect only runs client-side
     setHydrated(true)
   }, [])
 
@@ -86,7 +94,7 @@ export const useOptimizedImage = ({
   }, [hydratedUrl, hydrated])
 
   return {
-    url: stateUrl ?? initialUrl,
+    url: stateUrl || initialUrl,
     setUrl: setStateUrl,
     generateUrl: useCallback(() => hydrated ? hydratedUrl : initialUrl, [hydrated, hydratedUrl, initialUrl])
   }

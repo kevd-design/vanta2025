@@ -16,11 +16,17 @@ export const Navigation: FC<NavigationProps> = ({
   navLabels, 
   mobileBackgroundImage,
 }) => {
-  // Core hooks
+  // Core hooks with hydration handling 
   const isMobile = useIsMobile()
   const { width: screenWidth } = useWindowSize()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
   const pathname = usePathname()
+  
+  // Set isMounted after first render to indicate hydration
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
   
   // Check if we're on a project detail page
   const isProjectDetailPage = pathname.startsWith('/projects/') && pathname !== '/projects'
@@ -28,47 +34,46 @@ export const Navigation: FC<NavigationProps> = ({
   // Determine background style and logo variant based on path
   const getNavStyle = () => {
     if (pathname === '/') {
-      // Home page and project detail pages have transparent bg with light logo
       return { 
         bgClass: 'bg-transparent', 
-        logoVariant: 'dark' as const,  // White logo on these pages
-        hamburgerColor: 'dark' as const, // White hamburger on these pages
-        hasRadius: false  // No border radius on transparent nav
+        logoVariant: 'dark' as const,
+        hamburgerColor: 'dark' as const,
+        hasRadius: false
       }
     } else if (isProjectDetailPage) {
       return { 
         bgClass: 'bg-transparent', 
         logoVariant: 'light' as const,
         hamburgerColor: 'light' as const,
-        hasRadius: true  // Add border radius
+        hasRadius: true
       }
     } else if (pathname === '/projects') {
       return { 
         bgClass: 'bg-emerald-800', 
         logoVariant: 'light' as const,
         hamburgerColor: 'light' as const,
-        hasRadius: true  // Add border radius
+        hasRadius: true
       }
     } else if (pathname === '/about') {
       return { 
         bgClass: 'bg-white', 
         logoVariant: 'dark' as const,
         hamburgerColor: 'dark' as const,
-        hasRadius: true  // Add border radius
+        hasRadius: true
       }
     } else {
       return { 
         bgClass: 'bg-emerald-800', 
         logoVariant: 'light' as const,
         hamburgerColor: 'light' as const,
-        hasRadius: true  // Add border radius
+        hasRadius: true
       }
     }
   }
 
   const { bgClass, logoVariant, hamburgerColor, hasRadius } = getNavStyle()
 
-  // Derived values
+  // Derived values - only calculate when screenWidth is available
   const isDesktopScreen = useMemo(() => 
     screenWidth ? screenWidth >= DIMENSIONS.breakpoint.mobile : false,
   [screenWidth])
@@ -90,8 +95,8 @@ export const Navigation: FC<NavigationProps> = ({
   }, [isDesktopScreen])
 
   return (
-    <nav className={`absolute top-0 left-0 w-full z-50  ${bgClass} ${hasRadius ? 'rounded-b-[32px]' : ''}`}>
-      {/* Desktop Navigation Bar with consistent height across all pages */}
+    <nav className={`absolute top-0 left-0 w-full z-50 ${bgClass} ${hasRadius ? 'rounded-b-[32px]' : ''}`}>
+      {/* Desktop Navigation Bar */}
       <div className="flex items-center justify-between px-4 h-24 md:h-28">
         <Logo 
           logo={logo} 
@@ -111,8 +116,8 @@ export const Navigation: FC<NavigationProps> = ({
           ))}
         </div>
 
-        {/* Mobile Menu Toggle */}
-        {isMobile && !isDesktopScreen && (
+        {/* Mobile Menu Toggle - only render after hydration */}
+        {isMounted && isMobile && !isDesktopScreen && (
           <button
             onClick={() => setIsMenuOpen(true)}
             className="block md:hidden cursor-pointer"
@@ -123,8 +128,8 @@ export const Navigation: FC<NavigationProps> = ({
         )}
       </div>
 
-      {/* Mobile Navigation */}
-      {isMobile && !isDesktopScreen && mobileBackgroundImage && (
+      {/* Mobile Navigation - only render after hydration */}
+      {isMounted && isMobile && !isDesktopScreen && mobileBackgroundImage && (
         <MobileNavigation
           isOpen={isMenuOpen}
           onClose={() => setIsMenuOpen(false)}

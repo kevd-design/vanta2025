@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useOptimizedImage } from '@/app/hooks/useOptimizedImage'
 import { DIMENSIONS } from '@/app/constants'
+import { useWindowSize } from '@/app/hooks/useWindowSize'
 import type { LogoProps } from '@/app/lib/types/components/navigation'
 
 export const Logo = ({ 
@@ -14,7 +15,8 @@ export const Logo = ({
 }: LogoProps) => {
   // State
   const [isLoading, setIsLoading] = useState(true)
-
+  const { width: screenWidth } = useWindowSize()
+  
   // Select the appropriate logo asset based on variant
   const asset = useMemo(() => {
     // Use logoForLightBG when variant is 'dark' (for light backgrounds)
@@ -33,7 +35,6 @@ export const Logo = ({
   // Get dimensions from the selected asset
   const dimensions = useMemo(() => {
     if (!asset?.metadata?.dimensions) {
-      console.warn('Logo dimensions are missing')
       return { 
         width: DIMENSIONS.logo.desktop,
         height: DIMENSIONS.logo.desktop / 3, // Approximate aspect ratio
@@ -43,33 +44,38 @@ export const Logo = ({
     return asset.metadata.dimensions
   }, [asset])
 
-  // Calculate display sizes
-  const logoWidth = typeof window === 'undefined'
-    ? DIMENSIONS.logo.mobile
-    : window.innerWidth < DIMENSIONS.breakpoint.mobile
+  // Calculate logo dimensions based on screen size
+  // Use same calculation for server and client to avoid hydration mismatches
+  const logoWidth = useMemo(() => {
+    // For server rendering or before hydration, use mobile size as default
+    const screenSize = screenWidth || DIMENSIONS.screen.defaultWidth;
+    return screenSize < DIMENSIONS.breakpoint.mobile 
       ? DIMENSIONS.logo.mobile
-      : DIMENSIONS.logo.desktop
+      : DIMENSIONS.logo.desktop;
+  }, [screenWidth]);
   
-  // Use your existing useOptimizedImage hook with current parameters
+  const logoHeight = useMemo(() => 
+    Math.round(logoWidth / dimensions.aspectRatio),
+  [logoWidth, dimensions.aspectRatio]);
+
+  // Use the optimized image hook
   const { url: imageUrl } = useOptimizedImage({
     asset: asset || null,
     hotspot: null,
     crop: null,
     width: logoWidth,
-    height: Math.round(logoWidth / dimensions.aspectRatio),
+    height: logoHeight,
     quality: 90,
+    fit: 'max' // Use max fit for logos to preserve aspect ratio
   })
 
   if (!imageUrl) return null
-
-  // Calculate height based on aspect ratio
-  const logoHeight = Math.round(logoWidth / dimensions.aspectRatio)
 
   return (
     <Link href="/" className="block">
       <Image
         src={imageUrl}
-        alt={asset?.altText ?? "Vanta"}
+        alt={asset?.altText ?? "Vanta Construction logo"}
         width={logoWidth}
         height={logoHeight}
         placeholder={asset?.metadata?.lqip ? "blur" : "empty"}

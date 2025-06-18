@@ -17,7 +17,7 @@ export interface UseOptimizedImageProps {
   } | null;
   crop?: SanityImageCrop | null;
   width: number;
-  height?: number; // Make height optional
+  height?: number; // Optional height
   quality?: number;
   fit?: 'clip' | 'crop' | 'fill' | 'max' | 'scale' | 'min';
   format?: 'jpg' | 'png' | 'webp' | 'auto';
@@ -29,8 +29,9 @@ export interface ImageUrlOptions {
   hotspot?: ImageHotspot | null;
   crop?: SanityImageCrop | null;
   skipRounding?: boolean;
+  fit?: 'clip' | 'crop' | 'fill' | 'max' | 'scale' | 'min'; // Add fit property
+  format?: 'jpg' | 'png' | 'webp' | 'auto'; // Add format property
 }
-
 
 export type DimensionTracker = {
   width: number;
