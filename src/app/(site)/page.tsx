@@ -1,5 +1,5 @@
 import { sanityFetch } from "@/sanity/lib/live";
-import { Hero } from '@/app/components/Hero'
+import { HomepageHero } from '@/app/components/HomepageHero'
 import { Project } from '@/app/components/Project' // Updated import
 import { Services } from '@/app/components/Services'
 import { Review } from '@/app/components/Review'
@@ -34,7 +34,7 @@ export default async function Home() {
 
   return (
     <main>
-      <Hero
+      <HomepageHero
         image={data.heroImage as ImageObject | null}
         headline={data.heroHeadline}
         cta={data.heroCTA as CTAType | null}

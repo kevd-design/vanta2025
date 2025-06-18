@@ -3,10 +3,8 @@
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useBestDpr } from '@/app/hooks/useBestDpr'
-import { useUrlCache } from '@/app/hooks/useUrlCache'
-import { useWindowSize } from '@/app/hooks/useWindowSize'
-import { DIMENSIONS, IMAGE_OPTIONS } from '@/app/constants'
+import { useOptimizedImage } from '@/app/hooks/useOptimizedImage'
+import { DIMENSIONS } from '@/app/constants'
 import type { LogoProps } from '@/app/lib/types/components/navigation'
 
 export const Logo = ({ 
@@ -14,12 +12,6 @@ export const Logo = ({
   debug = false,
   variant = 'light' // Light for dark backgrounds, dark for light backgrounds
 }: LogoProps) => {
-
-  // Hooks
-  const { width: screenWidth } = useWindowSize()
-  const dpr = useBestDpr()
-  const { generateCachedUrl } = useUrlCache()
-
   // State
   const [isLoading, setIsLoading] = useState(true)
 
@@ -51,47 +43,36 @@ export const Logo = ({
     return asset.metadata.dimensions
   }, [asset])
 
-  // Calculate display sizes ONCE
-  const { displayWidth, displayHeight } = useMemo(() => {
-    const defaultWidth = DIMENSIONS.logo.mobile
-    const width = typeof window === 'undefined' 
-      ? defaultWidth
-      : (screenWidth || DIMENSIONS.screen.defaultWidth) < DIMENSIONS.breakpoint.mobile
-        ? DIMENSIONS.logo.mobile 
-        : DIMENSIONS.logo.desktop
-
-    return {
-      displayWidth: width,
-      displayHeight: Math.round(width / dimensions.aspectRatio)
-    }
-  }, [screenWidth, dimensions.aspectRatio])
-
-  // Generate URL based on the selected asset
-  const imageUrl = useMemo(() => {
-    if (!asset) return ''
-    
-    return generateCachedUrl(
-      asset,
-      displayWidth,
-      displayHeight,
-      {
-        quality: IMAGE_OPTIONS.quality.medium,
-        dpr,
-        skipRounding: true,
-      }
-    )
-  }, [asset, displayWidth, displayHeight, dpr, generateCachedUrl])
+  // Calculate display sizes
+  const logoWidth = typeof window === 'undefined'
+    ? DIMENSIONS.logo.mobile
+    : window.innerWidth < DIMENSIONS.breakpoint.mobile
+      ? DIMENSIONS.logo.mobile
+      : DIMENSIONS.logo.desktop
+  
+  // Use your existing useOptimizedImage hook with current parameters
+  const { url: imageUrl } = useOptimizedImage({
+    asset: asset || null,
+    hotspot: null,
+    crop: null,
+    width: logoWidth,
+    height: Math.round(logoWidth / dimensions.aspectRatio),
+    quality: 90,
+  })
 
   if (!imageUrl) return null
+
+  // Calculate height based on aspect ratio
+  const logoHeight = Math.round(logoWidth / dimensions.aspectRatio)
 
   return (
     <Link href="/" className="block">
       <Image
         src={imageUrl}
         alt={asset?.altText ?? "Vanta"}
-        width={displayWidth}
-        height={displayHeight}
-        placeholder="blur"
+        width={logoWidth}
+        height={logoHeight}
+        placeholder={asset?.metadata?.lqip ? "blur" : "empty"}
         blurDataURL={asset?.metadata?.lqip ?? undefined}
         priority
         className={`object-contain transition-opacity duration-300 ${
@@ -110,8 +91,7 @@ export const Logo = ({
             variant,
             original: `${dimensions.width}x${dimensions.height}`,
             aspectRatio: dimensions.aspectRatio,
-            display: `${displayWidth}x${displayHeight}`,
-            dpr,
+            display: `${logoWidth}x${logoHeight}`,
             imageUrl
           }, null, 2)}
         </div>
