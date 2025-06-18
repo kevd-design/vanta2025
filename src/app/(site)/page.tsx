@@ -1,6 +1,6 @@
 import { sanityFetch } from "@/sanity/lib/live";
 import { HomepageHero } from '@/app/components/HomepageHero'
-import { Project } from '@/app/components/Project' // Updated import
+import { Project } from '@/app/components/Project' 
 import { Services } from '@/app/components/Services'
 import { Review } from '@/app/components/Review'
 import { QUERY_HOME } from '@/app/queries/homeQuery';
