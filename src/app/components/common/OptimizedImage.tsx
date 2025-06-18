@@ -27,7 +27,7 @@ export const OptimizedImage: FC<OptimizedImageProps> = ({
     height,
     quality,
     objectFit,
-    onColorMapChange,
+    onColorMapChange, // Will receive empty array if color map support is removed
     onImageUrlGenerated,
     isDebugMode: showDebug
   })
@@ -44,7 +44,7 @@ export const OptimizedImage: FC<OptimizedImageProps> = ({
   return (
     <div className={`relative ${showDebug ? 'outline outline-2 outline-red-500' : ''}`}>
       <Image
-        src={imageUrl || ''}
+        src={imageUrl} // Type is now string, not string | null
         width={dimensions.width}
         height={dimensions.height}
         className={`${className} object-${objectFit}`}

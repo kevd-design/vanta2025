@@ -17,8 +17,10 @@ export interface UseOptimizedImageProps {
   } | null;
   crop?: SanityImageCrop | null;
   width: number;
-  height: number;
+  height?: number; // Make height optional
   quality?: number;
+  fit?: 'clip' | 'crop' | 'fill' | 'max' | 'scale' | 'min';
+  format?: 'jpg' | 'png' | 'webp' | 'auto';
 }
 
 export interface ImageUrlOptions {
