@@ -38,7 +38,7 @@ export const HeroBase: FC<HeroBaseProps> = ({
   const aspectRatio = originalWidth / originalHeight
 
   return (
-    <div className={`mx-auto max-w-[2000px] ${className}`}>
+    <div className={`${className}`}>
       <ImageContainer 
         className={`relative w-full ${height} rounded-b-[32px] overflow-hidden`}
         setOptimizedImageUrl={setOptimizedImageUrl}

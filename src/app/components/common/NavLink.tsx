@@ -24,19 +24,19 @@ export const NavLink = forwardRef<HTMLAnchorElement, NavLinkProps>(({
   const getTextColors = () => {
     if (pathname === '/') {
       // Home page - white text
-      return 'text-black hover:text-black'
+      return 'text-black hover:text-emerald-800'
     } else if (isProjectDetailPage) {
     // Projects page - white text
-    return 'text-white hover:text-white'
+    return 'text-white hover:text-emerald-200'
     } else if (pathname === '/projects') {
       // Projects page - white text
-      return 'text-white hover:text-white'
+      return 'text-white hover:text-emerald-200'
     } else if (pathname === '/about') {
       // About page - emerald text
-      return 'text-emerald-800 hover:text-emerald-900'
+      return 'text-white hover:text-emerald-200'
     } else {
       // Default - white text
-      return 'text-white hover:text-white'
+      return 'text-white hover:text-emerald-200'
     }
   }
 

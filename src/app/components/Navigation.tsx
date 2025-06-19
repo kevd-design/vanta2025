@@ -37,7 +37,7 @@ export const Navigation: FC<NavigationProps> = ({
       return { 
         bgClass: 'bg-transparent', 
         logoVariant: 'dark' as const,
-        hamburgerColor: 'dark' as const,
+        hamburgerColor: 'green' as const,
         hasRadius: false
       }
     } else if (isProjectDetailPage) {
@@ -55,10 +55,11 @@ export const Navigation: FC<NavigationProps> = ({
         hasRadius: true
       }
     } else if (pathname === '/about') {
+      // Update this section for the about page
       return { 
-        bgClass: 'bg-white', 
-        logoVariant: 'dark' as const,
-        hamburgerColor: 'dark' as const,
+        bgClass: 'bg-transparent', 
+        logoVariant: 'light' as const,
+        hamburgerColor: 'light' as const,
         hasRadius: true
       }
     } else {
