@@ -1,9 +1,8 @@
 'use client'
 
 import { FC } from 'react'
-import Image from 'next/image'
 import Cta from '@/app/components/common/Cta'
-import { urlFor } from '@/sanity/lib/image'
+import { OptimizedImage } from '@/app/components/common/OptimizedImage'
 import { ImageContainer } from '@/app/components/common/ImageContainer'
 import { ReviewsPageBackground } from '@/app/components/ReviewsPageBackground'
 import type { ImageObject } from '@/app/lib/types/image'
@@ -30,23 +29,9 @@ export const ReviewsPage: FC<ReviewsPageProps> = ({
   submitReviewInvitation,
   submitReviewCTA
 }) => {
-  // Generate descriptive image URL directly (static size)
-  let descriptiveImageUrl = null;
-  let descriptiveImageAlt = "Google reviews";
-  
-  if (reviewPageDescriptiveImage?.asset) {
-    descriptiveImageUrl = urlFor(reviewPageDescriptiveImage)
-      .width(600)
-      .height(400)
-      .quality(85)
-      .url();
-    
-    descriptiveImageAlt = reviewPageDescriptiveImage.alt || "Google reviews";
-  }
-
-  // Get LQIP (Low Quality Image Placeholder) for background image
+  // Get LQIP for background image
   const backgroundLqip = reviewPageBackgroundImage?.asset?.metadata?.lqip ?? undefined;
-
+  
   return (
     <>
       {/* Background layer - using ImageContainer to provide responsive dimensions */}
@@ -69,7 +54,7 @@ export const ReviewsPage: FC<ReviewsPageProps> = ({
       <div className="relative z-10 min-h-screen flex items-center mt-48">
         <div className="container mx-auto px-4 md:px-6">
           {/* Desktop: Two-column layout */}
-          <div className="hidden md:flex items-center">
+          <div className="hidden md:flex items-center justify-center">
             {/* Content Column - LEFT side on desktop */}
             <div className="w-1/2 pr-8">
               <h1 className="font-display text-4xl lg:text-5xl text-gray-900 mb-6">
@@ -111,15 +96,17 @@ export const ReviewsPage: FC<ReviewsPageProps> = ({
             </div>
             
             {/* Image Column - RIGHT side on desktop */}
-            <div className="w-1/2 pl-8">
-              {descriptiveImageUrl && (
+            <div className="w-1/2 max-w-md">
+              {reviewPageDescriptiveImage && (
                 <div className="rounded-lg overflow-hidden shadow-lg">
-                  <Image
-                    src={descriptiveImageUrl}
-                    alt={descriptiveImageAlt}
+                  {/* Using OptimizedImage instead of direct Image */}
+                  <OptimizedImage
+                    image={reviewPageDescriptiveImage}
                     width={600}
                     height={400}
+                    quality={85}
                     className="w-full"
+                    priority={true}
                   />
                 </div>
               )}
@@ -140,13 +127,14 @@ export const ReviewsPage: FC<ReviewsPageProps> = ({
               )}
               
               {/* Reviews Preview Image on Mobile - Below title */}
-              {descriptiveImageUrl && (
+              {reviewPageDescriptiveImage && (
                 <div className="my-8 rounded-lg overflow-hidden shadow-lg">
-                  <Image
-                    src={descriptiveImageUrl}
-                    alt={descriptiveImageAlt}
+                  {/* Using OptimizedImage instead of direct Image */}
+                  <OptimizedImage
+                    image={reviewPageDescriptiveImage}
                     width={600}
                     height={400}
+                    quality={85}
                     className="w-full"
                   />
                 </div>
