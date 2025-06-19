@@ -1,4 +1,5 @@
 import type { Rule } from 'sanity';
+import { EDITOR_CONFIG } from '@/sanity/lib/editorConfig';
 
 const companySettings = {
   name: 'companySettingsSingleton',
@@ -29,6 +30,7 @@ const companySettings = {
       title: 'Logo for Light Background',
       type: 'imageWithMetadata',
       fieldset: 'logos',
+      readOnly: EDITOR_CONFIG.READ_ONLY_IMAGES,
       options: {
         hotspot: false,
         metadata: ['blurhash', 'lqip', 'palette'],
@@ -41,6 +43,7 @@ const companySettings = {
       title: 'Logo for Dark Background',
       type: 'imageWithMetadata',
       fieldset: 'logos',
+      readOnly: EDITOR_CONFIG.READ_ONLY_IMAGES,
       options: {
         hotspot: false,
         metadata: ['blurhash', 'lqip', 'palette'],
@@ -85,6 +88,7 @@ const companySettings = {
       name: 'founderImage',
       title: 'Founder Image',
       type: 'imageWithMetadata',
+      readOnly: EDITOR_CONFIG.READ_ONLY_IMAGES,
       options: {
         hotspot: true,
         metadata: ['blurhash', 'lqip', 'palette'],
@@ -104,13 +108,16 @@ const companySettings = {
       name: 'teamImage',
       title: 'Team Image',
       type: 'imageWithMetadata',
+      readOnly: EDITOR_CONFIG.READ_ONLY_IMAGES,
       options: {
         hotspot: true,
         metadata: ['blurhash', 'lqip', 'palette'],
         requiredFields: ['title', 'altText'],
+
       },
       description: 'An image of the team.',
       fieldset: 'about',
+
     }
   ],
 };

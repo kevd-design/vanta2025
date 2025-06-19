@@ -1,5 +1,6 @@
 import type { Rule } from 'sanity';
 import callToAction from "./callToAction";
+import { EDITOR_CONFIG } from '@/sanity/lib/editorConfig';
 
 const siteSettings = {
     name: 'siteSettingsSingleton',
@@ -138,6 +139,7 @@ const siteSettings = {
         {
             name: 'mobileBackgroundImage',
             title: 'Mobile Background Image',
+            readOnly: EDITOR_CONFIG.READ_ONLY_IMAGES,
             type: 'imageWithMetadata',
             
             options: {
@@ -222,6 +224,7 @@ const siteSettings = {
             name: 'heroImage',
             title: 'Hero Image (Home Page)',
             type: 'imageWithMetadata',
+            readOnly: EDITOR_CONFIG.READ_ONLY_IMAGES,
             
             options: {
                 hotspot: true,
@@ -274,6 +277,7 @@ const siteSettings = {
             name: 'backgroundImageServices',
             title: 'Services Background Image',
             type: 'imageWithMetadata',
+            readOnly: EDITOR_CONFIG.READ_ONLY_IMAGES,
             
             options: {
                 hotspot: true,
@@ -358,6 +362,7 @@ const siteSettings = {
             name: 'aboutPageHeroImage',
             title: 'About Page Hero Image',
             type: 'imageWithMetadata',
+            readOnly: EDITOR_CONFIG.READ_ONLY_IMAGES,
             
             options: {
                 hotspot: true,
@@ -378,6 +383,7 @@ const siteSettings = {
             name: 'reviewPageBackgroundImage',
             title: 'Review Page Background Image',
             type: 'imageWithMetadata',
+            readOnly: EDITOR_CONFIG.READ_ONLY_IMAGES,
             
             options: {
                 hotspot: true,
@@ -391,6 +397,7 @@ const siteSettings = {
             name: 'reviewPageDescriptiveImage',
             title: 'Review Page Descriptive Image',
             type: 'imageWithMetadata',
+            readOnly: EDITOR_CONFIG.READ_ONLY_IMAGES,
             
             options: {
                 hotspot: true,
@@ -447,6 +454,7 @@ const siteSettings = {
             name: 'contactsPagebackgroundImage',
             title: 'Contact Page Background Image',
             type: 'imageWithMetadata',
+            readOnly: EDITOR_CONFIG.READ_ONLY_IMAGES,
             
             options: {
                 hotspot: true,
@@ -492,6 +500,7 @@ const siteSettings = {
             name: 'instagramIcon',
             title: 'Instagram Icon',
             type: 'imageWithMetadata',
+            readOnly: EDITOR_CONFIG.READ_ONLY_IMAGES,
             
             options: {
                 hotspot: true,
@@ -511,6 +520,7 @@ const siteSettings = {
             name: 'facebookIcon',
             title: 'Facebook Icon',
             type: 'imageWithMetadata',
+            readOnly: EDITOR_CONFIG.READ_ONLY_IMAGES,
             
             options: {
                 hotspot: true,
