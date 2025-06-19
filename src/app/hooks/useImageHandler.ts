@@ -1,8 +1,11 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useHydration } from '@/app/hooks/useHydration'
 import { useOptimizedImage } from '@/app/hooks/useOptimizedImage'
 import type { ImageMetadata } from '@/app/lib/types/image'
 import type { UseImageHandlerOptions } from '@/app/lib/types/hooks/imageHooks'
+
+// Define how much dimensions need to change to re-generate image
+const DIMENSION_CHANGE_THRESHOLD = 150;
 
 export const useImageHandler = ({
   image,
@@ -16,6 +19,13 @@ export const useImageHandler = ({
 }: UseImageHandlerOptions) => {
     const [imageUrl, setImageUrl] = useState<string>('')
     const isHydrated = useHydration()
+    
+    // Store previous dimensions to detect significant changes
+    const prevDimensionsRef = useRef<{ width: number, height: number } | null>(null);
+    // Cache the URL to avoid regenerating for small dimension changes
+    const cachedUrlRef = useRef<string | null>(null);
+    // Track if we've already called onImageUrlGenerated
+    const initialCallbackMadeRef = useRef(false);
   
     // Calculate a default height if not provided
     const calculatedHeight = useMemo(() => {
@@ -30,6 +40,17 @@ export const useImageHandler = ({
         
         return width;
     }, [height, width, image?.asset?.metadata?.dimensions]);
+
+    // Check if dimensions have changed significantly
+    const hasDimensionsChangedSignificantly = useMemo(() => {
+      if (!prevDimensionsRef.current) return true;
+      
+      const widthChange = Math.abs(prevDimensionsRef.current.width - width);
+      const heightChange = Math.abs(prevDimensionsRef.current.height - calculatedHeight);
+      
+      return widthChange > DIMENSION_CHANGE_THRESHOLD || 
+             heightChange > DIMENSION_CHANGE_THRESHOLD;
+    }, [width, calculatedHeight]);
 
     // Convert objectFit to fit parameter for useOptimizedImage
     const fitMode = useMemo(() => {
@@ -48,42 +69,64 @@ export const useImageHandler = ({
       }
     }, [objectFit]);
 
+    // Only regenerate URL if dimensions have changed significantly
+    const shouldRegenerateUrl = hasDimensionsChangedSignificantly || !cachedUrlRef.current;
+
     // Generate and store URL
     const { url: generatedUrl, generateUrl } = useOptimizedImage({
-      asset: image?.asset ?? null,
-      hotspot: image?.hotspot ?? null,
-      crop: image?.crop ?? null,
-      width,
-      height: calculatedHeight,
-      quality,
+      asset: shouldRegenerateUrl ? (image?.asset ?? null) : null, // Only pass asset if we need new URL
+      hotspot: shouldRegenerateUrl ? (image?.hotspot ?? null) : null,
+      crop: shouldRegenerateUrl ? (image?.crop ?? null) : null,
+      width: shouldRegenerateUrl ? width : 0, // Only pass dimensions if regenerating
+      height: shouldRegenerateUrl ? calculatedHeight : 0,
+      quality: shouldRegenerateUrl ? quality : 0,
       fit: fitMode // Pass the converted fit parameter 
     })
 
     // Handle URL generation
     useEffect(() => {
-      const url = generateUrl()
+      // Skip if we don't need to regenerate
+      if (!shouldRegenerateUrl && cachedUrlRef.current) {
+        setImageUrl(cachedUrlRef.current);
+        return;
+      }
+      
+      const url = generateUrl();
       if (url) {
           if (isDebugMode) {
-            console.log('Setting image URL:', url)
+            console.log('Setting image URL:', url, 'dimensions:', { width, height: calculatedHeight });
           }
-          setImageUrl(url)
           
-          if (onImageUrlGenerated) {
-            onImageUrlGenerated(url)
+          // Update URL state and cache
+          setImageUrl(url);
+          cachedUrlRef.current = url;
+          
+          // Store current dimensions
+          prevDimensionsRef.current = { width, height: calculatedHeight };
+          
+          // Only call the callback if we haven't done so before or dimensions changed significantly
+          if (!initialCallbackMadeRef.current || hasDimensionsChangedSignificantly) {
+            if (onImageUrlGenerated) {
+              onImageUrlGenerated(url);
+              initialCallbackMadeRef.current = true;
+            }
           }
       }
-    }, [generateUrl, isDebugMode, onImageUrlGenerated])
+    }, [generateUrl, shouldRegenerateUrl, isDebugMode, onImageUrlGenerated, 
+         width, calculatedHeight, hasDimensionsChangedSignificantly]);
 
-    // Update after hydration
+    // Update after hydration only if URL has changed significantly
     useEffect(() => {
-      if (isHydrated && generatedUrl) {
-          setImageUrl(generatedUrl)
+      if (isHydrated && generatedUrl && shouldRegenerateUrl) {
+          setImageUrl(generatedUrl);
+          cachedUrlRef.current = generatedUrl;
           
-          if (onImageUrlGenerated) {
-            onImageUrlGenerated(generatedUrl)
+          // Only call the callback if dimensions changed significantly
+          if (onImageUrlGenerated && hasDimensionsChangedSignificantly) {
+            onImageUrlGenerated(generatedUrl);
           }
       }
-    }, [generatedUrl, isHydrated, onImageUrlGenerated])
+    }, [generatedUrl, isHydrated, onImageUrlGenerated, shouldRegenerateUrl, hasDimensionsChangedSignificantly]);
 
     // Handle color map callback if provided
     useEffect(() => {
@@ -108,11 +151,12 @@ export const useImageHandler = ({
         
         onColorMapChange([], sourceImageInfo);
       }
-    }, [onColorMapChange, image, imageUrl, width, calculatedHeight])
+    }, [onColorMapChange, image, imageUrl, width, calculatedHeight]);
 
     return {
-      imageUrl: generatedUrl || '',
-      isReady: !!generatedUrl,
+      // Always use cached URL if available
+      imageUrl: cachedUrlRef.current || generatedUrl || '',
+      isReady: !!(cachedUrlRef.current || generatedUrl),
       alt: image?.alt || '',
       dimensions: { 
         width: Number(width),
@@ -123,9 +167,11 @@ export const useImageHandler = ({
         sourceHeight: Number(image?.asset?.metadata?.dimensions?.height || 0)
       },
       regenerateImageUrl: useCallback(() => {
+        // Force regeneration even if dimensions haven't changed significantly
         const url = generateUrl();
         if (url) {
           setImageUrl(url);
+          cachedUrlRef.current = url;
           if (onImageUrlGenerated) {
             onImageUrlGenerated(url);
           }

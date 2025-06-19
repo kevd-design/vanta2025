@@ -5,6 +5,9 @@ import { DIMENSIONS } from '@/app/constants';
 import { useDebounce } from '@/app/hooks/useDebounce';
 import type { WindowSize } from '@/app/lib/types/layout';
 
+// Height threshold that indicates a URL bar change (adjust as needed for your site)
+const HEIGHT_CHANGE_THRESHOLD = 100;
+
 export const useWindowSize = () => {
   // Initialize with undefined to prevent hydration mismatch
   const [windowSize, setWindowSize] = useState<WindowSize>({
@@ -22,9 +25,18 @@ export const useWindowSize = () => {
     const newHeight = Math.round(window.innerHeight);
     
     setWindowSize(prev => {
-      if (prev.width === newWidth && prev.height === newHeight) {
-        return prev;
+      // Always update if width changed
+      if (prev.width !== newWidth) {
+        return { width: newWidth, height: newHeight };
       }
+      
+      // For height: ignore small height changes that are likely just URL bar
+      const heightDiff = Math.abs(prev.height - newHeight);
+      if (heightDiff < HEIGHT_CHANGE_THRESHOLD) {
+        return prev; // Keep previous height, ignore small changes
+      }
+      
+      // Otherwise update both
       return { width: newWidth, height: newHeight };
     });
   }, []);

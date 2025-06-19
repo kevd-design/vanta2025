@@ -4,6 +4,9 @@ import { useWindowSize } from '@/app/hooks/useWindowSize'
 import { useImageDimensions } from '@/app/hooks/useImageDimensions'
 import type { ImageContainerProps } from '@/app/lib/types/components/common'
 
+// Define a significant size change threshold (in pixels)
+const SIZE_CHANGE_THRESHOLD = 150
+
 export const ImageContainer: FC<ImageContainerProps> = ({
   children,
   className,
@@ -14,6 +17,13 @@ export const ImageContainer: FC<ImageContainerProps> = ({
   const { width: screenWidth, height: screenHeight } = useWindowSize()
   const [containerWidth, setContainerWidth] = useState(screenWidth)
   const containerRef = useRef<HTMLDivElement>(null)
+  
+  // Store initial dimensions once they're available
+  const initialDimensionsRef = useRef<{
+    screenWidth: number;
+    screenHeight: number;
+    containerWidth: number;
+  } | null>(null)
 
   // Calculate dimensions only when we have real container width
   const dimensions = useImageDimensions(
@@ -29,9 +39,18 @@ export const ImageContainer: FC<ImageContainerProps> = ({
       if (width > 0) {
         setContainerWidth(width)
         setIsReady(true)
+        
+        // Store initial dimensions once we have them
+        if (!initialDimensionsRef.current) {
+          initialDimensionsRef.current = {
+            screenWidth,
+            screenHeight,
+            containerWidth: width
+          }
+        }
       }
     }
-  }, [])
+  }, [screenWidth, screenHeight])
 
   // Resize observer with immediate callback
   useEffect(() => {
@@ -42,6 +61,15 @@ export const ImageContainer: FC<ImageContainerProps> = ({
       if (width && width > 0) {
         setContainerWidth(width)
         setIsReady(true)
+        
+        // Store initial dimensions if not already set
+        if (!initialDimensionsRef.current) {
+          initialDimensionsRef.current = {
+            screenWidth,
+            screenHeight,
+            containerWidth: width
+          }
+        }
       }
     })
     
@@ -50,12 +78,18 @@ export const ImageContainer: FC<ImageContainerProps> = ({
     return () => {
       observer.disconnect()
     }
-  }, [])
+  }, [screenWidth, screenHeight])
 
   // Width handling with debounce
   const prevWidthRef = useRef(containerWidth)
   const debouncedSetWidth = useDebounce((width: number) => {
-    if (Math.abs(prevWidthRef.current - width) >= 10) {
+    // Only update dimensions if the change is significant enough
+    const lastWidth = prevWidthRef.current
+    
+    // Check if this is URL bar change by comparing against the threshold
+    const isSignificantChange = Math.abs(lastWidth - width) >= SIZE_CHANGE_THRESHOLD
+    
+    if (isSignificantChange) {
       prevWidthRef.current = width
       setContainerWidth(width)
     }

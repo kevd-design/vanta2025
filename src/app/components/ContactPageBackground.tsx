@@ -22,9 +22,6 @@ export const ContactPageBackground: FC<ContactPageBackgroundProps> = ({
   setOptimizedImageUrl,
   isDesktop = false
 }) => {
-  // Set a fixed height that doesn't change with URL bar
-  const imageHeight = Math.max(window.innerHeight * 1.2, 800) + 100; // Add buffer
-  
   const { 
     imageUrl, 
     isReady,
@@ -32,7 +29,7 @@ export const ContactPageBackground: FC<ContactPageBackgroundProps> = ({
   } = useImageHandler({
     image: backgroundImage,
     width: dimensions.width * 2,
-    height: imageHeight, // Use fixed height
+    height: dimensions.height + 100,
     quality: IMAGE_OPTIONS.quality.medium,
     objectFit: 'cover',
     onImageUrlGenerated: (url) => {
@@ -50,13 +47,13 @@ export const ContactPageBackground: FC<ContactPageBackgroundProps> = ({
 
   return (
     <div className="absolute inset-0 w-full h-full overflow-visible">
-      {/* Use fixed positioning to prevent container resizing with URL bar */}
+      {/* Container with positioning */}
       <div 
-        className={`fixed inset-x-0 top-0 ${isDesktop ? 'w-full' : 'w-[150%]'}`} 
+        className={`absolute inset-0 ${isDesktop ? 'w-full' : 'w-[150%]'}`} 
         style={{
-          left: !isDesktop ? '10%' : 'auto',
+          left: !isDesktop ? '10%' : 'auto', 
           right: isDesktop ? '0' : 'auto',
-          height: `${imageHeight}px`, // Use fixed height in pixels
+          height: 'calc(100% + 4rem)',
           bottom: '-4rem'
         }}
       >
@@ -71,7 +68,7 @@ export const ContactPageBackground: FC<ContactPageBackgroundProps> = ({
             <Image
               src={imageUrl || ''}
               width={dimensions.width * 2}
-              height={imageHeight}
+              height={dimensions.height + 100}
               className={`h-full filter ${isDesktop ? 'w-auto max-w-none' : 'w-full'}`}
               style={{
                 objectFit: isDesktop ? 'contain' : 'cover',
@@ -87,17 +84,14 @@ export const ContactPageBackground: FC<ContactPageBackgroundProps> = ({
         </div>
       </div>
       
-      {/* Fixed positioned gradient overlay */}
+      {/* No gradient overlay needed for background since the image itself has a gradient mask */}
       <div 
-        className={`fixed inset-x-0 top-0 ${
+        className={`absolute inset-0 ${
           isDesktop 
             ? 'bg-gradient-to-r from-white/60 to-transparent'
             : 'bg-gradient-to-r from-white/80 to-transparent'
         }`}
-        style={{ 
-          height: `${imageHeight}px`,
-          pointerEvents: 'none'
-        }}
+        style={{ height: 'calc(100% + 4rem)' }}
       />
     </div>
   )
