@@ -663,6 +663,110 @@ export type QUERY_ABOUT_PAGEResult = {
   } | null;
 };
 
+// Source: ./src/app/queries/contactQuery.ts
+// Variable: QUERY_CONTACT_PAGE
+// Query: *[_type == "siteSettingsSingleton"][0]{  contactPageTitle,  contactsPagebackgroundImage {  ...,  asset->{    ...,    metadata  }},  PhoneLabel,  PhoneNumber,  emailLabel,  emailAddress,  socialMediaLabel,  instagramIcon {  ...,  asset->{    ...,    metadata  }},  instagramLink,  facebookIcon {  ...,  asset->{    ...,    metadata  }},  facebookLink}
+export type QUERY_CONTACT_PAGEResult = {
+  contactPageTitle: string | null;
+  contactsPagebackgroundImage: {
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata: SanityImageMetadata | null;
+      source?: SanityAssetSourceData;
+    } | null;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    decorative?: boolean;
+    changed?: boolean;
+    _type: "imageWithMetadata";
+  } | null;
+  PhoneLabel: string | null;
+  PhoneNumber: string | null;
+  emailLabel: string | null;
+  emailAddress: string | null;
+  socialMediaLabel: string | null;
+  instagramIcon: {
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata: SanityImageMetadata | null;
+      source?: SanityAssetSourceData;
+    } | null;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    decorative?: boolean;
+    changed?: boolean;
+    _type: "imageWithMetadata";
+  } | null;
+  instagramLink: string | null;
+  facebookIcon: {
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata: SanityImageMetadata | null;
+      source?: SanityAssetSourceData;
+    } | null;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    decorative?: boolean;
+    changed?: boolean;
+    _type: "imageWithMetadata";
+  } | null;
+  facebookLink: string | null;
+} | null;
+
 // Source: ./src/app/queries/homeQuery.ts
 // Variable: QUERY_HOME
 // Query: *[_type == "siteSettingsSingleton"][0]{  // Hero section  heroCTA,  heroHeadline,  heroImage {  ...,  asset->{    ...,    metadata  }},    // Project section  projectCTA {    ...,    "project": toProject-> {      _id,      projectName,      projectSlug,      projectImage {  ...,  asset->{    ...,    metadata  }}    }  },    // Services section  servicesTitle,  servicesDescription,  backgroundImageServices {  ...,  asset->{    ...,    metadata  }},  servicesCTA,    // Review section  reviewerName,  reviewText,  reviewCTA}
@@ -1162,6 +1266,7 @@ import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
     "{\n  \"siteSettings\": *[_type == \"siteSettingsSingleton\"][0]{\n    aboutPageTitle,\n    aboutPageHeroImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n}\n  },\n  \"companySettings\": *[_type == \"companySettingsSingleton\"][0]{\n    slogan,\n    aboutHistory,\n    aboutMission,\n    aboutFounder,\n    founderImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n    aboutTeam,\n    teamImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n}\n  }\n}": QUERY_ABOUT_PAGEResult;
+    "*[_type == \"siteSettingsSingleton\"][0]{\n  contactPageTitle,\n  contactsPagebackgroundImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n  PhoneLabel,\n  PhoneNumber,\n  emailLabel,\n  emailAddress,\n  socialMediaLabel,\n  instagramIcon {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n  instagramLink,\n  facebookIcon {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n  facebookLink\n}": QUERY_CONTACT_PAGEResult;
     "*[_type == \"siteSettingsSingleton\"][0]{\n  // Hero section\n  heroCTA,\n  heroHeadline,\n  heroImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n  \n  // Project section\n  projectCTA {\n    ...,\n    \"project\": toProject-> {\n      _id,\n      projectName,\n      projectSlug,\n      projectImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n}\n    }\n  },\n  \n  // Services section\n  servicesTitle,\n  servicesDescription,\n  backgroundImageServices {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n  servicesCTA,\n  \n  // Review section\n  reviewerName,\n  reviewText,\n  reviewCTA\n}": QUERY_HOMEResult;
     "*[_type == \"companySettingsSingleton\"][0]{\n  logoForLightBG {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n  logoForDarkBG {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n}\n}": QUERY_LOGOResult;
     "*[_type == \"siteSettingsSingleton\"][0]{\n  homePageNavLabel,\n  projectsPageNavLabel,\n  aboutPageNavLabel,\n  reviewsPageNavLabel,\n  contactPageNavLabel,\n  mobileBackgroundImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n  \n  // Footer data\n  displayCopyright,\n  textBeforeCopyright,\n  copyrightText,\n  copyrightYear,\n  textAfterCopyright\n}": QUERY_NAVResult;

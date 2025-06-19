@@ -24,7 +24,7 @@ export const Footer: FC<FooterProps> = ({
   const year = copyrightYear ? new Date().getFullYear() : null
   
   return (
-    <footer className="bg-emerald-800 text-white mt-auto rounded-t-[32px] ">
+    <footer className="bg-emerald-800 text-white mt-auto rounded-t-[32px] relative z-30">
       <div className="container mx-auto py-6 px-4 text-center">
         <p className="text-sm md:text-base">
           {textBeforeCopyright && <span>{textBeforeCopyright}{' '}</span>}

@@ -23,15 +23,17 @@ export default async function RootLayout({
 
   return (
 
-              <div className="flex flex-col min-h-screen">
+              <div className="flex flex-col min-h-screen relative">
                 <Navigation
                   logo={logo as LogoType}
                   navLabels={navData as NavLabelsType}
                   mobileBackgroundImage={navData.mobileBackgroundImage as ImageObject | undefined}
                 />
-                <PageTransition>
-                  {children}
-                </PageTransition>
+                <div className="flex-grow"> {/* Container to ensure proper flex layout */}
+                  <PageTransition>
+                    {children}
+                  </PageTransition>
+                </div>
                 <Footer 
                   displayCopyright={navData.displayCopyright || false}
                   textBeforeCopyright={navData.textBeforeCopyright}

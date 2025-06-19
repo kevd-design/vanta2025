@@ -3,7 +3,7 @@
 import { FC } from 'react'
 import Cta from '@/app/components/common/Cta'
 import { OptimizedImage } from '@/app/components/common/OptimizedImage'
-import { ImageContainer } from '@/app/components/common/ImageContainer'
+import { PageBackground } from '@/app/components/common/PageBackground'
 import { ReviewsPageBackground } from '@/app/components/ReviewsPageBackground'
 import type { ImageObject } from '@/app/lib/types/image'
 import type { CTAType } from '@/app/lib/types/content'
@@ -33,25 +33,13 @@ export const ReviewsPage: FC<ReviewsPageProps> = ({
   const backgroundLqip = reviewPageBackgroundImage?.asset?.metadata?.lqip ?? undefined;
   
   return (
-    <>
-      {/* Background layer - using ImageContainer to provide responsive dimensions */}
-      <div className="fixed inset-0 z-0">
-        {reviewPageBackgroundImage && (
-          <ImageContainer className="w-full h-full">
-            {({ dimensions, setOptimizedImageUrl }) => (
-              <ReviewsPageBackground
-                backgroundImage={reviewPageBackgroundImage}
-                dimensions={dimensions}
-                lqip={backgroundLqip}
-                setOptimizedImageUrl={setOptimizedImageUrl}
-              />
-            )}
-          </ImageContainer>
-        )}
-      </div>
-      
+    <PageBackground
+      backgroundImage={reviewPageBackgroundImage}
+      backgroundComponent={ReviewsPageBackground}
+      lqip={backgroundLqip}
+    >
       {/* Content */}
-      <div className="relative z-10 min-h-screen flex items-center mt-48">
+      <div className="py-48 min-h-screen flex items-center">
         <div className="container mx-auto px-4 md:px-6">
           {/* Desktop: Two-column layout */}
           <div className="hidden md:flex items-center justify-center">
@@ -99,7 +87,6 @@ export const ReviewsPage: FC<ReviewsPageProps> = ({
             <div className="w-1/2 max-w-md">
               {reviewPageDescriptiveImage && (
                 <div className="rounded-lg overflow-hidden shadow-lg">
-                  {/* Using OptimizedImage instead of direct Image */}
                   <OptimizedImage
                     image={reviewPageDescriptiveImage}
                     width={600}
@@ -129,7 +116,6 @@ export const ReviewsPage: FC<ReviewsPageProps> = ({
               {/* Reviews Preview Image on Mobile - Below title */}
               {reviewPageDescriptiveImage && (
                 <div className="my-8 rounded-lg overflow-hidden shadow-lg">
-                  {/* Using OptimizedImage instead of direct Image */}
                   <OptimizedImage
                     image={reviewPageDescriptiveImage}
                     width={600}
@@ -170,6 +156,6 @@ export const ReviewsPage: FC<ReviewsPageProps> = ({
           </div>
         </div>
       </div>
-    </>
+    </PageBackground>
   )
 }

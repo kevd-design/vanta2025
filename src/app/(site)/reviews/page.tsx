@@ -27,18 +27,15 @@ export default async function Reviews() {
   const data = await client.fetch<ReviewsPageData>(QUERY_REVIEWS_PAGE);
   
   return (
-    <div className="relative min-h-screen">
-      {/* Content Component - the background will be handled in the client component */}
-      <ReviewsPage
-        reviewPageTitle={data?.reviewPageTitle || "Reviews"}
-        reviewPageBackgroundImage={data?.reviewPageBackgroundImage || null}
-        reviewPageDescriptiveImage={data?.reviewPageDescriptiveImage || null}
-        reviewPageSummary={data?.reviewPageSummary || null}
-        viewReviewsCTA={data?.viewReviewsCTA || null}
-        submitReviewTitle={data?.submitReviewTitle || "Submit a review"}
-        submitReviewInvitation={data?.submitReviewInvitation || null}
-        submitReviewCTA={data?.submitReviewCTA || null}
-      />
-    </div>
+    <ReviewsPage
+      reviewPageTitle={data?.reviewPageTitle || "Reviews"}
+      reviewPageBackgroundImage={data?.reviewPageBackgroundImage || null}
+      reviewPageDescriptiveImage={data?.reviewPageDescriptiveImage || null}
+      reviewPageSummary={data?.reviewPageSummary || null}
+      viewReviewsCTA={data?.viewReviewsCTA || null}
+      submitReviewTitle={data?.submitReviewTitle || "Submit a review"}
+      submitReviewInvitation={data?.submitReviewInvitation || null}
+      submitReviewCTA={data?.submitReviewCTA || null}
+    />
   )
 }

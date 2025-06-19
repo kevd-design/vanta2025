@@ -4,7 +4,7 @@ import { IMAGE_OPTIONS } from '@/app/constants'
 import { useImageHandler } from '@/app/hooks/useImageHandler'
 import type { ImageObject } from '@/app/lib/types/image'
 
-interface ReviewsPageBackgroundProps {
+interface ContactPageBackgroundProps {
   backgroundImage: ImageObject | null;
   dimensions: {
     width: number;
@@ -15,7 +15,7 @@ interface ReviewsPageBackgroundProps {
   isDesktop?: boolean;
 }
 
-export const ReviewsPageBackground: FC<ReviewsPageBackgroundProps> = ({
+export const ContactPageBackground: FC<ContactPageBackgroundProps> = ({
   backgroundImage,
   dimensions,
   lqip,
@@ -51,7 +51,7 @@ export const ReviewsPageBackground: FC<ReviewsPageBackgroundProps> = ({
       <div 
         className={`absolute inset-0 ${isDesktop ? 'w-full' : 'w-[150%]'}`} 
         style={{
-          left: !isDesktop ? '10%' : 'auto',
+          left: !isDesktop ? '10%' : 'auto', 
           right: isDesktop ? '0' : 'auto',
           height: 'calc(100% + 4rem)',
           bottom: '-4rem'
@@ -84,7 +84,7 @@ export const ReviewsPageBackground: FC<ReviewsPageBackgroundProps> = ({
         </div>
       </div>
       
-      {/* Reduced gradient overlay - the image itself now has a gradient mask */}
+      {/* No gradient overlay needed for background since the image itself has a gradient mask */}
       <div 
         className={`absolute inset-0 ${
           isDesktop 
