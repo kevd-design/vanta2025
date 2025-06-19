@@ -6,7 +6,7 @@ import { useDebounce } from '@/app/hooks/useDebounce';
 import type { WindowSize } from '@/app/lib/types/layout';
 
 // Height threshold that indicates a URL bar change (adjust as needed for your site)
-const HEIGHT_CHANGE_THRESHOLD = 100;
+const HEIGHT_CHANGE_THRESHOLD = 200;
 
 export const useWindowSize = () => {
   // Initialize with undefined to prevent hydration mismatch

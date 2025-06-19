@@ -5,7 +5,7 @@ import type { ImageMetadata } from '@/app/lib/types/image'
 import type { UseImageHandlerOptions } from '@/app/lib/types/hooks/imageHooks'
 
 // Define how much dimensions need to change to re-generate image
-const DIMENSION_CHANGE_THRESHOLD = 150;
+const DIMENSION_CHANGE_THRESHOLD = 300;
 
 export const useImageHandler = ({
   image,

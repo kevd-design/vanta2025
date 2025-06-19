@@ -5,7 +5,7 @@ import { useImageDimensions } from '@/app/hooks/useImageDimensions'
 import type { ImageContainerProps } from '@/app/lib/types/components/common'
 
 // Define a significant size change threshold (in pixels)
-const SIZE_CHANGE_THRESHOLD = 150
+const SIZE_CHANGE_THRESHOLD = 300
 
 export const ImageContainer: FC<ImageContainerProps> = ({
   children,
