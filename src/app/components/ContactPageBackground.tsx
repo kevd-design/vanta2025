@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useRef } from 'react'
 import Image from 'next/image' 
 import { IMAGE_OPTIONS } from '@/app/constants'
 import { useImageHandler } from '@/app/hooks/useImageHandler'
@@ -22,39 +22,52 @@ export const ContactPageBackground: FC<ContactPageBackgroundProps> = ({
   setOptimizedImageUrl,
   isDesktop = false
 }) => {
-  const { 
-    imageUrl, 
-    isReady,
-    alt
-  } = useImageHandler({
-    image: backgroundImage,
-    width: dimensions.width * 2,
-    height: dimensions.height + 100,
-    quality: IMAGE_OPTIONS.quality.medium,
+  // Use refs to store stable values that won't trigger re-renders
+  const stableUrlRef = useRef<string | null>(null);
+  const hasCalledSetterRef = useRef<boolean>(false);
+  
+  // Fixed dimensions for the image - make them large enough for any screen
+  const fixedWidth = Math.max(dimensions.width * 2, window.innerWidth * 2);
+  const fixedHeight = Math.max(dimensions.height + 200, window.innerHeight * 1.5);
+
+  // Only generate image URL once
+  const { imageUrl, isReady, alt } = useImageHandler({
+    image: !stableUrlRef.current ? backgroundImage : null, // Only process if we don't have a URL yet
+    width: fixedWidth,
+    height: fixedHeight,
+    quality: IMAGE_OPTIONS.quality.high,
     objectFit: 'cover',
     onImageUrlGenerated: (url) => {
-      if (setOptimizedImageUrl && url) {
-        setOptimizedImageUrl(url)
+      // Store the URL and only call the setter once
+      if (url && !stableUrlRef.current) {
+        stableUrlRef.current = url;
+        
+        if (setOptimizedImageUrl && !hasCalledSetterRef.current) {
+          setOptimizedImageUrl(url);
+          hasCalledSetterRef.current = true;
+        }
       }
     }
-  })
+  });
 
-  if (!backgroundImage?.asset || !isReady) return null
+  // Use the stable URL from the ref if available, otherwise use the generated URL
+  const finalUrl = stableUrlRef.current || imageUrl;
+
+  if (!backgroundImage?.asset || (!finalUrl && !isReady)) return null;
 
   // Gradient mask values - different for desktop vs mobile
   const gradientMaskDesktop = 'linear-gradient(to right, transparent, rgba(255,255,255,0.4) 15%, white 30%)';
   const gradientMaskMobile = 'linear-gradient(to right, transparent, rgba(255,255,255,0.5) 25%, white 50%)';
 
   return (
-    <div className="absolute inset-0 w-full h-full overflow-visible">
+    <div className="fixed inset-0 w-full h-full overflow-visible">
       {/* Container with positioning */}
       <div 
-        className={`absolute inset-0 ${isDesktop ? 'w-full' : 'w-[150%]'}`} 
+        className={`fixed inset-0 ${isDesktop ? 'w-full' : 'w-[150%]'}`} 
         style={{
-          left: !isDesktop ? '10%' : 'auto', 
+          left: !isDesktop ? '10%' : 'auto',
           right: isDesktop ? '0' : 'auto',
-          height: 'calc(100% + 4rem)',
-          bottom: '-4rem'
+          height: '100vh',
         }}
       >
         <div className={`w-full h-full relative ${isDesktop ? 'flex justify-end' : ''}`}>
@@ -66,9 +79,9 @@ export const ContactPageBackground: FC<ContactPageBackgroundProps> = ({
             }}
           >
             <Image
-              src={imageUrl || ''}
-              width={dimensions.width * 2}
-              height={dimensions.height + 100}
+              src={finalUrl || ''}
+              width={fixedWidth}
+              height={fixedHeight}
               className={`h-full filter ${isDesktop ? 'w-auto max-w-none' : 'w-full'}`}
               style={{
                 objectFit: isDesktop ? 'contain' : 'cover',
@@ -79,20 +92,23 @@ export const ContactPageBackground: FC<ContactPageBackgroundProps> = ({
               sizes="100vw"
               placeholder={lqip ? "blur" : undefined}
               blurDataURL={lqip}
+              unoptimized={true} // Disable Next.js image optimization to prevent URL changes
             />
           </div>
         </div>
       </div>
       
-      {/* No gradient overlay needed for background since the image itself has a gradient mask */}
       <div 
-        className={`absolute inset-0 ${
+        className={`fixed inset-0 ${
           isDesktop 
             ? 'bg-gradient-to-r from-white/60 to-transparent'
             : 'bg-gradient-to-r from-white/80 to-transparent'
         }`}
-        style={{ height: 'calc(100% + 4rem)' }}
+        style={{ 
+          height: '100vh',
+          pointerEvents: 'none' 
+        }}
       />
     </div>
-  )
-}
+  );
+};
