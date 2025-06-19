@@ -22,14 +22,17 @@ export const ReviewsPageBackground: FC<ReviewsPageBackgroundProps> = ({
   setOptimizedImageUrl,
   isDesktop = false
 }) => {
+  // Set a fixed height that doesn't change with URL bar
+  const imageHeight = Math.max(window.innerHeight * 1.2, 800) + 100; // Add buffer
+  
   const { 
     imageUrl, 
     isReady,
     alt
   } = useImageHandler({
     image: backgroundImage,
-    width: dimensions.width * 2,
-    height: dimensions.height + 100,
+    width: dimensions.width * 2, // Double the width for offset
+    height: imageHeight, // Use fixed height
     quality: IMAGE_OPTIONS.quality.medium,
     objectFit: 'cover',
     onImageUrlGenerated: (url) => {
@@ -47,13 +50,13 @@ export const ReviewsPageBackground: FC<ReviewsPageBackgroundProps> = ({
 
   return (
     <div className="absolute inset-0 w-full h-full overflow-visible">
-      {/* Container with positioning */}
+      {/* Use fixed positioning to prevent container resizing with URL bar */}
       <div 
-        className={`absolute inset-0 ${isDesktop ? 'w-full' : 'w-[150%]'}`} 
+        className={`fixed inset-x-0 top-0 ${isDesktop ? 'w-full' : 'w-[150%]'}`} 
         style={{
           left: !isDesktop ? '10%' : 'auto',
           right: isDesktop ? '0' : 'auto',
-          height: 'calc(100% + 4rem)',
+          height: `${imageHeight}px`, // Use fixed height in pixels
           bottom: '-4rem'
         }}
       >
@@ -68,7 +71,7 @@ export const ReviewsPageBackground: FC<ReviewsPageBackgroundProps> = ({
             <Image
               src={imageUrl || ''}
               width={dimensions.width * 2}
-              height={dimensions.height + 100}
+              height={imageHeight}
               className={`h-full filter ${isDesktop ? 'w-auto max-w-none' : 'w-full'}`}
               style={{
                 objectFit: isDesktop ? 'contain' : 'cover',
@@ -84,14 +87,17 @@ export const ReviewsPageBackground: FC<ReviewsPageBackgroundProps> = ({
         </div>
       </div>
       
-      {/* Reduced gradient overlay - the image itself now has a gradient mask */}
+      {/* Fixed positioned gradient overlay */}
       <div 
-        className={`absolute inset-0 ${
+        className={`fixed inset-x-0 top-0 ${
           isDesktop 
             ? 'bg-gradient-to-r from-white/60 to-transparent'
             : 'bg-gradient-to-r from-white/80 to-transparent'
         }`}
-        style={{ height: 'calc(100% + 4rem)' }}
+        style={{ 
+          height: `${imageHeight}px`,
+          pointerEvents: 'none'
+        }}
       />
     </div>
   )

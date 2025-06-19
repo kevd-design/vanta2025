@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import Image from 'next/image' 
 import { IMAGE_OPTIONS } from '@/app/constants'
 import { useImageHandler } from '@/app/hooks/useImageHandler'
@@ -10,6 +10,9 @@ export const MobileNavigationBackground: FC<MobileNavigationBackgroundProps> = (
   lqip,
   setOptimizedImageUrl
 }) => {
+  // Use a fixed height that won't change with URL bar
+  const fixedHeight = useMemo(() => Math.max(600, dimensions.width * 0.8), [dimensions.width]);
+  
   const { 
     imageUrl, 
     isReady,
@@ -17,7 +20,7 @@ export const MobileNavigationBackground: FC<MobileNavigationBackgroundProps> = (
   } = useImageHandler({
     image: backgroundImage,
     width: dimensions.width,
-    height: dimensions.height,
+    height: fixedHeight, // Use calculated fixed height
     quality: IMAGE_OPTIONS.quality.medium,
     objectFit: 'cover',
     onImageUrlGenerated: (url) => {
@@ -27,15 +30,14 @@ export const MobileNavigationBackground: FC<MobileNavigationBackgroundProps> = (
     }
   })
 
-  if (!backgroundImage?.asset) return null
-  if (!isReady) return null
+  if (!backgroundImage?.asset || !isReady) return null
 
   return (
     <div className="absolute inset-0 w-full h-full">
       <Image
         src={imageUrl || ''}
         width={dimensions.width}
-        height={dimensions.height}
+        height={fixedHeight}
         className="w-full h-full object-cover"
         priority
         alt={alt || ''}
