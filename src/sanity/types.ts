@@ -1046,6 +1046,100 @@ export type QUERY_PROJECT_INDEX_METADATAResult = {
   projectIndexPageDescription: string | null;
 } | null;
 
+// Source: ./src/app/queries/reviewsQuery.ts
+// Variable: QUERY_REVIEWS_PAGE
+// Query: *[_type == "siteSettingsSingleton"][0]{  reviewPageTitle,  reviewPageBackgroundImage {  ...,  asset->{    ...,    metadata  }},  reviewPageDescriptiveImage {  ...,  asset->{    ...,    metadata  }},  reviewPageSummary,  viewReviewsCTA {    ...,  },  submitReviewTitle,  submitReviewInvitation,  submitReviewCTA {    ...,  }}
+export type QUERY_REVIEWS_PAGEResult = {
+  reviewPageTitle: string | null;
+  reviewPageBackgroundImage: {
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata: SanityImageMetadata | null;
+      source?: SanityAssetSourceData;
+    } | null;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    decorative?: boolean;
+    changed?: boolean;
+    _type: "imageWithMetadata";
+  } | null;
+  reviewPageDescriptiveImage: {
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata: SanityImageMetadata | null;
+      source?: SanityAssetSourceData;
+    } | null;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    decorative?: boolean;
+    changed?: boolean;
+    _type: "imageWithMetadata";
+  } | null;
+  reviewPageSummary: string | null;
+  viewReviewsCTA: {
+    linkLabel?: string;
+    linkType?: "externalLink" | "toPage" | "toProject";
+    toProject?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "project";
+    };
+    toPage?: "about" | "contact" | "home" | "projects" | "reviews";
+    externalLink?: string;
+  } | null;
+  submitReviewTitle: string | null;
+  submitReviewInvitation: string | null;
+  submitReviewCTA: {
+    linkLabel?: string;
+    linkType?: "externalLink" | "toPage" | "toProject";
+    toProject?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "project";
+    };
+    toPage?: "about" | "contact" | "home" | "projects" | "reviews";
+    externalLink?: string;
+  } | null;
+} | null;
+
 // Source: ./src/sanity/lib/queries.ts
 // Variable: PROJECTS_QUERY
 // Query: *[  _type == "project" && defined(projectSlug.current)][0...12]{    _id, projectName, projectSlug  }
@@ -1074,6 +1168,7 @@ declare module "@sanity/client" {
     "*[\n  _type == \"project\" && defined(projectSlug.current)][0...12]{\n    _id, \n    projectName, \n    projectSlug,\n    projectImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n}\n  }\n": QUERY_PROJECTSResult;
     "*[\n  _type == \"project\" && projectSlug.current == $slug][0]{\n    _id, \n    projectName, \n    projectSlug, \n    projectDescription,\n    projectImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n    projectNeighbourhood->{\n      name\n    },\n    projectGallery[] {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n}\n  }\n": QUERY_PROJECTResult;
     "*[_type == \"siteSettingsSingleton\"][0]{\n  projectIndexPageTitle,\n  projectIndexPageDescription\n}": QUERY_PROJECT_INDEX_METADATAResult;
+    "*[_type == \"siteSettingsSingleton\"][0]{\n  reviewPageTitle,\n  reviewPageBackgroundImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n  reviewPageDescriptiveImage {\n  ...,\n  asset->{\n    ...,\n    metadata\n  }\n},\n  reviewPageSummary,\n  viewReviewsCTA {\n    ...,\n  },\n  submitReviewTitle,\n  submitReviewInvitation,\n  submitReviewCTA {\n    ...,\n  }\n}": QUERY_REVIEWS_PAGEResult;
     "*[\n  _type == \"project\" && defined(projectSlug.current)][0...12]{\n    _id, projectName, projectSlug\n  }\n": PROJECTS_QUERYResult;
     "*[\n  _type == \"project\" && projectSlug.current == $slug][0]{\n    _id, projectName, projectSlug, projectDescription\n  }\n": PROJECT_QUERYResult;
   }

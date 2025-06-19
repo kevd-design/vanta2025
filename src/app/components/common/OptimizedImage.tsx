@@ -12,7 +12,6 @@ export const OptimizedImage: FC<OptimizedImageProps> = ({
   priority = false,
   objectFit = 'cover',
   showDebug = false,
-  onColorMapChange,
   onImageUrlGenerated
 }) => {
   const [isLoaded, setIsLoaded] = useState(false)
@@ -29,7 +28,6 @@ export const OptimizedImage: FC<OptimizedImageProps> = ({
     height,
     quality,
     objectFit,
-    onColorMapChange,
     onImageUrlGenerated,
     isDebugMode: showDebug
   })

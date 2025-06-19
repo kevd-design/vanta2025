@@ -13,7 +13,8 @@ const roundToDecimal = (num: number, decimals: number = 2) =>
 
 
 const IS_DEVELOPMENT = process.env.NODE_ENV === 'development'
-const DEBUG = IS_DEVELOPMENT // Only debug in development
+// const DEBUG = IS_DEVELOPMENT // Only debug in development
+const DEBUG = false // Disable debug logs by default, enable manually if needed
 
 const buildImageUrl = (
   image: Image,

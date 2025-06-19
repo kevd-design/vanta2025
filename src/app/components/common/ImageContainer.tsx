@@ -87,9 +87,8 @@ export const ImageContainer: FC<ImageContainerProps> = ({
     }
   }
 
-  // Only render children when ready
+  // Only render children when ready - but don't pass containerRef to children
   const content = isReady ? children({
-    containerRef,
     dimensions,
     setOptimizedImageUrl: handleSetOptimizedImageUrl
   }) : null
